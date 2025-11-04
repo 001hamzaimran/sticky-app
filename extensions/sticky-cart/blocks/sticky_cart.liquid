@@ -1,40 +1,49 @@
 <script>
   window.stickyCart = {
     shop: '{{ shop.permanent_domain }}',
-    id: '{{ product.id }}'
-  }
+    id: '{{ product.id }}',
+  };
 </script>
-<div class="sticky-app-container" style="background-color: #000;">
-        <div class="top-text" style="background-color: #14ffc4;">
-            <p>Get it while it lasts</p>
-        </div>
-        <div class="product-item">
-            <div class="product-image">
-                <img src="" id="productImg" width="100" height="100" alt="img">
-            </div>
-            <div class="product-content">
-                <h2 class="product-title" id="productTitle"></h2>
-                <p class="product-price" id="productPrice"><span id="prodcutCurrencySymbol">$</span></p>
-            </div>
-            <div class="product-action">
-                <div class="qty-container">
-                    <button type="button" class="plus" id="plus">+</button>
-                    <input type="number" id="qtyInp" value="0">
-                    <button type="button" class="minus" id="minus">-</button>
-                </div>
-                <div class="product-add-to-cart">
-                    <button type="button" class="add-to-cart">Add to cart</button>
-                </div>
-            </div>
-        </div>
+<div id="parent" class="sticky-app-container" style="background-color: #000; display:none;">
+  <div class="top-text" style="background-color: #14ffc4;">
+    <p>Get it while it lasts</p>
+  </div>
+  <div class="product-item">
+    <div class="product-image">
+      <img src="thumbs-up.png" id="productImg" width="100" height="100" alt="img">
     </div>
+    <div class="product-content">
+        <h2 class="product-title" id="productTitle"></h2>
+        <p class="product-price" id="productPrice"><span id="prodcutCurrencySymbol">$</span></p>
+      </div>
+      <div class="product-info">
+        <div class="product-variant" id="variantsContainer">
+          <select id="variantsItem">
+            <option value=""></option>
+          </select>
+        </div>
+        <div class="product-action">
+        <div class="qty-container">
+          <button type="button" class="plus" id="plus">+</button>
+          <input type="number" id="qtyInp" value="0">
+          <button type="button" class="minus" id="minus">-</button>
+        </div>
+        <div class="product-add-to-cart">
+          <button type="button" class="add-to-cart" id="addToCartBtn">Add to cart</button>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+  </div>
+</div>
 
 {% schema %}
 {
   "name": "Sticky Cart",
   "target": "body",
   "stylesheet": "style.css",
-  "javascript": "script.js",
+  "javascript": "script.js"
 }
 {% endschema %}
-

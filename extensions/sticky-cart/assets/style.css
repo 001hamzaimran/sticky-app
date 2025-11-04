@@ -11,6 +11,7 @@
             bottom: 0;
             left: 0;
             width: 100%;
+            z-index: 9;
         }
         .sticky-app-container .top-text p {
             text-align: center;
@@ -40,8 +41,29 @@
         .product-action {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 20px;   
+        }
+        .product-info{
             margin-left: auto;
+            display: flex;
+            gap: 10px;
+        }
+        .product-variant select {
+            padding: 5px;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 24px;
+            background: transparent;
+            color: #fff;
+            border: none;
+            border-bottom: 1px solid #fff;
+        }
+        .product-variant select option{
+            background-color: #000;
+        }
+        *:focus-visible{
+            box-shadow: none;
+            border: 1px solid #fff;
         }
         .qty-container .plus, .qty-container .minus {
             padding: 4px 8px;

@@ -99,11 +99,7 @@ export default function HomePage() {
         open={modalActive}
         onClose={handleModalClose}
         title="Quick Setup Guide"
-        primaryAction={{
-          content: "Continue to Setup",
-          onAction: handleModalPrimaryAction,
-        }}
-        secondaryActions={[
+         secondaryActions={[
           {
             content: "Close",
             onAction: handleModalClose,

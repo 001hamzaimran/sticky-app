@@ -32,24 +32,23 @@ window.addEventListener('DOMContentLoaded', () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id: splitvariantId, quantity: Number(qtyInp.value) || 1 })
         })
-        .then(res => {
-            if (!res.ok) throw new Error("Add to cart failed");
-            return res.json();
-        })
-        .then(() => {
-            window.location.href = "/cart";
-        })
-        .catch(err => {
-            console.error("Add to Cart Error:", err);
-            alert("Something went wrong while adding the product to the cart.");
-        });
+            .then(res => {
+                if (!res.ok) throw new Error("Add to cart failed");
+                return res.json();
+            })
+            .then(() => {
+                window.location.href = "/cart";
+            })
+            .catch(err => {
+                console.error("Add to Cart Error:", err);
+                alert("Something went wrong while adding the product to the cart.");
+            });
     });
 
     // ✅ Shopify Product Fetch
     const { shop, id } = window.stickyCart;
 
     if (id) {
-        parent.style.display = 'block';
         const getProduct = async () => {
             try {
                 const resp = await fetch(`https://${shop}/apps/Sticky/product/${id}/${shop}`);
@@ -62,6 +61,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 const variantSelect = document.getElementById('variantsItem');
 
                 titleEl.textContent = title;
+                parent.style.display = 'block';
 
                 // ✅ If product has variants
                 if (variants.edges.length > 1) {
@@ -102,7 +102,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             imgEl.src = newImage;
                         }
                     });
-                } 
+                }
                 // ✅ If product has no variants
                 else {
                     variantsContainer.style.display = 'none'; // hide variant div

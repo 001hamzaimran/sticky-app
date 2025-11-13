@@ -12,7 +12,7 @@
     "deploy": "shopify app deploy"
   },
   "dependencies": {},
-  "author": "GFS IT",
+  "author": "Sticky App",
   "private": true,
   "workspaces": [
     "extensions/*",

@@ -1,13 +1,15 @@
 // @ts-check
 import { join } from "path";
-import { readFileSync } from "fs";
 import express from "express";
-import serveStatic from "serve-static";
-
+import { readFileSync } from "fs";
 import shopify from "./shopify.js";
-import productCreator from "./product-creator.js";
+import serveStatic from "serve-static";
+import dbConn from "./Utils/DB.Connection.js";
 import PrivacyWebhookHandlers from "./privacy.js";
 import productRoute from "./Routes/Product.route.js";
+import { storeRouter } from "./Routes/Store.Route.js";
+import { StickyCartRoute } from "./Routes/StickyCart.Route.js";
+
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -20,6 +22,7 @@ const STATIC_PATH =
     : `${process.cwd()}/frontend/`;
 
 const app = express();
+dbConn();
 
 // Set up Shopify authentication and webhook handling
 app.get(shopify.config.auth.path, shopify.auth.begin());
@@ -37,11 +40,12 @@ app.post(
 // also add a proxy rule for them in web/frontend/vite.config.js
 app.set('trust proxy', true)
 
+// @ts-ignore
 async function authenticateUser(req, res, next) {
   let shop = req.query.shop;
   let storeName = await shopify.config.sessionStorage.findSessionsByShop(shop);
-  console.log("storename for view", storeName);
   console.log("Shop for view", shop);
+  console.log("storename for view", storeName);
   if (shop === storeName[0].shop) {
     next();
   } else {
@@ -52,10 +56,12 @@ app.use(express.json());
 app.use("/api/*", shopify.validateAuthenticatedSession());
 app.use("/proxy/*", authenticateUser);
 
-
-
 app.use('/api', productRoute);
+app.use('/api', storeRouter);
+app.use('/api', StickyCartRoute);
+
 app.use('/proxy', productRoute);
+app.use('/proxy', StickyCartRoute);
 
 app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));
@@ -72,3 +78,4 @@ app.use("/*", shopify.ensureInstalledOnShop(), async (_req, res, _next) => {
 });
 
 app.listen(PORT);
+

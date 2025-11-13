@@ -11,43 +11,43 @@ const getProductById = async (req, res) => {
 
     const query = `
       query ProductMetafields($ownerId: ID!) {
-  product(id: $ownerId) {
-    id
-    title
-    variants(first:150){
-      edges{
-        node{
-          id
-          title
-          price
-          media(first:10) {
-            edges {
-              node {
-                 preview {
-                  image {
-                    url
+            product(id: $ownerId) {
+              id
+              title
+              variants(first:150){
+                edges{
+                  node{
+                    id
+                    title
+                    price
+                    media(first:10) {
+                      edges {
+                        node {
+                          preview {
+                            image {
+                              url
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
+              media(first:1) {
+                edges {
+                  node {
+                    preview {
+                      image {
+                        url
+                      }
+                    }
+                  }
+                }
+              }
+              
             }
           }
-        }
-      }
-    }
-    media(first:1) {
-      edges {
-        node {
-          preview {
-            image {
-              url
-            }
-          }
-        }
-      }
-    }
-    
-  }
-}
     `;
 
     const variables = {

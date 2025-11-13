@@ -1,32 +1,34 @@
 import {
-  Page,
   Box,
+  Page,
   Text,
-  Image,
-  Button,
-  Stack,
   Modal,
+  Image,
+  Stack,
+  Button,
   VideoThumbnail,
 } from "@shopify/polaris";
-import { StarFilledMinor } from "@shopify/polaris-icons";
-import { TitleBar } from "@shopify/app-bridge-react";
+import { useState } from "react";
+import setupImage from "../assets/index.svg";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import setupImage from "../assets/index.svg";
-import { useState } from "react";
+import { TitleBar } from "@shopify/app-bridge-react";
+import { StarFilledMinor } from "@shopify/polaris-icons";
 
 export default function HomePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [modalActive, setModalActive] = useState(false);
   const [playVideo, setPlayVideo] = useState(false);
+  const [modalActive, setModalActive] = useState(false);
 
   const handleGetStarted = () => setModalActive(true);
+
   const handleModalPrimaryAction = () => {
     setModalActive(false);
-    navigate("/Settings");
+    navigate("/Customize");
   };
+
   const handleModalClose = () => {
     setModalActive(false);
     setPlayVideo(false);
@@ -38,23 +40,23 @@ export default function HomePage() {
 
       <Box
         style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
           width: "100%",
+          display: "flex",
           padding: "2rem",
+          minHeight: "100vh",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         <Box
           style={{
-            textAlign: "center",
-            backgroundColor: "white",
-            padding: "2rem",
-            borderRadius: "1rem",
-            boxShadow: "0 4px 8px rgba(0,0,0,0.05)",
-            maxWidth: "700px",
             width: "100%",
+            padding: "2rem",
+            maxWidth: "700px",
+            textAlign: "center",
+            borderRadius: "1rem",
+            backgroundColor: "white",
+            boxShadow: "0 4px 8px rgba(0,0,0,0.05)",
           }}
         >
           <Stack vertical spacing="loose" alignment="center">
@@ -91,6 +93,7 @@ export default function HomePage() {
               </Button>
             </Stack>
           </Stack>
+
         </Box>
       </Box>
 
@@ -99,7 +102,11 @@ export default function HomePage() {
         open={modalActive}
         onClose={handleModalClose}
         title="Quick Setup Guide"
-         secondaryActions={[
+        primaryAction={{
+          content: "Proceed to Settings",
+          onAction: handleModalPrimaryAction,
+        }}
+        secondaryActions={[
           {
             content: "Close",
             onAction: handleModalClose,
@@ -111,19 +118,19 @@ export default function HomePage() {
           {playVideo ? (
             <div style={{ position: "relative", paddingTop: "56.25%" }}>
               <iframe
-                src="https://www.youtube.com/embed/1R5WZ6gZq2E?autoplay=1"
+                allowFullScreen
                 title="StickyCart Boost Quick Setup"
                 style={{
-                  position: "absolute",
                   top: 0,
                   left: 0,
+                  border: 0,
                   width: "100%",
                   height: "100%",
-                  border: 0,
                   borderRadius: "8px",
+                  position: "absolute",
                 }}
                 allow="autoplay; encrypted-media"
-                allowFullScreen
+                src="https://www.youtube.com/embed/1R5WZ6gZq2E?autoplay=1"
               />
             </div>
           ) : (

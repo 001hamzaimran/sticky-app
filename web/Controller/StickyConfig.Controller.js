@@ -36,6 +36,7 @@ export const createOrUpdateStickyCart = async (req, res) => {
             shop,
             enabled,
             displayScope,
+            displayMode,
             selectedProducts,
             excludedProducts,
             selectedCollections,
@@ -57,10 +58,10 @@ export const createOrUpdateStickyCart = async (req, res) => {
         let config = await StickyConfig.findOne({ shop });
 
         if (config) {
-            // Update existing settings
             config.set({
                 enabled,
                 displayScope,
+                displayMode,
                 selectedProducts,
                 excludedProducts,
                 selectedCollections,
@@ -72,6 +73,7 @@ export const createOrUpdateStickyCart = async (req, res) => {
                 container,
                 updatedAt: new Date(),
             });
+
             await config.save();
 
             return res.status(200).json({
@@ -81,11 +83,11 @@ export const createOrUpdateStickyCart = async (req, res) => {
             });
         }
 
-        // Create new settings
         const newConfig = await StickyConfig.create({
             shop,
             enabled,
             displayScope,
+            displayMode,
             selectedProducts,
             excludedProducts,
             selectedCollections,

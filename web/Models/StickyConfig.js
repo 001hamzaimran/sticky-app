@@ -59,6 +59,8 @@ const stickyCartSchema = new mongoose.Schema({
         isBold: { type: Boolean, default: false },
         fontSize: { type: Number, default: 14 },
         backgroundColor: { type: String, default: "#FFFFFF" },
+
+
     },
 
     // Quantity selector
@@ -70,6 +72,9 @@ const stickyCartSchema = new mongoose.Schema({
         borderColor: { type: String, default: "#CCCCCC" },
         borderWidth: { type: Number, default: 1 },
         backgroundColor: { type: String, default: "#FFFFFF" },
+        iconColor: { type: String, default: "#000000" },
+        IconSize: { type: Number, default: 12 },
+        iconBackgroundColor: { type: String, default: "#EEEEEE" },
     },
 
     // Add to cart button

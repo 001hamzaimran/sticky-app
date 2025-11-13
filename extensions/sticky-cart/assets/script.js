@@ -37,149 +37,206 @@ window.addEventListener('DOMContentLoaded', () => {
                 if (!res.ok) throw new Error("Add to cart failed");
                 return res.json();
             })
-            .then(() => (window.location.href = "/cart"))
+            .then(() => {
+                const action = window.stickyCartAction || "cart"; // fallback if missing
+                if (action === "cart") {
+                    window.location.href = "/cart";
+                    window.location.reload();
+                } else if (action === "checkout") {
+                    window.location.href = "/checkout";
+                } else {
+                    // stay on page, maybe show a small confirmation
+                    addToCartBtn.textContent = "Added!";
+                    setTimeout(() => addToCartBtn.textContent = addToCartButton.text, 1500);
+                }
+            })
+
             .catch(err => {
                 console.error("Add to Cart Error:", err);
                 alert("Something went wrong while adding the product to the cart.");
             });
     });
 
-    // ✅ Fetch product and cart settings
+    // ✅ Fetch product and sticky cart settings
     const { shop, id } = window.stickyCart;
 
-    if (id) {
-        const getProduct = async () => {
-            try {
-                const resp = await fetch(`https://${shop}/apps/Sticky/product/${id}/${shop}`);
-                const result = await resp.json();
-                const { title, variants, media } = result.data.product;
+    if (!id) return;
 
-                productTitle.textContent = title;
-                parent.style.display = 'block';
+    const getProduct = async () => {
+        try {
+            const resp = await fetch(`https://${shop}/apps/Sticky/product/${id}/${shop}`);
+            const result = await resp.json();
+            const { title, variants, media } = result.data.product;
 
-                // Always populate variant data but don't show it yet
-                // The display will be controlled by getCart() settings
-                const firstVariant = variants.edges[0].node;
-                productPrice.textContent = `$${firstVariant.price}`;
+            productTitle.textContent = title;
+            parent.style.display = 'block';
 
-                const defaultImage =
-                    firstVariant.media?.edges?.[0]?.node?.preview?.image?.url ||
-                    media?.edges?.[0]?.node?.preview?.image?.url || '';
+            const firstVariant = variants.edges[0].node;
+            productPrice.textContent = `$${firstVariant.price}`;
+            const defaultImage =
+                firstVariant.media?.edges?.[0]?.node?.preview?.image?.url ||
+                media?.edges?.[0]?.node?.preview?.image?.url || '';
+            productImg.src = defaultImage;
 
-                productImg.src = defaultImage;
+            // Populate variant select
+            variantSelect.innerHTML = '';
+            variants.edges.forEach((variant) => {
+                const opt = document.createElement('option');
+                opt.value = variant.node.id;
+                opt.textContent = variant.node.title;
+                variantSelect.appendChild(opt);
+            });
 
-                // Populate variant select options
-                variantSelect.innerHTML = '';
-                variants.edges.forEach((variant) => {
-                    const opt = document.createElement('option');
-                    opt.value = variant.node.id;
-                    opt.textContent = variant.node.title;
-                    variantSelect.appendChild(opt);
-                });
+            variantId = firstVariant.id;
 
-                variantId = firstVariant.id;
+            variantSelect.addEventListener('change', (e) => {
+                const selectedId = e.target.value;
+                const selectedVariant = variants.edges.find(v => v.node.id === selectedId)?.node;
+                if (selectedVariant) {
+                    productPrice.textContent = `$${selectedVariant.price}`;
+                    variantId = selectedVariant.id;
+                    const newImage =
+                        selectedVariant.media?.edges?.[0]?.node?.preview?.image?.url ||
+                        media?.edges?.[0]?.node?.preview?.image?.url || '';
+                    productImg.src = newImage;
+                }
+            });
+        } catch (error) {
+            console.error("Product fetch error:", error);
+        }
+    };
 
-                variantSelect.addEventListener('change', (e) => {
-                    const selectedId = e.target.value;
-                    const selectedVariant = variants.edges.find((v) => v.node.id === selectedId)?.node;
-                    if (selectedVariant) {
-                        productPrice.textContent = `$${selectedVariant.price}`;
-                        variantId = selectedVariant.id;
+    const getCart = async () => {
+        try {
+            const resp = await fetch(`https://${shop}/apps/Sticky/get-sticky-cart/${shop}`);
+            const result = await resp.json();
+            const settings = result.data;
 
-                        const newImage =
-                            selectedVariant.media?.edges?.[0]?.node?.preview?.image?.url ||
-                            media?.edges?.[0]?.node?.preview?.image?.url || '';
-                        productImg.src = newImage;
-                    }
-                });
-
-            } catch (error) {
-                console.error(error);
+            if (!settings || !settings.enabled) {
+                parent.style.display = 'none';
+                return;
             }
-        };
 
-        const getCart = async () => {
-            try {
-                const resp = await fetch(`https://${shop}/apps/Sticky/get-sticky-cart/${shop}`);
-                const result = await resp.json();
-                const settings = result.data;
+            const {
+                banner,
+                productDetails,
+                variantSelector,
+                quantitySelector,
+                addToCartButton,
+                container
+            } = settings;
 
-                if (!settings.enabled) {
-                    parent.style.display = 'none';
-                    return;
-                }
-
-                // ✅ Apply dynamic container styling
-                const { container, banner, productDetails, variantSelector, quantitySelector, addToCartButton } = settings;
-
-                parent.style.backgroundColor = container.backgroundColor || '#000';
-                parent.style.borderRadius = `${container.borderRadius || 0}px`;
-                parent.style.boxShadow = container.shadow ? '0px 0px 10px rgba(0,0,0,0.4)' : 'none';
-                parent.style.bottom = container.position === 'bottom' ? '0' : 'auto';
-                parent.style.top = container.position === 'top' ? '0' : 'auto';
-
-                // ✅ Banner
-                if (banner.show) {
-                    topText.style.display = 'block';
-                    topText.style.backgroundColor = banner.backgroundColor;
-                    topTextP.textContent = banner.text;
-                    topTextP.style.color = banner.textColor;
-                    topTextP.style.fontWeight = banner.fontWeight;
-                    topTextP.style.fontStyle = banner.fontStyle;
-                    topTextP.style.textDecoration = banner.underline ? 'underline' : 'none';
-                } else {
-                    topText.style.display = 'none';
-                }
-
-                // ✅ Product details
-                productTitle.style.display = productDetails.showTitle ? 'block' : 'none';
-                productTitle.style.fontWeight = productDetails.titleBold ? 'bold' : 'normal';
-                productTitle.style.color = productDetails.titleColor;
-
-                productPrice.style.display = productDetails.showPrice ? 'block' : 'none';
-                productPrice.style.color = productDetails.priceColor;
-
-                // ✅ Product Image - ADD THIS SECTION
-                const productImageContainer = document.querySelector('.product-image');
-                if (productDetails.showImage) {
-                    productImageContainer.style.display = 'block';
-                } else {
-                    productImageContainer.style.display = 'none';
-                }
-
-                // ✅ Variant selector
-                if (variantSelector.show) {
-                    variantsContainer.style.display = 'block';
-                    variantSelect.style.color = variantSelector.textColor;
-                    variantSelect.style.backgroundColor = variantSelector.backgroundColor;
-                } else {
-                    variantsContainer.style.display = 'none';
-                }
-
-                // ✅ Quantity selector
-                if (quantitySelector.show) {
-                    qtyContainer.style.display = 'flex';
-                    qtyInp.style.backgroundColor = quantitySelector.backgroundColor;
-                    qtyInp.style.color = quantitySelector.textColor;
-                    qtyInp.style.borderColor = quantitySelector.textColor;
-                    plusbtn.style.color = quantitySelector.textColor;
-                    minusbtn.style.color = quantitySelector.textColor;
-                } else {
-                    qtyContainer.style.display = 'none';
-                }
-
-                // ✅ Add to Cart Button
-                addToCartBtn.textContent = addToCartButton.text;
-                addToCartBtn.style.backgroundColor = addToCartButton.backgroundColor;
-                addToCartBtn.style.color = addToCartButton.textColor;
-                addToCartBtn.style.fontWeight = addToCartButton.fontWeight;
-
-            } catch (error) {
-                console.error("Error fetching sticky cart settings:", error);
+            // ✅ Container styles
+            if (container.backgroundColor && container.backgroundColor.startsWith("linear-gradient(")) {
+                parent.style.background = container.backgroundColor; // use background for gradients
+            } else {
+                parent.style.backgroundColor = container.backgroundColor || "#000";
             }
-        };
+            parent.style.borderRadius = `${container.borderRadius || 0}px`;
+            parent.style.boxShadow = container.shadow ? '0px 0px 10px rgba(0,0,0,0.4)' : 'none';
+            parent.style.bottom = container.position === 'bottom' ? '0' : 'auto';
+            parent.style.top = container.position === 'top' ? '0' : 'auto';
 
-        getProduct();
-        getCart();
-    }
+            // ✅ Banner
+            if (banner.show) {
+                topText.style.display = 'block';
+                topText.style.backgroundColor = banner.backgroundColor;
+                topTextP.textContent = banner.text;
+                topTextP.style.color = banner.textColor;
+                topTextP.style.fontWeight = banner.fontWeight;
+                topTextP.style.fontStyle = banner.fontStyle;
+                topTextP.style.textDecoration = banner.underline ? 'underline' : 'none';
+            } else {
+                topText.style.display = 'none';
+            }
+
+            // ✅ Product Details
+            productTitle.style.display = productDetails.showTitle ? 'block' : 'none';
+            productTitle.style.fontWeight = productDetails.titleBold ? 'bold' : 'normal';
+            productTitle.style.color = productDetails.titleColor;
+            productTitle.style.fontSize = `${productDetails.titleSize}px`;
+
+            productPrice.style.display = productDetails.showPrice ? 'block' : 'none';
+            productPrice.style.color = productDetails.priceColor;
+            productPrice.style.fontSize = `${productDetails.priceSize}px`;
+            productPrice.style.fontWeight = productDetails.priceBold ? 'bold' : 'normal';
+
+            const productImageWithVariantContainer = document.querySelector('.product-image-content-variant');
+            const productImageContainer = document.querySelector('.product-image');
+
+            productImageWithVariantContainer.classList.add(productDetails.showImage && variantSelector.show ? 'with-image' : 'without-image');
+            productImageContainer.style.display = productDetails.showImage ? 'block' : 'none';
+
+            // ✅ Variant Selector
+            if (variantSelector.show) {
+                variantsContainer.style.display = 'block';
+                variantSelect.style.color = variantSelector.textColor;
+                variantSelect.style.fontSize = `${variantSelector.fontSize}px`;
+                variantSelect.style.backgroundColor = variantSelector.backgroundColor;
+                variantSelect.style.fontWeight = variantSelector.isBold ? 'bold' : 'normal';
+            } else {
+                variantsContainer.style.display = 'none';
+            }
+
+            // ✅ // ✅ Quantity Selector
+            if (quantitySelector.show) {
+                qtyContainer.style.display = 'flex';
+
+                // Input styles
+                qtyInp.style.backgroundColor = quantitySelector.backgroundColor;
+                qtyInp.style.color = quantitySelector.textColor;
+                qtyInp.style.borderColor = quantitySelector.borderColor;
+                qtyInp.style.borderWidth = `${quantitySelector.borderWidth}px`;
+                qtyInp.style.borderStyle = "solid";
+                qtyInp.style.fontSize = `${quantitySelector.fontSize}px`;
+                qtyInp.style.fontWeight = quantitySelector.isBold ? "bold" : "normal";
+                qtyInp.style.textAlign = "center";
+                qtyInp.style.width = "50px";
+                qtyInp.style.margin = "0 5px";
+
+                // Plus/Minus button styles
+                const iconSize = `${quantitySelector.IconSize || 14}px`;
+                const iconColor = quantitySelector.iconColor || "#000";
+                const iconBg = quantitySelector.iconBackgroundColor || "#eee";
+
+                [plusbtn, minusbtn].forEach(btn => {
+                    btn.style.backgroundColor = iconBg;
+                    btn.style.color = iconColor;
+                    btn.style.fontSize = iconSize;
+                    btn.style.width = "30px";
+                    btn.style.height = "30px";
+                    btn.style.display = "flex";
+                    btn.style.alignItems = "center";
+                    btn.style.justifyContent = "center";
+                    btn.style.border = `1px solid ${quantitySelector.borderColor}`;
+                    btn.style.borderRadius = "4px";
+                    btn.style.cursor = "pointer";
+                    btn.style.userSelect = "none";
+                });
+            } else {
+                qtyContainer.style.display = 'none';
+            }
+
+
+            // ✅ Add to Cart Button
+            addToCartBtn.textContent = addToCartButton.text;
+            addToCartBtn.style.backgroundColor = addToCartButton.backgroundColor;
+            addToCartBtn.style.color = addToCartButton.textColor;
+            addToCartBtn.style.fontWeight = addToCartButton.fontWeight;
+            addToCartBtn.style.fontSize = `${addToCartButton.fontSize}px`;
+            addToCartBtn.style.borderRadius = `${addToCartButton.borderRadius}px`;
+            addToCartBtn.style.borderColor = addToCartButton.borderColor;
+            addToCartBtn.style.borderWidth = `${addToCartButton.borderWidth}px`;
+            addToCartBtn.style.borderStyle = "solid";
+            // ✅ Save action globally for addToCart behavior
+            window.stickyCartAction = addToCartButton.action || "cart";
+
+
+        } catch (error) {
+            console.error("Sticky Cart Settings Error:", error);
+        }
+    };
+
+    getProduct();
+    getCart();
 });

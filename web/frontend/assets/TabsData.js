@@ -27,14 +27,14 @@ const tabsData = [
           { label: "Go to checkout", type: "radio", name: "buttonAction", value: "checkout" },
         ],
       },
-      {
-        title: "Show the bar",
-        items: [
-          { label: "Always", type: "radio", name: "showBar", value: "always" },
-          { label: "After scrolling past “Add to cart”", type: "radio", name: "showBar", value: "scroll" },
-          { label: "When “Add to cart” is out of view", type: "radio", name: "showBar", value: "outOfView" },
-        ],
-      },
+      // {
+      //   title: "Show the bar",
+      //   items: [
+      //     { label: "Always", type: "radio", name: "showBar", value: "always" },
+      //     { label: "After scrolling past “Add to cart”", type: "radio", name: "showBar", value: "scroll" },
+      //     { label: "When “Add to cart” is out of view", type: "radio", name: "showBar", value: "outOfView" },
+      //   ],
+      // },
       // {
       //   title: "Size",
       //   items: [
@@ -100,7 +100,7 @@ const tabsData = [
     ],
   },
 
-  
+
 
   // ====== PRODUCT TAB ======
   {
@@ -272,9 +272,9 @@ const tabsData = [
         items: [
           { label: "All products", type: "radio", name: "stickyCart", value: "all-products" },
           { label: "Specific products", type: "radio", name: "stickyCart", value: "specific-products" },
-          { label: "Specific collections", type: "radio", name: "stickyCart", value: "specific-collections" },
+          // { label: "Specific collections", type: "radio", name: "stickyCart", value: "specific-collections" },
           { label: "Exclude specific products", type: "radio", name: "stickyCart", value: "exclude-products" },
-          { label: "Exclude specific collections", type: "radio", name: "stickyCart", value: "exclude-collections" },
+          // { label: "Exclude specific collections", type: "radio", name: "stickyCart", value: "exclude-collections" },
         ],
       },
     ],

@@ -9,30 +9,44 @@
     <p>Get it while it lasts</p>
   </div>
   <div class="product-item">
-    <div class="product-image">
-      <img src="thumbs-up.png" id="productImg" width="100" height="100" alt="img">
-    </div>
-    <div class="product-content">
-        <h2 class="product-title" id="productTitle"></h2>
-        <p class="product-price" id="productPrice"><span id="prodcutCurrencySymbol">$</span></p>
+    <div class="product-image-content-variant">
+      <div class="product-image-content">
+        <div class="product-image">
+          <img src="{{ 'thumbs-up.png' | asset_url }}" id="productImg" width="100" height="100" alt="img">
+        </div>
+        <div class="product-content">
+          <div class="product-title-price">
+            <h2 class="product-title" id="productTitle"></h2>
+            <div class="product-prices">
+              <p class="product-compare-price" id="productComparePrice">$960</p>
+              <p class="product-price" id="productPrice"><span id="prodcutCurrencySymbol">$</span></p>
+              
+            </div>
+          </div>
+          <div class="product-info">
+            <div class="product-variant" id="variantsContainer">
+              <select id="variantsItem">
+                <option value=""></option>
+              </select>
+            </div>
+            <div class="product-action">
+              <div class="qty-container">
+                <button type="button" class="plus" id="plus">+</button>
+                <input type="number" id="qtyInp" value="0">
+                <button type="button" class="minus" id="minus">-</button>
+              </div>
+              
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="product-info">
-        <div class="product-variant" id="variantsContainer">
-          <select id="variantsItem">
-            <option value=""></option>
-          </select>
-        </div>
-        <div class="product-action">
-        <div class="qty-container">
-          <button type="button" class="plus" id="plus">+</button>
-          <input type="number" id="qtyInp" value="0">
-          <button type="button" class="minus" id="minus">-</button>
-        </div>
-        <div class="product-add-to-cart">
-          <button type="button" class="add-to-cart" id="addToCartBtn">Add to cart</button>
-        </div>
-      </div>
     </div>
+    <div class="product-add-to-cart">
+      <button type="button" class="add-to-cart" id="addToCartBtn">Add to cart</button>
+    </div>
+
+
+
     
     
     

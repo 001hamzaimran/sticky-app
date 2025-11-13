@@ -18,8 +18,188 @@ import tabsData from "../assets/TabsData.js";
 export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
   const [activeTab, setActiveTab] = useState(null);
   const [activeModal, setActiveModal] = useState(false);
+  const [storeData, setStoreData] = useState(null);
+  const [productsData, setProductsData] = useState(null);
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
+  const [excludedProductsIds, setexcludedProductsIds] = useState([]);
 
 
+  const getProducts = async () => {
+    try {
+      const response = await fetch("/api/get-products");
+      const data = await response.json();
+      console.log("Products data:", data);
+      setProductsData(data.data.map(item => item.node));
+
+    } catch (error) {
+      console.error("Error fetching products data:", error);
+    }
+  }
+  const toggleProductSelection = (productId) => {
+    setSelectedProductIds((prevSelected) =>
+      prevSelected.includes(productId)
+        ? prevSelected.filter((id) => id !== productId)
+        : [...prevSelected, productId]
+    );
+  };
+  const toggleExcludedProductSelection = (productId) => {
+    setexcludedProductsIds((prevSelected) =>
+      prevSelected.includes(productId)
+        ? prevSelected.filter((id) => id !== productId)
+        : [...prevSelected, productId]
+    );
+  };
+
+
+
+  const getStore = async () => {
+    try {
+      const response = await fetch("/api/get-store");
+      const data = await response.json();
+      setStoreData(data);
+      // console.log("Store data:", data);
+    } catch (error) {
+      console.error("Error fetching store data:", error);
+    }
+  }
+
+  const handleSaveSettings = async () => {
+    if (!storeData?.domain) {
+      alert("Store data not found!");
+      return;
+    }
+
+    // Construct schema-aligned payload
+    const payload = {
+      shop: storeData.domain,
+      enabled: true,
+
+      // displayScope should match schema enum
+      displayScope:
+        selectedValues.showBar === "always"
+          ? "all_products"
+          : selectedValues.showBar === "specific-products"
+            ? "selected_products"
+            : selectedValues.showBar === "exclude-products"
+              ? "exclude_products"
+              : "collections",
+
+      selectedProducts:
+        selectedValues.showBar === "specific-products"
+          ? selectedProductIds
+          : [],
+      excludedProducts:
+        selectedValues.showBar === "exclude-products"
+          ? excludedProductsIds
+          : [],
+
+      selectedCollections: [],
+
+      banner: {
+        show: !!selectedValues.announcementEnabled,
+        text: selectedValues.announcementText || "Get it while it lasts",
+        backgroundColor: selectedValues.announcementBgColor || "#e80d0d",
+        textColor: selectedValues.announcementFontColor || "#ffffff",
+        fontWeight: ["normal", "bold"].includes(selectedValues.announcementWeight)
+          ? selectedValues.announcementWeight
+          : "bold",
+        fontStyle: ["normal", "italic"].includes(selectedValues.announcementFontStyle)
+          ? selectedValues.announcementFontStyle
+          : "normal",
+        underline: !!selectedValues.announcementUnderline,
+      },
+
+      productDetails: {
+        showTitle: !!selectedValues.showName,
+        titleBold: selectedValues.productNameWeight === "bold",
+        titleColor: selectedValues.productNameColor || "#ffffff",
+        titleSize: Number(selectedValues.productNameSize) || 16,
+
+        showPrice: !!selectedValues.showPrice,
+        priceColor: selectedValues.productPriceColor || "#ffffff",
+        priceSize: Number(selectedValues.productPriceSize) || 14,
+        priceBold: selectedValues.productPriceWeight === "bold",
+
+        showComparePrice: !!selectedValues.showComparedPrice,
+        comparePriceColor: selectedValues.productCompareColor || "#a1a1a1",
+        comparePriceSize: Number(selectedValues.productCompareSize) || 14,
+        comparePriceBold: selectedValues.productCompareFont === "bold",
+
+        showImage: !!selectedValues.showImage,
+      },
+
+      variantSelector: {
+        show: !!selectedValues.showVariant,
+        textColor: selectedValues.variantTextColor || "#000000",
+        isBold: selectedValues.variantTextFont === "bold",
+        fontSize: Number(selectedValues.variantTextSize) || 14,
+        backgroundColor: selectedValues.variantBgColor || "#ffffff",
+      },
+
+      quantitySelector: {
+        show: !!selectedValues.showQuantity,
+        textColor: selectedValues.qtyTextColor || "#000000",
+        isBold: !!selectedValues.qtyTextBold,
+        fontSize: Number(selectedValues.qtyTextSize) || 14,
+        borderColor: selectedValues.qtyBorderColor || "#CCCCCC",
+        borderWidth: Number(selectedValues.qtyBorderSize) || 1,
+        backgroundColor: selectedValues.qtyBgColor || "#FFFFFF",
+        iconColor: selectedValues.qtyIconColor || "#000000",
+        IconSize: Number(selectedValues.qtyIconSize) || 12,
+        iconBackgroundColor: selectedValues.qtyIconBgColor || "#EEEEEE",
+      },
+
+      addToCartButton: {
+        text: selectedValues.buttonText || "Add to Cart",
+        backgroundColor: selectedValues.buttonBgColor || "#000000",
+        textColor: selectedValues.buttonTextColor || "#FFFFFF",
+        action: ["cart", "checkout", "stay"].includes(selectedValues.buttonAction)
+          ? selectedValues.buttonAction
+          : "cart",
+        fontWeight: ["normal", "bold"].includes(selectedValues.buttonFontWeight)
+          ? selectedValues.buttonFontWeight
+          : "bold",
+        fontSize: Number(selectedValues.buttonTextSize) || 16,
+        borderRadius: Number(selectedValues.buttonBorderRadius) || 4,
+        borderColor: selectedValues.buttonBorderColor || "#000000",
+        borderWidth: Number(selectedValues.buttonBorderWidth) || 1,
+      },
+
+      container: {
+        borderRadius: Number(selectedValues.containerBorderRadius) || 8,
+        shadow: !!selectedValues.dropShadow,
+        position: selectedValues.position || "bottom",
+        backgroundColor:
+          selectedValues.bgType === "gradient"
+            ? `linear-gradient(${selectedValues.gradientAngle}deg, ${selectedValues.gradientColor1}, ${selectedValues.gradientColor2})`
+            : selectedValues.bgColor || "#000000",
+      },
+
+
+    };
+
+    try {
+      console.log("Saving sticky cart with payload:", payload);
+      const response = await fetch("/api/add-sticky-cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      console.log("Sticky cart saved:", data);
+      alert(data.message || "Settings saved successfully!");
+    } catch (error) {
+      console.error("Error saving sticky cart:", error);
+      alert("Error saving settings!");
+    }
+  };
+
+
+  useEffect(() => {
+    getStore();
+    getProducts();
+  }, []);
 
   // Set default values
   useEffect(() => {
@@ -35,8 +215,8 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
       announcementEnabled: true,
       announcementText: "Hello World!",
       visibilyDevice: "showDesktop",
-      bgType: "single",
-      bgColor: "#000000",
+      // bgType: "single",
+      // bgColor: "#000000",
       buttonAction: "stay",
       showBar: "always",
       productNameWeight: prev.productNameWeight || "bold",
@@ -68,7 +248,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
     <div className="customizer-panel">
       <div className="save-settings">
         {/* <button type="button">Save Settings</button> */}
-        <Button primary onClick={() => alert("Settings saved!")}>Save Settings</Button>
+        <Button primary onClick={() => handleSaveSettings()}>Save Settings</Button>
       </div>
       {tabsData.map((tab, index) => (
         <div key={index} className={`customizer-panel-tab tab-${index}`}>
@@ -281,17 +461,99 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
       >
         <Modal.Section>
           {selectedValues.stickyCart === "specific-products" && (
-            <Text>Here display your Shopify product picker for selecting products</Text>
+            <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+              {productsData?.map((product) => (
+                <div
+                  key={product.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    padding: "8px 0",
+                    borderBottom: "1px solid #eee",
+                  }}
+                >
+                  <Checkbox
+                    label=""
+                    checked={selectedProductIds.includes(product.id)}
+                    onChange={() => toggleProductSelection(product.id)}
+                  />
+                  <img
+                    src={
+                      product.images.edges[0]?.node.originalSrc ||
+                      "https://cdn.shopify.com/s/assets/no-image-75c5e3d6b1.png"
+                    }
+                    alt={product.title}
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      objectFit: "cover",
+                      borderRadius: "6px",
+                    }}
+                  />
+                  <div>
+                    <Text variant="bodyMd" as="p" fontWeight="bold">
+                      {product.title}
+                    </Text>
+                    <Text variant="bodySm" as="p" color="subdued">
+                      {product.tags?.join(", ") || "No tags"}
+                    </Text>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
+          {/* 
           {selectedValues.stickyCart === "specific-collections" && (
             <Text>Here display your Shopify collection picker</Text>
-          )}
+          )} */}
           {selectedValues.stickyCart === "exclude-products" && (
-            <Text>Here display Shopify product picker for excluding products</Text>
+            <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+              {productsData?.map((product) => (
+                <div
+                  key={product.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    padding: "8px 0",
+                    borderBottom: "1px solid #eee",
+                  }}
+                >
+                  <Checkbox
+                    label=""
+                    checked={excludedProductsIds.includes(product.id)}
+                    onChange={() => toggleExcludedProductSelection(product.id)}
+                  />
+                  <img
+                    src={
+                      product.images.edges[0]?.node.originalSrc ||
+                      "https://cdn.shopify.com/s/assets/no-image-75c5e3d6b1.png"
+                    }
+                    alt={product.title}
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      objectFit: "cover",
+                      borderRadius: "6px",
+                    }}
+                  />
+                  <div>
+                    <Text variant="bodyMd" as="p" fontWeight="bold">
+                      {product.title}
+                    </Text>
+                    <Text variant="bodySm" as="p" color="subdued">
+                      {product.tags?.join(", ") || "No tags"}
+                    </Text>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
-          {selectedValues.stickyCart === "exclude-collections" && (
-            <Text>Here display Shopify collection picker for excluding collections</Text>
-          )}
+
+          {/* {selectedValues.stickyCart === "exclude-collections" && (
+          //   <Text>Here display Shopify collection picker for excluding collections</Text>
+          // )} */}
         </Modal.Section>
       </Modal>
 

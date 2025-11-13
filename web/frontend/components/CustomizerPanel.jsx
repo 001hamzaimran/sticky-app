@@ -215,7 +215,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
       announcementEnabled: true,
       announcementText: "Hello World!",
       visibilyDevice: "showDesktop",
-      // bgType: "single",
+      bgType: "single",
       // bgColor: "#000000",
       buttonAction: "stay",
       showBar: "always",

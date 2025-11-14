@@ -191,24 +191,24 @@ window.addEventListener('DOMContentLoaded', () => {
                 qtyInp.style.fontSize = `${quantitySelector.fontSize}px`;
                 qtyInp.style.fontWeight = quantitySelector.isBold ? "bold" : "normal";
                 qtyInp.style.textAlign = "center";
-                qtyInp.style.width = "50px";
+                qtyInp.style.width = "40px";
                 qtyInp.style.margin = "0 5px";
 
                 // Plus/Minus button styles
                 const iconSize = `${quantitySelector.IconSize || 14}px`;
                 const iconColor = quantitySelector.iconColor || "#000";
-                const iconBg = quantitySelector.iconBackgroundColor || "#eee";
+                const iconBg = quantitySelector.backgroundColor || "#eee";
 
                 [plusbtn, minusbtn].forEach(btn => {
-                    btn.style.backgroundColor = iconBg;
+                    btn.style.backgroundColor = iconBg || "";
                     btn.style.color = iconColor;
                     btn.style.fontSize = iconSize;
-                    btn.style.width = "30px";
+                    btn.style.width = "20px";
                     btn.style.height = "30px";
                     btn.style.display = "flex";
                     btn.style.alignItems = "center";
                     btn.style.justifyContent = "center";
-                    btn.style.border = `1px solid ${quantitySelector.borderColor}`;
+                    btn.style.border = quantitySelector.borderColor ? `1px solid ${quantitySelector.borderColor}` : "none";
                     btn.style.borderRadius = "4px";
                     btn.style.cursor = "pointer";
                     btn.style.userSelect = "none";
@@ -220,7 +220,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             // ✅ Add to Cart Button
             addToCartBtn.textContent = addToCartButton.text;
-            addToCartBtn.style.backgroundColor = addToCartButton.backgroundColor;
+            addToCartBtn.style.backgroundColor = addToCartButton.backgroundColor || "#007cdb";
             addToCartBtn.style.color = addToCartButton.textColor;
             addToCartBtn.style.fontWeight = addToCartButton.fontWeight;
             addToCartBtn.style.fontSize = `${addToCartButton.fontSize}px`;

@@ -15,13 +15,14 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import tabsData from "../assets/TabsData.js";
 
-export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
+export default function CustomizerPanel({ selectedValues, setSelectedValues, handleChange }) {
   const [activeTab, setActiveTab] = useState(null);
   const [activeModal, setActiveModal] = useState(false);
   const [storeData, setStoreData] = useState(null);
   const [productsData, setProductsData] = useState(null);
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [excludedProductsIds, setexcludedProductsIds] = useState([]);
+  const [saving, setSaving] = useState(false);
 
 
   const getProducts = async () => {
@@ -35,7 +36,12 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
       console.error("Error fetching products data:", error);
     }
   }
+
+
   const toggleProductSelection = (productId) => {
+    console.log("Toggling product selection for ID:", productId);
+    // const snippedID = productId.split("/").pop();
+    // console.log("Snipped ID:", snippedID);
     setSelectedProductIds((prevSelected) =>
       prevSelected.includes(productId)
         ? prevSelected.filter((id) => id !== productId)
@@ -43,6 +49,8 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
     );
   };
   const toggleExcludedProductSelection = (productId) => {
+    // const productId = productId.split("/").pop();
+
     setexcludedProductsIds((prevSelected) =>
       prevSelected.includes(productId)
         ? prevSelected.filter((id) => id !== productId)
@@ -69,6 +77,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
       return;
     }
 
+    setSaving(true);
     // Construct schema-aligned payload
     const payload = {
       shop: storeData.domain,
@@ -76,21 +85,21 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
 
       // displayScope should match schema enum
       displayScope:
-        selectedValues.showBar === "always"
+        selectedValues.stickyCart === "always"
           ? "all_products"
-          : selectedValues.showBar === "specific-products"
+          : selectedValues.stickyCart === "specific-products"
             ? "selected_products"
-            : selectedValues.showBar === "exclude-products"
+            : selectedValues.stickyCart === "exclude-products"
               ? "exclude_products"
-              : "collections",
+              : "all_products",
 
       selectedProducts:
-        selectedValues.showBar === "specific-products"
-          ? selectedProductIds
+        selectedValues.stickyCart === "specific-products"
+          ? selectedProductIds.map(id => id.split("/").pop())
           : [],
       excludedProducts:
-        selectedValues.showBar === "exclude-products"
-          ? excludedProductsIds
+        selectedValues.stickyCart === "exclude-products"
+          ? excludedProductsIds.map(id => id.split("/").pop())
           : [],
 
       selectedCollections: [],
@@ -98,7 +107,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
       banner: {
         show: !!selectedValues.announcementEnabled,
         text: selectedValues.announcementText || "Get it while it lasts",
-        backgroundColor: selectedValues.announcementBgColor || "#e80d0d",
+        backgroundColor: selectedValues.announcementBgColor || "#14FFC4",
         textColor: selectedValues.announcementFontColor || "#ffffff",
         fontWeight: ["normal", "bold"].includes(selectedValues.announcementWeight)
           ? selectedValues.announcementWeight
@@ -180,6 +189,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
 
     try {
       console.log("Saving sticky cart with payload:", payload);
+      console.log("Selected Values:", selectedProductIds, excludedProductsIds);
       const response = await fetch("/api/add-sticky-cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -192,6 +202,8 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
     } catch (error) {
       console.error("Error saving sticky cart:", error);
       alert("Error saving settings!");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -209,27 +221,20 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
       showImage: true,
       showName: true,
       showPrice: true,
-      showComparedPrice: true,
       showQuantity: true,
       showVariant: true,
       announcementEnabled: true,
-      announcementText: "Hello World!",
+      announcementFontColor: "#635F5F",
+      announcementText: "🔥 Hello Wolrd!",
       visibilyDevice: "showDesktop",
       bgType: "single",
-      // bgColor: "#000000",
+      bgColor: "#1a1a1a",
       buttonAction: "stay",
       showBar: "always",
       productNameWeight: prev.productNameWeight || "bold",
       productPriceWeight: prev.productPriceWeight || "normal",
       productCompareFont: prev.productCompareFont || "normal",
       counterVisibilty: "hide",
-      productNameColor: "#ffffff",
-      productPriceColor: "#ffffff",
-      productCompareColor: "#a1a1a1",
-      variantTextColor: "#000000",
-      variantBgColor: "#ffffff",
-      buttonBgColor: "#ff0000",
-      buttonBorderColor: "#ff0000",
     }));
   }, []);
 
@@ -237,9 +242,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
     setActiveTab((prev) => (prev === index ? null : index));
   };
 
-  const handleChange = (name, value) => {
-    setSelectedValues((prev) => ({ ...prev, [name]: value }));
-  };
+
 
   const toggleModal = () => setActiveModal(!activeModal);
   const handleAddButtonClick = () => toggleModal();
@@ -248,7 +251,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
     <div className="customizer-panel">
       <div className="save-settings">
         {/* <button type="button">Save Settings</button> */}
-        <Button primary onClick={() => handleSaveSettings()}>Save Settings</Button>
+        <Button primary disabled={saving} onClick={() => handleSaveSettings()}>Save Settings</Button>
       </div>
       {tabsData.map((tab, index) => (
         <div key={index} className={`customizer-panel-tab tab-${index}`}>
@@ -277,7 +280,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
                       const activeConditionalFields = isActive ? item.conditionalFields ?? field.conditionalFields?.[item.value] ?? [] : [];
 
                       return (
-                        <div key={j} className="custom-radio">
+                        <div key={j} className={`custom-radio ${isActive ? "active" : ""}`}>
                           {/* Radio */}
                           {item.type === "radio" && (
                             <>
@@ -356,6 +359,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues }) {
                                           handleChange(condField.name, value)
                                         }
                                       />
+
                                     )}
                                   </div>
                                 ))}

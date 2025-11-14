@@ -8,14 +8,20 @@ import CustomizerPreview from "../components/CustomizerPreview";
 
 const Tabs = () => {
     const [selectedValues, setSelectedValues] = useState({});
+    const handleChange = (name, value) => {
+        setSelectedValues((prev) => ({ ...prev, [name]: value }));
+    };
     return (
         <main className="customizer-container">
             <CustomizerPanel 
                 selectedValues={selectedValues} 
                 setSelectedValues={setSelectedValues} 
+                handleChange={handleChange}
             />
             <CustomizerPreview
-                selectedValues={selectedValues}/>
+                selectedValues={selectedValues}
+                handleChange={handleChange}
+            />
         </main>
     );
 };

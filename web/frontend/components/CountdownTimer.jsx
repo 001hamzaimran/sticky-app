@@ -47,7 +47,12 @@ export default function CountdownTimer({ selectedValues }) {
 
   return (
     <div className="timer-preview">
-      <p>
+      <p
+        style={{
+          fontWeight: selectedValues?.announcementFontWeight ? "bold" : "normal",
+          fontStyle: selectedValues?.announcementFontStyle ? "italic" : "normal",
+        }}
+      >
         <span>{selectedValues.announcementText} </span>
         {selectedValues.counterVisibilty !== "hide" && (
           <span>{formatTime(remainingTime)}</span>

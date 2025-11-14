@@ -44,7 +44,7 @@ body {
     width: 10%;
 }
 .product-content{
-    width: 90%;
+    width: 95%;
     display: flex;
     align-items: center;
 }
@@ -98,14 +98,11 @@ p.product-price {
 }
 
 .product-variant select {
-    padding: 5px;
-    font-size: 16px;
-    font-weight: 400;
+    padding: 5px 10px;
     line-height: 24px;
     background: transparent;
-    color: #fff;
     border: none;
-    border-bottom: 1px solid #fff;
+    border-radius: 4px;;
 }
 
 .product-variant select option {
@@ -120,11 +117,8 @@ p.product-price {
 .qty-container .plus,
 .qty-container .minus {
     padding: 4px 8px;
-    font-size: 14px;
     line-height: 20px;
     background: transparent;
-    border: 1px solid #fff;
-    color: #fff;
 }
 
 .qty-container .plus:hover,
@@ -134,12 +128,7 @@ p.product-price {
 }
 
 input#qtyInp {
-    width: 60px;
     height: 30px;
-    text-align: center;
-    background: transparent;
-    border: 1px solid #fff;
-    color: #fff;
 }
 
 input::-webkit-outer-spin-button,
@@ -149,11 +138,7 @@ input::-webkit-inner-spin-button {
 }
 
 .product-add-to-cart button {
-    background-color: transparent;
-    border: 1px solid #fff;
-    color: #fff;
-    padding: 6px 20px;
-    font-size: 16px;
+    padding: 8px 12px;
     transition: .2s all ease-in-out;
 }
 
@@ -164,6 +149,9 @@ input::-webkit-inner-spin-button {
 
 button {
     cursor: pointer;
+}
+.product-image {
+    width: 5%;
 }
 
 
@@ -181,7 +169,7 @@ button {
         padding: 0 10px 0 0;
     }
     .product-image {
-        width: 15%;
+        width: 20%;
     }
     .product-content{
         width: 85%;

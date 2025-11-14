@@ -1,8 +1,11 @@
 import img from "../assets/placeholder-featured-image.svg";
 import CountdownTimer from "./CountdownTimer";
 
-export default function CustomizerPreview({ selectedValues, remainingTime, formatTime }) {
-
+export default function CustomizerPreview({ selectedValues, remainingTime, formatTime, handleChange }) {
+  const deviceChange = (device) => {
+    // update selectedValues state
+    handleChange("visibilyDevice", device);
+  };
 
   return (
     <div
@@ -15,15 +18,43 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
               ? "320px"
               : "100%", // fallback
         transition: "width 0.3s ease",
-        margin: "0 auto"
+        margin: "0 auto",
+        backgroundColor: "#efe9df"
       }}
     >
+      <div className="device-btns">
+        <button
+          type="button"
+          className={selectedValues.visibilyDevice === "showDesktop" ? "active" : ""}
+          onClick={() => deviceChange("showDesktop")}
+        >
+          Desktop
+        </button>
+        <button
+          type="button"
+          className={selectedValues.visibilyDevice === "showMobile" ? "active" : ""}
+          onClick={() => deviceChange("showMobile")}
+        >
+          Mobile
+        </button>
+      </div>
+      <div className="customizer-preview-topbar" style={{
+        backgroundColor: "#fff",
+        borderRadius: "20px 20px 0 0",
+      }}>
+        <div className="dots">
+          <span className="dot-item">&nbsp;</span>
+          <span className="dot-item">&nbsp;</span>
+          <span className="dot-item">&nbsp;</span>
+        </div>
+        <div className="horizontal-line">&nbsp;</div>
+      </div>
       <div
         className="sticky-product-container"
         style={{
           background:
             selectedValues?.bgType === "gradient"
-              ? `linear-gradient(${selectedValues?.gradientAngle || 0}deg, ${selectedValues?.gradientColor1 || "#fff"}, ${selectedValues?.gradientColor2 || "#1a1a1a"})`
+              ? `linear-gradient(${selectedValues?.gradientAngle || 0}deg, ${selectedValues?.gradientColor1 || "#fff"}, ${selectedValues?.gradientColor2 || "#13ffc4"})`
               : selectedValues?.bgColor || "#1a1a1a",
           borderWidth: selectedValues?.borderSize ? `${selectedValues.borderSize}px` : "0px",
           borderColor: selectedValues?.borderColor || "#000",
@@ -37,7 +68,7 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
           <div
             className="top-text"
             style={{
-              backgroundColor: selectedValues?.announcementBgColor || "#e80d0d",
+              backgroundColor: selectedValues?.announcementBgColor || "#14FFC4",
               boxShadow: selectedValues?.dropShadow ? "0 -4px 10px rgba(0,0,0,0.25)" : "none",
             }}
           >
@@ -136,8 +167,8 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                         style={{
                           width: "100%",
                           padding: "5px 10px",
-                          backgroundColor: selectedValues?.variantBgColor || "#fff",
-                          color: selectedValues?.variantTextColor || "#000",
+                          backgroundColor: selectedValues?.variantBgColor || "",
+                          color: selectedValues?.variantTextColor || "#fff",
                           fontSize: selectedValues?.variantTextSize
                             ? `${parseInt(selectedValues.variantTextSize)}px` : "14px",
                           fontWeight: selectedValues?.variantTextFont || "normal",
@@ -161,12 +192,14 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                       }}
                     >
                       <button style={{
+                        width: "20px",
+                        height: "30px",
                         padding: "5px",
                         fontSize: selectedValues?.qtyTextSize,
                         lineHeight: selectedValues?.qtyTextSize ? `${parseInt(selectedValues.qtyTextSize) + 4}px` : "18px",
-                        color: selectedValues?.qtyIconColor,
-                        backgroundColor: selectedValues?.qtyBgColor,
-                        borderWidth: selectedValues?.qtyBorderSize,
+                        color: selectedValues?.qtyIconColor || "#fff",
+                        backgroundColor: selectedValues?.qtyBgColor || "transparent",
+                        borderWidth: selectedValues?.qtyBorderSize || 0,
                         borderStyle: "solid",
                         borderColor: selectedValues?.qtyBorderColor,
                         borderRadius: selectedValues?.qtyBorderRadius
@@ -177,16 +210,26 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                         value="1"
                         min="1"
                         readOnly
-                        style={{ width: "50px", height: "30px", lineHeight: "24px", textAlign: "center" }}
+                        style={{ 
+                          width: "40px", 
+                          height: "30px", 
+                          lineHeight: "24px", 
+                          textAlign: "center",
+                          color: selectedValues?.qtyIconColor || "#fff",
+                          backgroundColor: selectedValues?.qtyBgColor || "transparent",
+                          borderWidth: selectedValues?.qtyBorderSize || 0,
+                        }}
                       />
                       <button
                         style={{
+                          width: "20px",
+                          height: "30px",
                           padding: "5px",
                           fontSize: selectedValues?.qtyTextSize,
                           lineHeight: selectedValues?.qtyTextSize ? `${parseInt(selectedValues.qtyTextSize) + 4}px` : "18px",
-                          color: selectedValues?.qtyIconColor,
-                          backgroundColor: selectedValues?.qtyBgColor,
-                          borderWidth: selectedValues?.qtyBorderSize,
+                          color: selectedValues?.qtyIconColor || "#fff",
+                          backgroundColor: selectedValues?.qtyBgColor || "transparent",
+                          borderWidth: selectedValues?.qtyBorderSize || 0,
                           borderStyle: "solid",
                           borderColor: selectedValues?.qtyBorderColor,
                           borderRadius: selectedValues?.qtyBorderRadius
@@ -211,7 +254,7 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
             <button
               style={{
                 color: selectedValues?.buttonTextColor || "#fff",
-                backgroundColor: selectedValues?.buttonBgColor || "#000",
+                backgroundColor: selectedValues?.buttonBgColor || "#007CDB",
                 fontSize: selectedValues?.buttonTextSize ? `${selectedValues.buttonTextSize}px` : "14px",
                 borderWidth: selectedValues?.buttonBorderWidth ? `${selectedValues.buttonBorderWidth}px` : "1px",
                 borderColor: selectedValues?.buttonBorderColor || "#000",

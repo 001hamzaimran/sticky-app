@@ -3,6 +3,8 @@ import shopify from '../shopify.js';
 const getProductById = async (req, res) => {
   try {
     const { id, shop } = req.params;
+    // const shop = req.query.shop;
+
     let sessionInstance = await shopify.config.sessionStorage.findSessionsByShop(shop);
 
     const sessions = sessionInstance[0]

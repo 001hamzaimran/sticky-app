@@ -65,7 +65,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       const response = await fetch("/api/get-store");
       const data = await response.json();
       setStoreData(data);
-      // console.log("Store data:", data);
+      console.log("Store data:", data);
     } catch (error) {
       console.error("Error fetching store data:", error);
     }
@@ -139,28 +139,28 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
 
       variantSelector: {
         show: !!selectedValues.showVariant,
-        textColor: selectedValues.variantTextColor || "#000000",
+        textColor: selectedValues.variantTextColor || "#ffffff",
         isBold: selectedValues.variantTextFont === "bold",
         fontSize: Number(selectedValues.variantTextSize) || 14,
-        backgroundColor: selectedValues.variantBgColor || "#ffffff",
+        backgroundColor: selectedValues.variantBgColor || " #000000",
       },
 
       quantitySelector: {
         show: !!selectedValues.showQuantity,
-        textColor: selectedValues.qtyTextColor || "#000000",
+        textColor: selectedValues.qtyTextColor || "#FFFFFF",
         isBold: !!selectedValues.qtyTextBold,
         fontSize: Number(selectedValues.qtyTextSize) || 14,
         borderColor: selectedValues.qtyBorderColor || "#CCCCCC",
         borderWidth: Number(selectedValues.qtyBorderSize) || 1,
-        backgroundColor: selectedValues.qtyBgColor || "#FFFFFF",
-        iconColor: selectedValues.qtyIconColor || "#000000",
+        backgroundColor: selectedValues.qtyBgColor || " #000000",
+        iconColor: selectedValues.qtyIconColor || "#EEEEEE",
         IconSize: Number(selectedValues.qtyIconSize) || 12,
-        iconBackgroundColor: selectedValues.qtyIconBgColor || "#EEEEEE",
+        iconBackgroundColor: selectedValues.qtyIconBgColor || " #000000",
       },
 
       addToCartButton: {
         text: selectedValues.buttonText || "Add to Cart",
-        backgroundColor: selectedValues.buttonBgColor || "#000000",
+        backgroundColor: selectedValues.buttonBgColor || "#007CDB",
         textColor: selectedValues.buttonTextColor || "#FFFFFF",
         action: ["cart", "checkout", "stay"].includes(selectedValues.buttonAction)
           ? selectedValues.buttonAction

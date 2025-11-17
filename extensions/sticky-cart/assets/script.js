@@ -47,7 +47,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 } else {
                     // stay on page, maybe show a small confirmation
                     addToCartBtn.textContent = "Added!";
-                    setTimeout(() => addToCartBtn.textContent = addToCartButton.text, 1500);
+                    setTimeout(() => addToCartBtn.textContent = "Add to Cart", 1500);
                 }
             })
 

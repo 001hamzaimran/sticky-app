@@ -113,6 +113,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
 
     setSaving(true);
     // Construct schema-aligned payload
+    console.log(selectedValues.counterVisibilty)
     const payload = {
       shop: storeData.domain,
       enabled: true,
@@ -143,13 +144,16 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
         text: selectedValues.announcementText || "Get it while it lasts",
         backgroundColor: selectedValues.announcementBgColor || "#14FFC4",
         textColor: selectedValues.announcementFontColor || "#ffffff",
-        fontWeight: ["normal", "bold"].includes(selectedValues.announcementWeight)
-          ? selectedValues.announcementWeight
+        fontWeight: ["normal", "bold"].includes(selectedValues.announcementFontWeight)
+          ? selectedValues.announcementFontWeight
           : "bold",
         fontStyle: ["normal", "italic"].includes(selectedValues.announcementFontStyle)
           ? selectedValues.announcementFontStyle
           : "normal",
         underline: !!selectedValues.announcementUnderline,
+        Countdown: selectedValues.counterVisibilty,
+        coundownDate: selectedValues.timerType === "countdown-to-date" ? selectedValues.countdownDate + " " + selectedValues.countdownTime : null,
+        fixedminute: selectedValues.timerType === "fixed-minutes" ? selectedValues.timerDays + " " + selectedValues.timerHour + " " + selectedValues.timerMinutes + " " + selectedValues.timerSeconds : null,
       },
 
       productDetails: {
@@ -182,14 +186,14 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       quantitySelector: {
         show: !!selectedValues.showQuantity,
         textColor: selectedValues.qtyTextColor || "#FFFFFF",
-        isBold: !!selectedValues.qtyTextBold,
         fontSize: Number(selectedValues.qtyTextSize) || 14,
         borderColor: selectedValues.qtyBorderColor || "#CCCCCC",
-        borderWidth: Number(selectedValues.qtyBorderSize) || 1,
+        borderSize: Number(selectedValues.qtyBorderSize) || 0,
         backgroundColor: selectedValues.qtyBgColor || " #000000",
         iconColor: selectedValues.qtyIconColor || "#EEEEEE",
         IconSize: Number(selectedValues.qtyIconSize) || 12,
         iconBackgroundColor: selectedValues.qtyIconBgColor || " #000000",
+        borderRadius: Number(selectedValues.qtyBorderRadius) || 0,
       },
 
       addToCartButton: {
@@ -203,9 +207,10 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
           ? selectedValues.buttonFontWeight
           : "bold",
         fontSize: Number(selectedValues.buttonTextSize) || 16,
+        borderSize: Number(selectedValues.buttonBorderWidth) || 0,
         borderRadius: Number(selectedValues.buttonBorderRadius) || 4,
         borderColor: selectedValues.buttonBorderColor || "#000000",
-        borderWidth: Number(selectedValues.buttonBorderWidth) || 1,
+        borderWidth: Number(selectedValues.buttonBorderWidth) || 0,
       },
 
       // container: {
@@ -226,7 +231,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       //   //     : selectedValues.bgColor || "#000000",
       // },
       container: {
-        borderSize: `${Number(selectedValues.borderSize)}px` || 0,
+        borderSize: Number(selectedValues.borderSize) || 0,
         borderColor: selectedValues.borderColor || "#000000",
         borderRadius: Number(selectedValues.containerBorderRadius) || 8,
         shadow: !!selectedValues.dropShadow,
@@ -235,6 +240,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
           selectedValues.bgType === "gradient"
             ? `linear-gradient(${selectedValues.gradientAngle ?? 0}deg, ${selectedValues.gradientColor1}, ${selectedValues.gradientColor2})`
             : selectedValues.bgColor || "#000000",
+        fontFamily: selectedValues.fontFamily || "Arial, sans-serif",
       },
 
 
@@ -333,7 +339,6 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
 
       // Setting
       hideSoldOut: addToCartButton?.soldOutText ? true : false,
-      borderSize: container?.borderWidth || 0,
 
       // Banner
       announcementEnabled: banner?.show ?? false,
@@ -344,11 +349,46 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       announcementFontStyle: banner?.fontStyle ?? "normal",
       announcementUnderline: banner?.underline ?? false,
       announcementFontSize: banner?.fontSize ?? "14",
+      counterVisibilty: banner?.Countdown ?? "hide",
+      timerType:
+        banner?.coundownDate && banner.coundownDate !== "" && banner.coundownDate !== null
+          ? "countdown-to-date"
+          : "fixed-minutes",
 
-      // Product details
+      countdownDate: banner?.coundownDate
+        ? banner.coundownDate.split(" ")[0]
+        : "",
+
+      countdownTime: banner?.coundownDate
+        ? banner.coundownDate.split(" ")[1]
+        : "",
+
+      // FIXED SAFE SPLIT
+      ...(() => {
+        const fixedParts = banner?.fixedminute
+          ? banner.fixedminute.split(" ")
+          : ["0", "0", "0", "1"];
+
+        return {
+          timerDays: fixedParts[0],
+          timerHour: fixedParts[1],
+          timerMinutes: fixedParts[2],
+          timerSeconds: fixedParts[3],
+        };
+      })(),
+
+
+
+      // Product detailsf
       showImage: productDetails?.showImage ?? true,
       showName: productDetails?.showTitle ?? true,
+      productNameColor: productDetails?.titleColor ?? "#FFFFFF",
+      productNameFont: productDetails?.titleBold ? "bold" : "normal",
+      productNameSize: productDetails?.titleSize ?? 14,
+      productPriceWeight: productDetails?.priceBold ? "bold" : "normal",
+      productPriceColor: productDetails?.priceColor ?? "#FFFFFF",
       showPrice: productDetails?.showPrice ?? true,
+      productCompareFont: productDetails?.comparePriceBold ? "bold" : "normal",
       showComparedPrice: productDetails?.showComparePrice ?? false,
       productCompareColor: productDetails?.comparePriceColor ?? "#aaa",
 
@@ -370,6 +410,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       qtyBorderColor: quantitySelector?.borderColor ?? "#CCCCCC",
       qtyBorderSize: quantitySelector?.borderWidth ?? 1,
       qtyBgColor: quantitySelector?.backgroundColor ?? "#000000",
+      qtyBorderRadius: quantitySelector?.borderRadius ?? 0,
 
       // Button
       buttonText: addToCartButton?.text ?? "Add to Cart",
@@ -378,6 +419,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       buttonTextColor: addToCartButton?.textColor ?? "#FFFFFF",
       buttonBgColor: addToCartButton?.backgroundColor ?? "#007CDB",
       buttonBorderColor: addToCartButton?.borderColor ?? "#000000",
+      buttonBorderWidth: addToCartButton?.borderSize ?? 0,
       buttonBorderRadius: addToCartButton?.borderRadius ?? 4,
       buttonAction: addToCartButton?.action ?? "cart",
       soldOutText: addToCartButton?.soldOutText ?? "Sold Out",
@@ -388,8 +430,9 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       dropShadow: container?.shadow ?? false,
       containerBorderRadius: container?.borderRadius ?? 8,
       position: container?.position ?? "bottom",
-      borderSize: container?.borderWidth ?? 0,
+      borderSize: container?.borderSize ?? 0,
       borderColor: container?.borderColor ?? "#000000",
+      fontFamily: container?.fontFamily ?? "Arial, sans-serif",
     }));
   }, [stickyCartSettings]);
 
@@ -411,6 +454,8 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       announcementFontSize: "14",
       announcementEnabled: true,
       announcementFontColor: "#635F5F",
+      announcementFontStyle: "normal",
+
       announcementText: "ðŸ”¥ Hello Wolrd!",
       visibilyDevice: "showDesktop",
       bgType: "single",

@@ -35,16 +35,29 @@ const stickyCartSchema = new mongoose.Schema(
             fontStyle: { type: String, enum: ["normal", "italic"], default: "normal" },
             underline: { type: Boolean, default: false },
             fontSize: { type: String, default: "16px" }, // added for React mapping
-            Countdown: { type: Boolean, default: false },
+            Countdown: { type: String, default: "hide" },
+            coundownDate: { type: String, default: "" },
+            fixedminute: { type: String, default: "" }
         },
 
         // PRODUCT DETAILS SECTION
         productDetails: {
             showTitle: { type: Boolean, default: true },
+            titleBold: { type: Boolean, default: true },
+            titleColor: { type: String, default: "#FFFFFF" },
+            titleSize: { type: Number, default: 16 },
+
             showPrice: { type: Boolean, default: true },
-            showVendor: { type: Boolean, default: false },
-            textColor: { type: String, default: "#000000" },
-            fontSize: { type: String, default: "16px" },
+            priceColor: { type: String, default: "#FFFFFF" },
+            priceSize: { type: Number, default: 14 },
+            priceBold: { type: Boolean, default: false },
+
+            showComparePrice: { type: Boolean, default: false },
+            comparePriceColor: { type: String, default: "#CCCCCC" },
+            comparePriceSize: { type: Number, default: 14 },
+            comparePriceBold: { type: Boolean, default: false },
+
+            showImage: { type: Boolean, default: true },
         },
 
         // VARIANT SELECTOR
@@ -63,6 +76,11 @@ const stickyCartSchema = new mongoose.Schema(
             backgroundColor: { type: String, default: "#ffffff" },
             textColor: { type: String, default: "#000000" },
             borderColor: { type: String, default: "#cccccc" },
+            borderRadius: { type: Number, default: 0 },
+            borderSize: { type: Number, default: 0 },
+            iconColor: { type: String, default: "#000000" },
+            iconSize: { type: Number, default: 12 },
+            fontSize: { type: Number, default: 14 },
         },
 
         // ATC (Add to Cart Button)
@@ -70,10 +88,12 @@ const stickyCartSchema = new mongoose.Schema(
             text: { type: String, default: "Add to cart" },
             backgroundColor: { type: String, default: "#000000" },
             textColor: { type: String, default: "#ffffff" },
-            borderRadius: { type: String, default: "5px" },
+            borderSize: { type: Number, default: 0 },
+            borderColor: { type: String, default: "#000000" },
+            fontSize: { type: String, default: "16px" },
+            borderRadius: { type: Number, default: "5px" },
             showIcon: { type: Boolean, default: true },
             action: { type: String, enum: ["cart", "checkout", "stay"], default: "cart" },
-
             soldOutText: { type: String, default: "Sold out" }, // added for your React code
         },
 
@@ -87,9 +107,10 @@ const stickyCartSchema = new mongoose.Schema(
                 default: "bottom",
             },
             borderRadius: { type: String, default: "8px" },
-            borderSize: { type: String, default: 0 },
+            borderSize: { type: Number, default: 0 },
             borderColor: { type: String, default: "#000000" },
             shadow: { type: Boolean, default: false },
+            fontFamily: { type: String, default: "Arial, sans-serif" },
         },
 
         createdAt: { type: Date, default: Date.now },

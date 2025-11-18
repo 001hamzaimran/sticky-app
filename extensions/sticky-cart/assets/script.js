@@ -7,6 +7,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const variantsContainer = document.getElementById('variantsContainer');
     const topText = document.querySelector('.top-text');
     const topTextP = topText.querySelector('p');
+    const topDate = topText.querySelector('h3');
     const productTitle = document.getElementById('productTitle');
     const productPrice = document.getElementById('productPrice');
     const productImg = document.getElementById('productImg');
@@ -41,11 +42,11 @@ window.addEventListener('DOMContentLoaded', () => {
                 const action = window.stickyCartAction || "cart"; // fallback if missing
                 if (action === "cart") {
                     window.location.href = "/cart";
-                    window.location.reload();
                 } else if (action === "checkout") {
                     window.location.href = "/checkout";
                 } else {
                     // stay on page, maybe show a small confirmation
+                    window.location.reload();
                     addToCartBtn.textContent = "Added!";
                     setTimeout(() => addToCartBtn.textContent = "Add to Cart", 1500);
                 }
@@ -126,20 +127,83 @@ window.addEventListener('DOMContentLoaded', () => {
                 container
             } = settings;
 
+
+            if (banner.Countdown !== "hide") {
+                topDate.style.display = 'block';
+                topText.style.justifyContent = 'center';
+                topText.style.alignItems = 'center';
+
+                if (banner.coundownDate) {
+                    // Countdown to a specific date
+                    const targetDate = new Date(banner.coundownDate).getTime();
+
+                    const interval = setInterval(() => {
+                        const now = new Date().getTime();
+                        const distance = targetDate - now;
+
+                        if (distance <= 0) {
+                            clearInterval(interval);
+                            topDate.textContent = "00:00:00";
+                            return;
+                        }
+
+                        const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+                        const minutes = Math.floor((distance / (1000 * 60)) % 60);
+                        const seconds = Math.floor((distance / 1000) % 60);
+
+                        topDate.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    }, 1000);
+
+                } else if (banner.fixedminute) {
+                    // Parse "1 2 5 1" → [days, hours, minutes, seconds]
+                    const [days, hours, minutes, seconds] = banner.fixedminute.split(' ').map(Number);
+
+                    // Calculate end timestamp based on updatedAt
+                    const updatedAt = new Date(settings.updatedAt).getTime();
+                    const targetTime = updatedAt +
+                        (days * 24 * 60 * 60 * 1000) +
+                        (hours * 60 * 60 * 1000) +
+                        (minutes * 60 * 1000) +
+                        (seconds * 1000);
+
+                    const interval = setInterval(() => {
+                        const now = new Date().getTime();
+                        const distance = targetTime - now;
+
+                        if (distance <= 0) {
+                            clearInterval(interval);
+                            topDate.textContent = "00:00:00:00";
+                            return;
+                        }
+
+                        const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        const h = Math.floor((distance / (1000 * 60 * 60)) % 24);
+                        const m = Math.floor((distance / (1000 * 60)) % 60);
+                        const s = Math.floor((distance / 1000) % 60);
+
+                        topDate.textContent = `${d.toString().padStart(2, '0')}:${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                    }, 1000);
+                }
+            }
+
+
             // ✅ Container styles
             if (container.backgroundColor && container.backgroundColor.startsWith("linear-gradient(")) {
                 parent.style.background = container.backgroundColor; // use background for gradients
             } else {
                 parent.style.backgroundColor = container.backgroundColor || "#000";
             }
+
+            parent.style.border = `${container.borderSize || 0}px solid ${container.borderColor || '#000'}`;
             parent.style.borderRadius = `${container.borderRadius || 0}px`;
             parent.style.boxShadow = container.shadow ? '0px 0px 10px rgba(0,0,0,0.4)' : 'none';
             parent.style.bottom = container.position === 'bottom' ? '0' : 'auto';
             parent.style.top = container.position === 'top' ? '0' : 'auto';
+            parent.style.fontFamily = container.fontFamily;
 
             // ✅ Banner
             if (banner.show) {
-                topText.style.display = 'block';
+                topText.style.display = 'flex';
                 topText.style.backgroundColor = banner.backgroundColor;
                 topTextP.textContent = banner.text;
                 topTextP.style.color = banner.textColor;
@@ -155,6 +219,7 @@ window.addEventListener('DOMContentLoaded', () => {
             productTitle.style.fontWeight = productDetails.titleBold ? 'bold' : 'normal';
             productTitle.style.color = productDetails.titleColor;
             productTitle.style.fontSize = `${productDetails.titleSize}px`;
+            productTitle.style.fontFamily = container.fontFamily;
 
             productPrice.style.display = productDetails.showPrice ? 'block' : 'none';
             productPrice.style.color = productDetails.priceColor;

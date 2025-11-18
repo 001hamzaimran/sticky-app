@@ -77,6 +77,13 @@ h2.product-title {
     line-height: 32px;
     color: #fff;
 }
+.product-image-content-variant.with-image .product-title-price{
+    padding: 10px 0;
+}
+
+.product-image-content-variant.without-image .product-title-price{
+    padding: 10px;
+}
 
 p.product-price {
     font-size: 18px;
@@ -84,6 +91,7 @@ p.product-price {
     line-height: 28px;
     color: #fff;
 }
+
 
 .product-action {
     display: flex;

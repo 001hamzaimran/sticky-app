@@ -5,8 +5,9 @@
   };
 </script>
 <div id="parent" class="sticky-app-container" style="background-color: #000; display:none;">
-  <div class="top-text" style="background-color: #14ffc4;">
+  <div class="top-text" style="background-color: #14ffc4; display:flex; justify-content:center;align-items:center">
     <p>Get it while it lasts</p>
+    <h3 style="display:none;">Date</h3>
   </div>
   <div class="product-item">
     <div class="product-image-content-variant">
@@ -20,7 +21,6 @@
             <div class="product-prices">
               {% comment %} <p class="product-compare-price" id="productComparePrice">$960</p> {% endcomment %}
               <p class="product-price" id="productPrice"><span id="prodcutCurrencySymbol">$</span></p>
-              
             </div>
           </div>
           <div class="product-info">
@@ -35,7 +35,6 @@
                 <input type="number" id="qtyInp" value="0">
                 <button type="button" class="minus" id="minus">-</button>
               </div>
-              
             </div>
           </div>
         </div>
@@ -44,12 +43,6 @@
     <div class="product-add-to-cart">
       <button type="button" class="add-to-cart" id="addToCartBtn">Add to cart</button>
     </div>
-
-
-
-    
-    
-    
   </div>
 </div>
 

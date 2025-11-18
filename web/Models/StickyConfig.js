@@ -1,115 +1,101 @@
 import mongoose from "mongoose";
+// import CountdownTimer from "../frontend/components/CountdownTimer";
 
-const stickyCartSchema = new mongoose.Schema({
-    shop: {
-        type: String,
-        required: true,
-    },
+const stickyCartSchema = new mongoose.Schema(
+    {
+        shop: { type: String, required: true, unique: true },
 
-    // Display control
-    enabled: {
-        type: Boolean,
-        default: true,
-    },
-    displayScope: {
-        display: { type: String, enum: ["always", "in_view", "out_of_view"], default: "always" },
-        type: String,
-        enum: ["all_products", "selected_products", "exclude_products", "collections"],
-        default: "all_products",
-    },
-    selectedProducts: [String], // array of product IDs
-    excludedProducts: [String],
-    selectedCollections: [String],
+        enabled: { type: Boolean, default: false },
 
-    // Banner customization
-    banner: {
-        show: { type: Boolean, default: true },
-        text: { type: String, default: "Get it while it lasts" },
-        backgroundColor: { type: String, default: "#00FFC2" },
-        textColor: { type: String, default: "#000000" },
-        fontWeight: { type: String, enum: ["normal", "bold"], default: "normal" },
-        fontStyle: { type: String, enum: ["normal", "italic"], default: "normal" },
-        underline: { type: Boolean, default: false },
-    },
-
-    // Product details section
-    productDetails: {
-        showTitle: { type: Boolean, default: true },
-        titleBold: { type: Boolean, default: true },
-        titleColor: { type: String, default: "#FFFFFF" },
-        titleSize: { type: Number, default: 16 },
-
-        showPrice: { type: Boolean, default: true },
-        priceColor: { type: String, default: "#FFFFFF" },
-        priceSize: { type: Number, default: 14 },
-        priceBold: { type: Boolean, default: false },
-
-        showComparePrice: { type: Boolean, default: false },
-        comparePriceColor: { type: String, default: "#CCCCCC" },
-        comparePriceSize: { type: Number, default: 14 },
-        comparePriceBold: { type: Boolean, default: false },
-
-        showImage: { type: Boolean, default: true },
-    },
-
-    // Variant selector
-    variantSelector: {
-        show: { type: Boolean, default: true },
-        textColor: { type: String, default: "#000000" },
-        isBold: { type: Boolean, default: false },
-        fontSize: { type: Number, default: 14 },
-        backgroundColor: { type: String, default: "#FFFFFF" },
-
-
-    },
-
-    // Quantity selector
-    quantitySelector: {
-        show: { type: Boolean, default: true },
-        textColor: { type: String, default: "#000000" },
-        isBold: { type: Boolean, default: false },
-        fontSize: { type: Number, default: 14 },
-        borderColor: { type: String, default: "#CCCCCC" },
-        borderWidth: { type: Number, default: 1 },
-        backgroundColor: { type: String, default: "#FFFFFF" },
-        iconColor: { type: String, default: "#000000" },
-        IconSize: { type: Number, default: 12 },
-        iconBackgroundColor: { type: String, default: "#EEEEEE" },
-    },
-
-    // Add to cart button
-    addToCartButton: {
-        text: { type: String, default: "Add to Cart" },
-        backgroundColor: { type: String, default: "#000000" },
-        textColor: { type: String, default: "#FFFFFF" },
-        action: { type: String, enum: ["cart", "checkout", "stay"], default: "cart" },
-        fontWeight: { type: String, enum: ["normal", "bold"], default: "bold" },
-        fontSize: { type: Number, default: 16 },
-        borderRadius: { type: Number, default: 4 },
-        borderColor: { type: String, default: "#000000" },
-        borderWidth: { type: Number, default: 0 },
-    },
-
-    // General layout/styling
-    container: {
-        backgroundColor: { type: String, default: "#000000" },
-        borderRadius: { type: Number, default: 8 },
-        shadow: { type: Boolean, default: true },
-        position: {
+        // WHERE TO DISPLAY
+        displayScope: {
             type: String,
-            enum: ["top", "bottom"],
-            default: "bottom",
+            enum: ["all_products", "selected_products", "exclude_products", "collections"],
+            default: "all_products",
         },
+
+        // WHEN TO DISPLAY
+        displayMode: {
+            type: String,
+            enum: ["always", "in_view", "out_of_view"],
+            default: "always",
+        },
+
+        selectedProducts: { type: [String], default: [] },
+        excludedProducts: { type: [String], default: [] },
+        selectedCollections: { type: [String], default: [] },
+
+        // BANNER SETTINGS
+        banner: {
+            show: { type: Boolean, default: false },
+            text: { type: String, default: "" },
+            backgroundColor: { type: String, default: "#ffffff" },
+            textColor: { type: String, default: "#000000" },
+            fontWeight: { type: String, enum: ["normal", "bold"], default: "normal" },
+            fontStyle: { type: String, enum: ["normal", "italic"], default: "normal" },
+            underline: { type: Boolean, default: false },
+            fontSize: { type: String, default: "16px" }, // added for React mapping
+            Countdown: { type: Boolean, default: false },
+        },
+
+        // PRODUCT DETAILS SECTION
+        productDetails: {
+            showTitle: { type: Boolean, default: true },
+            showPrice: { type: Boolean, default: true },
+            showVendor: { type: Boolean, default: false },
+            textColor: { type: String, default: "#000000" },
+            fontSize: { type: String, default: "16px" },
+        },
+
+        // VARIANT SELECTOR
+        variantSelector: {
+            show: { type: Boolean, default: true },
+            style: { type: String, enum: ["dropdown", "buttons"], default: "dropdown" },
+            backgroundColor: { type: String, default: "#ffffff" },
+            textColor: { type: String, default: "#000000" },
+            fontSize: { type: String, default: "14px" },
+            isBold: { type: Boolean, default: false },
+        },
+
+        // QUANTITY SELECTOR
+        quantitySelector: {
+            show: { type: Boolean, default: true },
+            backgroundColor: { type: String, default: "#ffffff" },
+            textColor: { type: String, default: "#000000" },
+            borderColor: { type: String, default: "#cccccc" },
+        },
+
+        // ATC (Add to Cart Button)
+        addToCartButton: {
+            text: { type: String, default: "Add to cart" },
+            backgroundColor: { type: String, default: "#000000" },
+            textColor: { type: String, default: "#ffffff" },
+            borderRadius: { type: String, default: "5px" },
+            showIcon: { type: Boolean, default: true },
+            action: { type: String, enum: ["cart", "checkout", "stay"], default: "cart" },
+
+            soldOutText: { type: String, default: "Sold out" }, // added for your React code
+        },
+
+        // MAIN CONTAINER
+        container: {
+            backgroundColor: { type: String, default: "#ffffff" },
+            padding: { type: String, default: "10px" },
+            position: {
+                type: String,
+                enum: ["bottom", "top"],
+                default: "bottom",
+            },
+            borderRadius: { type: String, default: "8px" },
+            borderSize: { type: String, default: 0 },
+            borderColor: { type: String, default: "#000000" },
+            shadow: { type: Boolean, default: false },
+        },
+
+        createdAt: { type: Date, default: Date.now },
+        updatedAt: { type: Date, default: Date.now },
     },
-
-    // Date tracking
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
-});
-
-stickyCartSchema.pre("save", function (next) {
-    this.updatedAt = new Date();
-    next();
-});
+    { timestamps: true }
+);
 
 export default mongoose.model("StickyCartConfig", stickyCartSchema);

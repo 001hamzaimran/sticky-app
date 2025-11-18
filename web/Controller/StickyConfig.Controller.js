@@ -113,3 +113,28 @@ export const createOrUpdateStickyCart = async (req, res) => {
         });
     }
 };
+
+
+export const getStickyCart = async (req, res) => {
+    try {
+        const { shop } = req.params;
+        const config = await StickyConfig.findOne({ shop });
+        if (config) {
+            return res.status(200).json({
+                success: true,
+                message: "Sticky cart settings fetched successfully",
+                data: config,
+            });
+        }
+        return res.status(404).json({
+            success: false,
+            message: "Sticky cart settings not found for this shop",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message,
+        });
+    }
+}

@@ -494,8 +494,7 @@ main.customizer-container {
 
 .product-image-content.without-image .product-content .product-title-price {
     width: 100%;
-    display: flex;
-    justify-content: space-between;
+
     margin-bottom: 10px;
     padding: 0;
 }
@@ -506,7 +505,7 @@ main.customizer-container {
 
 .product-image-content.without-image .product-content .product-info {
     margin-left: 0;
-    justify-content: space-between;
+    justify-content: end;
     width: 100%;
 }
 

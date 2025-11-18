@@ -176,6 +176,14 @@ button {
         flex-direction: column;
         align-items: start;
     }
+    .product-title-price{
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 10px;
+    }
     .product-info {
         margin-left: 0;
         width: 100%;
@@ -197,5 +205,32 @@ button {
         justify-content: space-between;
         width: 100%;
     }
+    h2.product-title{
+        line-height: 20px;
+        padding-left: 10px;
+        margin-bottom: 5px;
+    }
 
+}
+
+@media (max-width: 480px) {
+    .product-title-price{
+        display: block;
+    }
+    h2.product-title{
+        padding-top: 10px;
+    }
+    .sticky-app-container{
+        border-radius: 0px !important;
+    }
+    .product-variant, .product-prices {
+        padding-left: 10px;
+    }
+    .product-image-content{
+        gap: 0;
+        align-items: start;
+    }
+    .product-image {
+        width: 42%;
+    }
 }

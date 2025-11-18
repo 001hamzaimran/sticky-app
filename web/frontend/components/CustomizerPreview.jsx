@@ -128,11 +128,11 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                           textDecoration: "line-through",
                         }}
                       >
-                        $90
+                        $90 -
                       </p>
 
                     )}
-                    -
+                    
                     {selectedValues?.showPrice !== false && (
                       <p
                         className="pucrodt-price"

@@ -14,6 +14,7 @@ import {
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import tabsData from "../assets/TabsData.js";
+import "../assets/style.css";
 
 export default function CustomizerPanel({ selectedValues, setSelectedValues, handleChange }) {
   const [activeTab, setActiveTab] = useState(null);
@@ -23,13 +24,45 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [excludedProductsIds, setexcludedProductsIds] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [stickyCartSettings, setStickyCartSettings] = useState({});
+  const [loading, setLoading] = useState(false);
 
+
+  const getStickyCartSettings = async () => {
+    setLoading(true);
+    try {
+      if (!storeData?.domain) {
+        console.warn("Store domain not available yet.");
+        return;
+      }
+      const response = await fetch(`/api/get-sticky-cart/${storeData.domain}`);
+      const result = await response.json();
+      const settings = result.data;
+
+      if (!settings || !settings.enabled) {
+        parent.style.display = 'none';
+        return;
+      }
+
+      console.log("Fetched sticky cart settings:", settings);
+
+      setStickyCartSettings(settings);
+    } catch (error) {
+      console.error("Error fetching sticky cart settings:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getStickyCartSettings();
+  }, [storeData?.domain]);
 
   const getProducts = async () => {
     try {
       const response = await fetch("/api/get-products");
       const data = await response.json();
-      console.log("Products data:", data);
+      // console.log("Products data:", data);
       setProductsData(data.data.map(item => item.node));
 
     } catch (error) {
@@ -61,11 +94,12 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
 
 
   const getStore = async () => {
+    setLoading(true);
     try {
       const response = await fetch("/api/get-store");
       const data = await response.json();
       setStoreData(data);
-      console.log("Store data:", data);
+      // console.log("Store data:", data);
     } catch (error) {
       console.error("Error fetching store data:", error);
     }
@@ -174,15 +208,35 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
         borderWidth: Number(selectedValues.buttonBorderWidth) || 1,
       },
 
+      // container: {
+      //   borderRadius: Number(selectedValues.containerBorderRadius) || 8,
+      //   shadow: !!selectedValues.dropShadow,
+      //   position: selectedValues.position || "bottom",
+      //   backgroundColor:
+      //     selectedValues.bgType === "gradient"
+      //     ? (selectedValues.gradientAngle &&
+      //       selectedValues.gradientColor1 &&
+      //       selectedValues.gradientColor2)
+      //       ? `linear-gradient(${selectedValues.gradientAngle}deg, ${selectedValues.gradientColor1}, ${selectedValues.gradientColor2})`
+      //       : "#000000" // fallback if any undefined
+      //     : selectedValues.bgColor || "#000000",
+      //   // backgroundColor:
+      //   //   selectedValues.bgType === "gradient"
+      //   //     ? `linear-gradient(${selectedValues.gradientAngle}deg, ${selectedValues.gradientColor1}, ${selectedValues.gradientColor2})`
+      //   //     : selectedValues.bgColor || "#000000",
+      // },
       container: {
+        borderSize: `${Number(selectedValues.borderSize)}px` || 0,
+        borderColor: selectedValues.borderColor || "#000000",
         borderRadius: Number(selectedValues.containerBorderRadius) || 8,
         shadow: !!selectedValues.dropShadow,
         position: selectedValues.position || "bottom",
         backgroundColor:
           selectedValues.bgType === "gradient"
-            ? `linear-gradient(${selectedValues.gradientAngle}deg, ${selectedValues.gradientColor1}, ${selectedValues.gradientColor2})`
+            ? `linear-gradient(${selectedValues.gradientAngle ?? 0}deg, ${selectedValues.gradientColor1}, ${selectedValues.gradientColor2})`
             : selectedValues.bgColor || "#000000",
       },
+
 
 
     };
@@ -207,11 +261,138 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
     }
   };
 
+  // Helper to safely parse gradient or color
+  const getContainerBgColor = (container) => {
+    if (!container) return "#000000";
+
+    const bg = container.backgroundColor?.trim() || "#000000";
+
+    // Check if gradient is valid
+    if (bg.startsWith("linear-gradient")) {
+      if (
+        bg.includes("undefined") // if any undefined
+      ) {
+        return "#000000"; // fallback to solid color
+      }
+      return bg;
+    }
+
+    // otherwise assume it's a solid color
+    return bg;
+  };
+
+
 
   useEffect(() => {
     getStore();
     getProducts();
   }, []);
+
+  useEffect(() => {
+    const {
+      banner,
+      productDetails,
+      variantSelector,
+      quantitySelector,
+      addToCartButton,
+      container,
+    } = stickyCartSettings;
+
+    if (!container?.backgroundColor) return;
+
+    let bgType = "single";
+    let bgColor = "#000000";
+    let gradientAngle = 0;
+    let gradientColor1 = "#000000";
+    let gradientColor2 = "#ffffff";
+
+    const bg = container.backgroundColor;
+
+    if (bg.startsWith("linear-gradient")) {
+      bgType = "gradient";
+      const matches = bg.match(
+        /linear-gradient\((\d+)deg,\s*(#[0-9a-fA-F]+),\s*(#[0-9a-fA-F]+|undefined)\)/
+      );
+      gradientAngle = matches ? Number(matches[1]) : 0;
+      gradientColor1 = matches && matches[2] ? matches[2] : "#000000";
+      gradientColor2 = matches && matches[3] && matches[3] !== "undefined" ? matches[3] : "#ffffff";
+      bgColor = gradientColor1; // fallback for single-color picker
+    } else {
+      bgType = "single";
+      bgColor = bg;
+    }
+
+    setSelectedValues((prev) => ({
+      ...prev,
+      // Gradient / background
+      bgType,
+      bgColor,
+      gradientAngle,
+      gradientColor1,
+      gradientColor2,
+
+      // Setting
+      hideSoldOut: addToCartButton?.soldOutText ? true : false,
+      borderSize: container?.borderWidth || 0,
+
+      // Banner
+      announcementEnabled: banner?.show ?? false,
+      announcementText: banner?.text ?? "Get it while it lasts",
+      announcementBgColor: banner?.backgroundColor ?? "#00FFC2",
+      announcementFontColor: banner?.textColor ?? "#000000",
+      announcementFontWeight: banner?.fontWeight ?? "normal",
+      announcementFontStyle: banner?.fontStyle ?? "normal",
+      announcementUnderline: banner?.underline ?? false,
+      announcementFontSize: banner?.fontSize ?? "14",
+
+      // Product details
+      showImage: productDetails?.showImage ?? true,
+      showName: productDetails?.showTitle ?? true,
+      showPrice: productDetails?.showPrice ?? true,
+      showComparedPrice: productDetails?.showComparePrice ?? false,
+      productCompareColor: productDetails?.comparePriceColor ?? "#aaa",
+
+      // Variant
+      showVariant: variantSelector?.show ?? true,
+      variantTextFont: variantSelector?.isBold ? "bold" : "normal",
+      variantTextSize: variantSelector?.fontSize ?? 14,
+      variantTextColor: variantSelector?.textColor ?? "#FFFFFF",
+      variantBgColor: variantSelector?.backgroundColor ?? "transparent",
+
+      // Quantity
+      showQuantity: quantitySelector?.show ?? true,
+      qtyTextSize: quantitySelector?.fontSize ?? 14,
+      qtyTextColor: quantitySelector?.textColor ?? "#FFFFFF",
+      qtyTextBold: quantitySelector?.isBold ?? false,
+      qtyIconColor: quantitySelector?.iconColor ?? "#EEEEEE",
+      qtyIconSize: quantitySelector?.IconSize ?? 12,
+      qtyIconBgColor: quantitySelector?.iconBackgroundColor ?? "#000000",
+      qtyBorderColor: quantitySelector?.borderColor ?? "#CCCCCC",
+      qtyBorderSize: quantitySelector?.borderWidth ?? 1,
+      qtyBgColor: quantitySelector?.backgroundColor ?? "#000000",
+
+      // Button
+      buttonText: addToCartButton?.text ?? "Add to Cart",
+      buttonTextSize: addToCartButton?.fontSize ?? 16,
+      buttonFontWeight: addToCartButton?.fontWeight ?? "bold",
+      buttonTextColor: addToCartButton?.textColor ?? "#FFFFFF",
+      buttonBgColor: addToCartButton?.backgroundColor ?? "#007CDB",
+      buttonBorderColor: addToCartButton?.borderColor ?? "#000000",
+      buttonBorderRadius: addToCartButton?.borderRadius ?? 4,
+      buttonAction: addToCartButton?.action ?? "cart",
+      soldOutText: addToCartButton?.soldOutText ?? "Sold Out",
+      soldOutBgColor: addToCartButton?.soldOutBgColor ?? "#FFFFFF",
+      soldOutBorderColor: addToCartButton?.soldOutBorderColor ?? "#000000",
+
+      // Container
+      dropShadow: container?.shadow ?? false,
+      containerBorderRadius: container?.borderRadius ?? 8,
+      position: container?.position ?? "bottom",
+      borderSize: container?.borderWidth ?? 0,
+      borderColor: container?.borderColor ?? "#000000",
+    }));
+  }, [stickyCartSettings]);
+
 
   // Set default values
   useEffect(() => {
@@ -221,11 +402,16 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       showImage: true,
       showName: true,
       showPrice: true,
+      showComparedPrice: true,
+      productCompareColor: "#aaa",
       showQuantity: true,
       showVariant: true,
+      variantBgColor: "transparent",
+      variantTextColor: "#fff",
+      announcementFontSize: "14",
       announcementEnabled: true,
       announcementFontColor: "#635F5F",
-      announcementText: "🔥 Hello Wolrd!",
+      announcementText: "ðŸ”¥ Hello Wolrd!",
       visibilyDevice: "showDesktop",
       bgType: "single",
       bgColor: "#1a1a1a",
@@ -248,319 +434,328 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
   const handleAddButtonClick = () => toggleModal();
 
   return (
-    <div className="customizer-panel">
-      <div className="save-settings">
-        {/* <button type="button">Save Settings</button> */}
-        <Button primary disabled={saving} onClick={() => handleSaveSettings()}>Save Settings</Button>
-      </div>
-      {tabsData.map((tab, index) => (
-        <div key={index} className={`customizer-panel-tab tab-${index}`}>
-          <button type="button" onClick={() => toggleTab(index)}>
-            <span className="tab-bnt">{tab.title}</span>
-            <span className="tab-icon">{activeTab === index ? "-" : "+"}</span>
-          </button>
+    <>
+      {loading && (
+        <div className="loading-overlay">
+          <p>Loading...</p>
+        </div>
+      )}
+      <div className="customizer-panel">
 
-          <AnimatePresence>
-            {activeTab === index && (
-              <motion.div
-                className={`customizer-panel-tab-content ${tab.title
-                  .replace(/\s+/g, "-")
-                  .toLowerCase()}-content`}
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {tab.fields.map((field, i) => (
-                  <div key={i} className={`field-item inp-${field.title}`}>
-                    {field.title && <h4>{field.title}</h4>}
 
-                    {field.items?.map((item, j) => {
-                      const isActive = selectedValues[item.name] === item.value;
-                      const activeConditionalFields = isActive ? item.conditionalFields ?? field.conditionalFields?.[item.value] ?? [] : [];
+        <div className="save-settings">
+          {/* <button type="button">Save Settings</button> */}
+          <Button primary disabled={saving} onClick={() => handleSaveSettings()}>Save Settings</Button>
+        </div>
+        {tabsData.map((tab, index) => (
+          <div key={index} className={`customizer-panel-tab tab-${index}`}>
+            <button type="button" onClick={() => toggleTab(index)}>
+              <span className="tab-bnt">{tab.title}</span>
+              <span className="tab-icon">{activeTab === index ? "-" : "+"}</span>
+            </button>
 
-                      return (
-                        <div key={j} className={`custom-radio ${isActive ? "active" : ""}`}>
-                          {/* Radio */}
-                          {item.type === "radio" && (
-                            <>
-                              <RadioButton
+            <AnimatePresence>
+              {activeTab === index && (
+                <motion.div
+                  className={`customizer-panel-tab-content ${tab.title
+                    .replace(/\s+/g, "-")
+                    .toLowerCase()}-content`}
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {tab.fields.map((field, i) => (
+                    <div key={i} className={`field-item inp-${field.title}`}>
+                      {field.title && <h4>{field.title}</h4>}
+
+                      {field.items?.map((item, j) => {
+                        const isActive = selectedValues[item.name] === item.value;
+                        const activeConditionalFields = isActive ? item.conditionalFields ?? field.conditionalFields?.[item.value] ?? [] : [];
+
+                        return (
+                          <div key={j} className={`custom-radio ${isActive ? "active" : ""}`}>
+                            {/* Radio */}
+                            {item.type === "radio" && (
+                              <>
+                                <RadioButton
+                                  label={item.label}
+                                  checked={isActive}
+                                  name={`${item.name}-${field.title.replace(/\s+/g, "-").toLowerCase()}`}
+                                  id={`${field.title.replace(/\s+/g, "-").toLowerCase()}-${item.value}`}
+                                  value={item.value}
+                                  onChange={() =>
+                                    handleChange(item.name, item.value)
+                                  }
+                                />
+
+                                {/* Conditional fields for this radio */}
+                                {isActive &&
+                                  activeConditionalFields?.map((condField, k) => (
+                                    <div
+                                      key={k}
+                                      style={{
+                                        marginLeft: "20px",
+                                        marginBottom: "8px",
+                                      }}
+                                      className={`field-item inp-${condField.type}`}
+                                    >
+                                      {condField.type === "range" && (
+                                        <RangeSlider
+                                          labelHidden
+                                          value={
+                                            selectedValues[condField.name] ||
+                                            condField.value
+                                          }
+                                          onChange={(value) =>
+                                            handleChange(condField.name, value)
+                                          }
+                                          min={condField.min}
+                                          max={condField.max}
+                                          output
+                                        />
+                                      )}
+                                      {condField.type === "date" && (
+                                        <TextField
+                                          label={condField.label}
+                                          type="date"
+                                          value={selectedValues[condField.name] ?? condField.value}
+                                          onChange={(value) => handleChange(condField.name, value)}
+                                        />
+                                      )}
+                                      {condField.type === "time" && (
+                                        <TextField
+                                          label={condField.label}
+                                          type="time"
+                                          value={selectedValues[condField.name] ?? condField.value}
+                                          onChange={(value) => handleChange(condField.name, value)}
+                                        />
+                                      )}
+                                      {condField.type === "number" && (
+                                        <TextField
+                                          label={condField.label}
+                                          type="number"
+                                          value={String(selectedValues[condField.name] ?? condField.value ?? 0)}
+                                          onChange={(value) =>
+                                            handleChange(condField.name, parseInt(value) || 0)
+                                          }
+                                        />
+                                      )}
+                                      {condField.type === "color" && (
+                                        <TextField
+                                          label={condField.label}
+                                          type="color"
+                                          value={
+                                            selectedValues[condField.name] ||
+                                            condField.value
+                                          }
+                                          onChange={(value) =>
+                                            handleChange(condField.name, value)
+                                          }
+                                        />
+
+                                      )}
+                                    </div>
+                                  ))}
+
+                                {/* Sticky Cart Add Button */}
+                                {tab.title === "Show Sticky Cart" &&
+                                  item.value !== "all-products" &&
+                                  selectedValues[item.name] === item.value && (
+                                    <div className="show-modal-for-product" style={{ marginTop: "5px" }}>
+                                      <Text>Sticky cart option: {item.label}</Text>
+                                      <Button onClick={handleAddButtonClick}>Add</Button>
+                                    </div>
+                                  )}
+                              </>
+                            )}
+
+                            {/* Checkbox */}
+                            {item.type === "checkbox" && (
+                              <Checkbox
                                 label={item.label}
-                                checked={isActive}
-                                name={`${item.name}-${field.title.replace(/\s+/g, "-").toLowerCase()}`}
-                                id={`${field.title.replace(/\s+/g, "-").toLowerCase()}-${item.value}`}
-                                value={item.value}
-                                onChange={() =>
-                                  handleChange(item.name, item.value)
+                                checked={selectedValues[item.name] || false}
+                                onChange={(newChecked) =>
+                                  handleChange(item.name, newChecked)
                                 }
                               />
+                            )}
 
-                              {/* Conditional fields for this radio */}
-                              {isActive &&
-                                activeConditionalFields?.map((condField, k) => (
-                                  <div
-                                    key={k}
-                                    style={{
-                                      marginLeft: "20px",
-                                      marginBottom: "8px",
-                                    }}
-                                    className={`field-item inp-${condField.type}`}
-                                  >
-                                    {condField.type === "range" && (
-                                      <RangeSlider
-                                        labelHidden
-                                        value={
-                                          selectedValues[condField.name] ||
-                                          condField.value
-                                        }
-                                        onChange={(value) =>
-                                          handleChange(condField.name, value)
-                                        }
-                                        min={condField.min}
-                                        max={condField.max}
-                                        output
-                                      />
-                                    )}
-                                    {condField.type === "date" && (
-                                      <TextField
-                                        label={condField.label}
-                                        type="date"
-                                        value={selectedValues[condField.name] ?? condField.value}
-                                        onChange={(value) => handleChange(condField.name, value)}
-                                      />
-                                    )}
-                                    {condField.type === "time" && (
-                                      <TextField
-                                        label={condField.label}
-                                        type="time"
-                                        value={selectedValues[condField.name] ?? condField.value}
-                                        onChange={(value) => handleChange(condField.name, value)}
-                                      />
-                                    )}
-                                    {condField.type === "number" && (
-                                      <TextField
-                                        label={condField.label}
-                                        type="number"
-                                        value={String(selectedValues[condField.name] ?? condField.value ?? 0)}
-                                        onChange={(value) =>
-                                          handleChange(condField.name, parseInt(value) || 0)
-                                        }
-                                      />
-                                    )}
-                                    {condField.type === "color" && (
-                                      <TextField
-                                        label={condField.label}
-                                        type="color"
-                                        value={
-                                          selectedValues[condField.name] ||
-                                          condField.value
-                                        }
-                                        onChange={(value) =>
-                                          handleChange(condField.name, value)
-                                        }
-                                      />
-
-                                    )}
-                                  </div>
-                                ))}
-
-                              {/* Sticky Cart Add Button */}
-                              {tab.title === "Show Sticky Cart" &&
-                                item.value !== "all-products" &&
-                                selectedValues[item.name] === item.value && (
-                                  <div className="show-modal-for-product" style={{ marginTop: "5px" }}>
-                                    <Text>Sticky cart option: {item.label}</Text>
-                                    <Button onClick={handleAddButtonClick}>Add</Button>
-                                  </div>
+                            {/* Number */}
+                            {item.type === "number" && (
+                              <TextField
+                                label={item.label}
+                                type="number"
+                                value={String(
+                                  selectedValues[item.name] || item.value || 0
                                 )}
-                            </>
-                          )}
+                                onChange={(value) =>
+                                  handleChange(item.name, parseInt(value))
+                                }
+                              />
+                            )}
 
-                          {/* Checkbox */}
-                          {item.type === "checkbox" && (
-                            <Checkbox
-                              label={item.label}
-                              checked={selectedValues[item.name] || false}
-                              onChange={(newChecked) =>
-                                handleChange(item.name, newChecked)
-                              }
-                            />
-                          )}
+                            {/* Color */}
+                            {item.type === "color" && (
+                              <TextField
+                                label={item.label}
+                                type="color"
+                                value={selectedValues[item.name] || item.value}
+                                onChange={(value) =>
+                                  handleChange(item.name, value)
+                                }
+                              />
+                            )}
 
-                          {/* Number */}
-                          {item.type === "number" && (
-                            <TextField
-                              label={item.label}
-                              type="number"
-                              value={String(
-                                selectedValues[item.name] || item.value || 0
-                              )}
-                              onChange={(value) =>
-                                handleChange(item.name, parseInt(value))
-                              }
-                            />
-                          )}
+                            {/* Text */}
+                            {item.type === "text" && (
+                              <TextField
+                                label={item.label}
+                                type="text"
+                                value={selectedValues[item.name] || item.value || ""}
+                                onChange={(value) => handleChange(item.name, value)}
+                              />
+                            )}
 
-                          {/* Color */}
-                          {item.type === "color" && (
-                            <TextField
-                              label={item.label}
-                              type="color"
-                              value={selectedValues[item.name] || item.value}
-                              onChange={(value) =>
-                                handleChange(item.name, value)
-                              }
-                            />
-                          )}
+                            {/* Select */}
+                            {item.type === "select" && (
+                              <Select
+                                label={item.label}
+                                options={item.options.map((o) => ({
+                                  label: o.label,
+                                  value: o.value,
+                                }))}
+                                value={selectedValues[item.name] || item.value}
+                                onChange={(value) => handleChange(item.name, value)}
+                              />
+                            )}
 
-                          {/* Text */}
-                          {item.type === "text" && (
-                            <TextField
-                              label={item.label}
-                              type="text"
-                              value={selectedValues[item.name] || item.value || ""}
-                              onChange={(value) => handleChange(item.name, value)}
-                            />
-                          )}
+                            {/* Editor */}
+                            {item.type === "editor" && (
+                              <ReactQuill
+                                theme="snow"
+                                value={selectedValues[item.name] || ""}
+                                onChange={(value) => handleChange(item.name, value)}
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        ))}
 
-                          {/* Select */}
-                          {item.type === "select" && (
-                            <Select
-                              label={item.label}
-                              options={item.options.map((o) => ({
-                                label: o.label,
-                                value: o.value,
-                              }))}
-                              value={selectedValues[item.name] || item.value}
-                              onChange={(value) => handleChange(item.name, value)}
-                            />
-                          )}
-
-                          {/* Editor */}
-                          {item.type === "editor" && (
-                            <ReactQuill
-                              theme="snow"
-                              value={selectedValues[item.name] || ""}
-                              onChange={(value) => handleChange(item.name, value)}
-                            />
-                          )}
-                        </div>
-                      );
-                    })}
+        {/* Shopify Polaris Modal */}
+        <Modal
+          open={activeModal}
+          onClose={toggleModal}
+          title="Select Items"
+          primaryAction={{ content: "Save", onAction: toggleModal }}
+          secondaryActions={[{ content: "Cancel", onAction: toggleModal }]}
+        >
+          <Modal.Section>
+            {selectedValues.stickyCart === "specific-products" && (
+              <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                {productsData?.map((product) => (
+                  <div
+                    key={product.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      padding: "8px 0",
+                      borderBottom: "1px solid #eee",
+                    }}
+                  >
+                    <Checkbox
+                      label=""
+                      checked={selectedProductIds.includes(product.id)}
+                      onChange={() => toggleProductSelection(product.id)}
+                    />
+                    <img
+                      src={
+                        product.images.edges[0]?.node.originalSrc ||
+                        "https://cdn.shopify.com/s/assets/no-image-75c5e3d6b1.png"
+                      }
+                      alt={product.title}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        objectFit: "cover",
+                        borderRadius: "6px",
+                      }}
+                    />
+                    <div>
+                      <Text variant="bodyMd" as="p" fontWeight="bold">
+                        {product.title}
+                      </Text>
+                      <Text variant="bodySm" as="p" color="subdued">
+                        {product.tags?.join(", ") || "No tags"}
+                      </Text>
+                    </div>
                   </div>
                 ))}
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
-        </div>
-      ))}
-
-      {/* Shopify Polaris Modal */}
-      <Modal
-        open={activeModal}
-        onClose={toggleModal}
-        title="Select Items"
-        primaryAction={{ content: "Save", onAction: toggleModal }}
-        secondaryActions={[{ content: "Cancel", onAction: toggleModal }]}
-      >
-        <Modal.Section>
-          {selectedValues.stickyCart === "specific-products" && (
-            <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-              {productsData?.map((product) => (
-                <div
-                  key={product.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    padding: "8px 0",
-                    borderBottom: "1px solid #eee",
-                  }}
-                >
-                  <Checkbox
-                    label=""
-                    checked={selectedProductIds.includes(product.id)}
-                    onChange={() => toggleProductSelection(product.id)}
-                  />
-                  <img
-                    src={
-                      product.images.edges[0]?.node.originalSrc ||
-                      "https://cdn.shopify.com/s/assets/no-image-75c5e3d6b1.png"
-                    }
-                    alt={product.title}
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                      objectFit: "cover",
-                      borderRadius: "6px",
-                    }}
-                  />
-                  <div>
-                    <Text variant="bodyMd" as="p" fontWeight="bold">
-                      {product.title}
-                    </Text>
-                    <Text variant="bodySm" as="p" color="subdued">
-                      {product.tags?.join(", ") || "No tags"}
-                    </Text>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          {/* 
+            {/* 
           {selectedValues.stickyCart === "specific-collections" && (
             <Text>Here display your Shopify collection picker</Text>
           )} */}
-          {selectedValues.stickyCart === "exclude-products" && (
-            <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-              {productsData?.map((product) => (
-                <div
-                  key={product.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    padding: "8px 0",
-                    borderBottom: "1px solid #eee",
-                  }}
-                >
-                  <Checkbox
-                    label=""
-                    checked={excludedProductsIds.includes(product.id)}
-                    onChange={() => toggleExcludedProductSelection(product.id)}
-                  />
-                  <img
-                    src={
-                      product.images.edges[0]?.node.originalSrc ||
-                      "https://cdn.shopify.com/s/assets/no-image-75c5e3d6b1.png"
-                    }
-                    alt={product.title}
+            {selectedValues.stickyCart === "exclude-products" && (
+              <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                {productsData?.map((product) => (
+                  <div
+                    key={product.id}
                     style={{
-                      width: "50px",
-                      height: "50px",
-                      objectFit: "cover",
-                      borderRadius: "6px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      padding: "8px 0",
+                      borderBottom: "1px solid #eee",
                     }}
-                  />
-                  <div>
-                    <Text variant="bodyMd" as="p" fontWeight="bold">
-                      {product.title}
-                    </Text>
-                    <Text variant="bodySm" as="p" color="subdued">
-                      {product.tags?.join(", ") || "No tags"}
-                    </Text>
+                  >
+                    <Checkbox
+                      label=""
+                      checked={excludedProductsIds.includes(product.id)}
+                      onChange={() => toggleExcludedProductSelection(product.id)}
+                    />
+                    <img
+                      src={
+                        product.images.edges[0]?.node.originalSrc ||
+                        "https://cdn.shopify.com/s/assets/no-image-75c5e3d6b1.png"
+                      }
+                      alt={product.title}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        objectFit: "cover",
+                        borderRadius: "6px",
+                      }}
+                    />
+                    <div>
+                      <Text variant="bodyMd" as="p" fontWeight="bold">
+                        {product.title}
+                      </Text>
+                      <Text variant="bodySm" as="p" color="subdued">
+                        {product.tags?.join(", ") || "No tags"}
+                      </Text>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
 
-          {/* {selectedValues.stickyCart === "exclude-collections" && (
+            {/* {selectedValues.stickyCart === "exclude-collections" && (
           //   <Text>Here display Shopify collection picker for excluding collections</Text>
           // )} */}
-        </Modal.Section>
-      </Modal>
+          </Modal.Section>
+        </Modal>
 
-    </div>
+      </div>
+    </>
   );
 }

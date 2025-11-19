@@ -28,6 +28,63 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
   const [loading, setLoading] = useState(false);
 
 
+  const handleColorChange = (name, value) => {
+    let newValue = value;
+
+    // Agar value HEX text input se aa rahi hai
+    if (typeof value === "string" && value.startsWith("#") && value.length === 7) {
+      newValue = value.toLowerCase();
+    }
+
+    setSelectedValues((prev) => {
+      const updated = { ...prev, [name]: newValue };
+
+      // Agar ye picker field hai aur corresponding Code field hai, sync karo
+      if (!name.endsWith("Code") && prev.hasOwnProperty(name + "Code")) {
+        updated[name + "Code"] = newValue;
+      }
+
+      // Agar ye Code field hai, toh corresponding picker bhi update karo
+      if (name.endsWith("Code")) {
+        const pickerField = name.replace(/Code$/, "");
+        if (prev.hasOwnProperty(pickerField)) {
+          updated[pickerField] = newValue;
+        }
+      }
+
+      return updated;
+    });
+  };
+
+
+  const handleSizeChange = (name, value, item) => {
+  setSelectedValues(prev => {
+    const updated = { ...prev };
+
+    // RANGE → TEXT (slider moved)
+    if (item.type === "range") {
+      const px = Math.round((value / 100) * 1440); // convert %
+      updated[item.name] = value; // slider value
+      updated["customWidth"] = px > 1440 ? 1440 : px; // text field px
+    }
+
+    // TEXT → RANGE (custom width typed)
+    if (item.type === "text") {
+      let px = parseInt(value) || 0;
+      if (px > 1440) px = 1440; // limit
+      const percent = Math.round((px / 1440) * 100);
+
+      updated["customWidth"] = px;
+      updated["width"] = percent; // slider update
+    }
+
+    return updated;
+  });
+};
+
+
+
+
   const getStickyCartSettings = async () => {
     setLoading(true);
     try {
@@ -426,7 +483,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       soldOutBgColor: addToCartButton?.soldOutBgColor ?? "#FFFFFF",
       soldOutBorderColor: addToCartButton?.soldOutBorderColor ?? "#000000",
 
-      // Container
+      // Containers
       dropShadow: container?.shadow ?? false,
       containerBorderRadius: container?.borderRadius ?? 8,
       position: container?.position ?? "bottom",
@@ -458,6 +515,11 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
 
       announcementText: "ðŸ”¥ Hello Wolrd!",
       visibilyDevice: "showDesktop",
+      showDektopDevice:true,
+      showMobileDevice:true,
+      positionVertical: "bottom",
+      size:"full",
+      position: "bottom",
       bgType: "single",
       bgColor: "#1a1a1a",
       buttonAction: "stay",
@@ -511,16 +573,18 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
                   transition={{ duration: 0.3 }}
                 >
                   {tab.fields.map((field, i) => (
-                    <div key={i} className={`field-item inp-${field.title}`}>
+                    <div key={i} className={`field-item inp-${field.class}`}>
                       {field.title && <h4>{field.title}</h4>}
 
                       {field.items?.map((item, j) => {
                         const isActive = selectedValues[item.name] === item.value;
-                        const activeConditionalFields = isActive ? item.conditionalFields ?? field.conditionalFields?.[item.value] ?? [] : [];
+                        const activeConditionalFields = isActive
+                          ? item.conditionalFields ?? field.conditionalFields?.[item.value] ?? []
+                          : [];
 
                         return (
-                          <div key={j} className={`custom-radio ${isActive ? "active" : ""}`}>
-                            {/* Radio */}
+                          <div key={j} className={`custom-radio ${isActive ? "active" : ""} inp-${item.type}-inner`}>
+                            {/* Radio Button */}
                             {item.type === "radio" && (
                               <>
                                 <RadioButton
@@ -529,89 +593,113 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
                                   name={`${item.name}-${field.title.replace(/\s+/g, "-").toLowerCase()}`}
                                   id={`${field.title.replace(/\s+/g, "-").toLowerCase()}-${item.value}`}
                                   value={item.value}
-                                  onChange={() =>
-                                    handleChange(item.name, item.value)
-                                  }
+                                  onChange={() => handleChange(item.name, item.value)}
                                 />
 
-                                {/* Conditional fields for this radio */}
+                                {/* Conditional Fields */}
                                 {isActive &&
                                   activeConditionalFields?.map((condField, k) => (
+
                                     <div
                                       key={k}
-                                      style={{
-                                        marginLeft: "20px",
-                                        marginBottom: "8px",
-                                      }}
+                                      style={{ marginLeft: "20px", marginBottom: "8px" }}
                                       className={`field-item inp-${condField.type}`}
                                     >
+                                      {/* Single Field Types */}
                                       {condField.type === "range" && (
-                                        <RangeSlider
-                                          labelHidden
-                                          value={
-                                            selectedValues[condField.name] ||
-                                            condField.value
-                                          }
-                                          onChange={(value) =>
-                                            handleChange(condField.name, value)
-                                          }
-                                          min={condField.min}
-                                          max={condField.max}
-                                          output
-                                        />
-                                      )}
-                                      {condField.type === "date" && (
-                                        <TextField
-                                          label={condField.label}
-                                          type="date"
-                                          value={selectedValues[condField.name] ?? condField.value}
-                                          onChange={(value) => handleChange(condField.name, value)}
-                                        />
-                                      )}
-                                      {condField.type === "time" && (
-                                        <TextField
-                                          label={condField.label}
-                                          type="time"
-                                          value={selectedValues[condField.name] ?? condField.value}
-                                          onChange={(value) => handleChange(condField.name, value)}
-                                        />
-                                      )}
-                                      {condField.type === "number" && (
-                                        <TextField
-                                          label={condField.label}
-                                          type="number"
-                                          value={String(selectedValues[condField.name] ?? condField.value ?? 0)}
-                                          onChange={(value) =>
-                                            handleChange(condField.name, parseInt(value) || 0)
-                                          }
-                                        />
-                                      )}
-                                      {condField.type === "color" && (
-                                        <TextField
-                                          label={condField.label}
-                                          type="color"
-                                          value={
-                                            selectedValues[condField.name] ||
-                                            condField.value
-                                          }
-                                          onChange={(value) =>
-                                            handleChange(condField.name, value)
-                                          }
-                                        />
+                                        <RangeSlider 
+                                          labelHidden value={selectedValues[condField.name] || condField.value} 
+                                          onChange={(value) => handleChange(condField.name, value)} 
+                                          min={condField.min} 
+                                          max={condField.max} 
+                                          output 
+                                        />)} 
+                                        {condField.type === "date" && (
+                                          <TextField 
+                                            label={condField.label} 
+                                            type="date" 
+                                            value={selectedValues[condField.name] ?? condField.value} 
+                                            onChange={(value) => handleChange(condField.name, value)} 
+                                          />
+                                         )} 
+                                         {condField.type === "time" && (
+                                            <TextField 
+                                            label={condField.label} 
+                                            type="time" value={selectedValues[condField.name] ?? condField.value} 
+                                            onChange={(value) => handleChange(condField.name, value)
 
+                                            } 
+                                            />
+                                            )} 
+                                            {condField.type === "text" && (
+                                            <TextField 
+                                            label={condField.label} 
+                                            type="text" value={selectedValues[condField.name] ?? condField.value} 
+                                            onChange={(value) => handleChange(condField.name, value)
+
+                                            } 
+                                            />
+                                            )} 
+                                            {condField.type === "number" && (
+                                              <TextField 
+                                                label={condField.label} 
+                                                type="number" 
+                                                value={String(selectedValues[condField.name] ?? condField.value ?? 0)} 
+                                                onChange={(value) => handleChange(condField.name, parseInt(value) || 0)} 
+                                              />
+                                            )}
+
+                                          {condField.type === "color" && (
+                                            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                              <TextField
+                                                label={condField.label}
+                                                type="color"
+                                                value={selectedValues[condField.name] || condField.value}
+                                                onChange={(value) => handleColorChange(condField.name, value)}
+                                              />
+                                              {/* HEX input */}
+                                              <TextField
+                                                label="HEX"
+                                                type="text"
+                                                value={selectedValues[condField.name] || condField.value}
+                                                onChange={(value) => handleColorChange(condField.name, value)}
+                                              />
+                                            </div>
+                                          )}
+
+                                      {/* Gradient group items */}
+                                      {condField.items && (
+                                        <div className="gradient-items">
+                                          {condField.title && (
+                                            <div className="gradient-items-title" style={{ marginBottom: "6px", fontWeight: "600" }}>
+                                              {condField.title}
+                                            </div>
+                                          )}
+
+                                          {condField.items.map((gradItem, idx) => (
+                                            <div key={idx} style={{ marginBottom: "8px", display: "flex", gap: "10px" }}>
+                                              {gradItem.type === "color" && (
+                                                <>
+                                                  <TextField
+                                                    label={gradItem.label}
+                                                    type="color"
+                                                    value={selectedValues[gradItem.name] || gradItem.value}
+                                                    onChange={(value) => handleColorChange(gradItem.name, value)}
+                                                  />
+                                                  <TextField
+                                                    label=""
+                                                    type="text"
+                                                    value={selectedValues[gradItem.name] || gradItem.value}
+                                                    onChange={(value) => handleColorChange(gradItem.name, value)}
+                                                  />
+                                                </>
+                                              )}
+                                            </div>
+                                          ))}
+                                        </div>
                                       )}
                                     </div>
                                   ))}
-
-                                {/* Sticky Cart Add Button */}
-                                {tab.title === "Show Sticky Cart" &&
-                                  item.value !== "all-products" &&
-                                  selectedValues[item.name] === item.value && (
-                                    <div className="show-modal-for-product" style={{ marginTop: "5px" }}>
-                                      <Text>Sticky cart option: {item.label}</Text>
-                                      <Button onClick={handleAddButtonClick}>Add</Button>
-                                    </div>
-                                  )}
                               </>
                             )}
 
@@ -620,39 +708,45 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
                               <Checkbox
                                 label={item.label}
                                 checked={selectedValues[item.name] || false}
-                                onChange={(newChecked) =>
-                                  handleChange(item.name, newChecked)
-                                }
+                                onChange={(newChecked) => handleChange(item.name, newChecked)}
                               />
                             )}
 
-                            {/* Number */}
+                            {/* Number / Text / Color fields outside radio */}
                             {item.type === "number" && (
                               <TextField
                                 label={item.label}
                                 type="number"
-                                value={String(
-                                  selectedValues[item.name] || item.value || 0
-                                )}
-                                onChange={(value) =>
-                                  handleChange(item.name, parseInt(value))
-                                }
+                                value={String(selectedValues[item.name] || item.value || 0)}
+                                onChange={(value) => handleChange(item.name, parseInt(value))}
                               />
                             )}
 
-                            {/* Color */}
                             {item.type === "color" && (
-                              <TextField
+                              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                <TextField
+                                  label={item.label}
+                                  type="color"
+                                  value={selectedValues[item.name] || item.value}
+                                  onChange={(value) => handleColorChange(item.name, value)}
+                                />
+                                <TextField
+                                  label=""
+                                  type="text"
+                                  value={selectedValues[item.name] || item.value}
+                                  onChange={(value) => handleColorChange(item.name, value)}
+                                />
+                              </div>
+                            )}
+
+                            {item.type === "range" && (
+                              <RangeSlider
                                 label={item.label}
-                                type="color"
-                                value={selectedValues[item.name] || item.value}
-                                onChange={(value) =>
-                                  handleChange(item.name, value)
-                                }
+                                checked={selectedValues[item.name] || false}
+                                onChange={(newChecked) => handleChange(item.name, newChecked)}
                               />
                             )}
 
-                            {/* Text */}
                             {item.type === "text" && (
                               <TextField
                                 label={item.label}
@@ -662,24 +756,11 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
                               />
                             )}
 
-                            {/* Select */}
                             {item.type === "select" && (
                               <Select
                                 label={item.label}
-                                options={item.options.map((o) => ({
-                                  label: o.label,
-                                  value: o.value,
-                                }))}
-                                value={selectedValues[item.name] || item.value}
-                                onChange={(value) => handleChange(item.name, value)}
-                              />
-                            )}
-
-                            {/* Editor */}
-                            {item.type === "editor" && (
-                              <ReactQuill
-                                theme="snow"
-                                value={selectedValues[item.name] || ""}
+                                options={item.options || []}
+                                value={selectedValues[item.name] ?? item.value ?? ""}
                                 onChange={(value) => handleChange(item.name, value)}
                               />
                             )}
@@ -688,6 +769,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
                       })}
                     </div>
                   ))}
+
                 </motion.div>
               )}
             </AnimatePresence>

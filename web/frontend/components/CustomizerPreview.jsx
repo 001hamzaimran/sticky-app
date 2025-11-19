@@ -19,7 +19,8 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
               : "100%", // fallback
         transition: "width 0.3s ease",
         margin: "0 auto",
-        backgroundColor: "#efe9df"
+        backgroundColor: "#efe9df",
+        
       }}
     >
       <div className="device-btns">
@@ -61,8 +62,15 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
           borderStyle: "solid",
           color: selectedValues?.fontColor || "#fff",
           fontFamily: selectedValues?.fontFamily || "inherit",
+          top: selectedValues?.positionVertical === "top" ? "50px" : "unset",
+          bottom: selectedValues?.positionVertical === "bottom" ? "0" : "unset",
+          left: selectedValues?.positionHorizontal === "left" ? "0" : "unset",
+          right: selectedValues?.positionHorizontal === "right" ? "0" : "unset",
+          width: selectedValues.size === "full" ? "100%" : selectedValues.size === "condensed" ? `${selectedValues.customWidth}px` : "auto",
+          
         }}
       >
+      
         {/* Top Text / Announcement Bar */}
         {selectedValues?.announcementEnabled && (
           <div

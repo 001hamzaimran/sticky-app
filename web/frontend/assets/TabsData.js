@@ -7,53 +7,141 @@ const tabsData = [
     title: "Settings",
     fields: [
       {
+        title: "Devices",
+        class: "Responsive",
+        items: [
+          { label: "Desktop", type: "radio", name: "visibilyDevice", value: "showDesktop" },
+          { label: "Mobile", type: "radio", name: "visibilyDevice", value: "showMobile" },
+        ],
+      },
+      {
         title: "",
+        class: "show-for-sold-out-products",
         items: [
           { label: "Don't show for sold out products", type: "checkbox", name: "hideSoldOut", value: false },
         ],
       },
       {
         title: "Devices",
+        class: "visibility",
         items: [
-          { label: "Show on desktop", type: "radio", name: "visibilyDevice", value: "showDesktop" },
-          { label: "Show on mobile", type: "radio", name: "visibilyDevice", value: "showMobile" },
+          { label: "Show on Desktop", type: "checkbox", name: "showDektopDevice", value: true },
+          { label: "Show on Mobile", type: "checkbox", name: "showMobileDevice", value: true },
         ],
       },
       {
         title: "Button action on click",
+        class: "button-action-on-click",
         items: [
           { label: "Stay on page", type: "radio", name: "buttonAction", value: "stay" },
           { label: "Go to cart", type: "radio", name: "buttonAction", value: "cart" },
           { label: "Go to checkout", type: "radio", name: "buttonAction", value: "checkout" },
         ],
       },
-      // {
-      //   title: "Show the bar",
-      //   items: [
-      //     { label: "Always", type: "radio", name: "showBar", value: "always" },
-      //     { label: "After scrolling past “Add to cart”", type: "radio", name: "showBar", value: "scroll" },
-      //     { label: "When “Add to cart” is out of view", type: "radio", name: "showBar", value: "outOfView" },
-      //   ],
-      // },
-      // {
-      //   title: "Size",
-      //   items: [
-      //     { label: "Full width", type: "radio", name: "size", value: "full" },
-      //     { label: "Condensed", type: "radio", name: "size", value: "condensed" },
-      //   ],
-      // },
-      // {
-      //   title: "Vertical position",
-      //   items: [
-      //     { label: "Top", type: "radio", name: "position", value: "top" },
-      //     { label: "Bottom", type: "radio", name: "position", value: "bottom" },
-      //     { label: "Bottom offset position", type: "range", name: "bottomOffset", min: 0, max: 100, step: 10, value: 0 },
-      //     { label: "Left offset position", type: "range", name: "leftOffset", min: 0, max: 100, step: 10, value: 0 },
-      //     { label: "Right offset position", type: "range", name: "rightOffset", min: 0, max: 100, step: 10, value: 0 },
-      //   ],
-      // },
+      {
+        title: "Show the bar",
+        class: "show-the-bar",
+        items: [
+          { label: "Always", type: "radio", name: "showBar", value: "always" },
+          { label: "After scrolling past “Add to cart”", type: "radio", name: "showBar", value: "scroll" },
+          { label: "When “Add to cart” is out of view", type: "radio", name: "showBar", value: "outOfView" },
+        ],
+      },
+      {
+        title: "Size",
+        class: "container-size",
+        items: [
+          { label: "Full width", type: "radio", name: "size", value: "full" },
+          { label: "Condensed", type: "radio", name: "size", value: "condensed" },
+        ],
+        conditionalFields: {
+            condensed: [
+              { label: "Custom Width", type: "range", name: "width", min: 0, max: 100, step: 10, value: 100 },
+              { label: "", type: "text", name: "customWidth", value: "800" },
+            ]
+          }
+      },
+      {
+        title: "Vertical position",
+        class: "vertical-position",
+        items: [
+          { label: "Top", type: "radio", name: "positionVertical", value: "top" },
+          { label: "Bottom", type: "radio", name: "positionVertical", value: "bottom" },
+          
+        ]
+      },
+      {
+        title: "Horizontal position",
+        class: "horizontal-position",
+        items: [
+          { label: "Left", type: "radio", name: "positionHorizontal", value: "left" },
+          { label: "Right", type: "radio", name: "positionHorizontal", value: "right" },
+        ]
+      },
+      {
+        title: "Position",
+        class: "position",
+        items: [
+          {
+            name: "topOffset",
+            type: "range",
+            label: "Top offset position",
+            value: 0,
+            min: 0,
+            max: 100,
+            step: 10,
+            conditionalFieldFor: "vertical",
+            activeWhen: "top"
+          },
+          {
+            name: "bottomOffset",
+            type: "range",
+            label: "Bottom offset position",
+            value: 0,
+            min: 0,
+            max: 100,
+            step: 10,
+            conditionalFieldFor: "vertical",
+            activeWhen: "bottom"
+          },
+          {
+            name: "leftOffset",
+            type: "range",
+            label: "Left offset position",
+            value: 0,
+            min: 0,
+            max: 100,
+            step: 10,
+            conditionalFieldFor: "horizontal",
+            activeWhen: "left"
+          },
+          {
+            name: "rightOffset",
+            type: "range",
+            label: "Right offset position",
+            value: 0,
+            min: 0,
+            max: 100,
+            step: 10,
+            conditionalFieldFor: "horizontal",
+            activeWhen: "right"
+          }
+        ]
+      },
+
+      {
+        title: "Template",
+        class: "tempalte",
+        items: [
+          { label: "Template", type: "select", name: "template", options: [
+            { label: "Dark", value: "dark" },
+            { label: "White", value: "white" },
+          ] },
+        ]
+      },
       {
         title: "Background",
+        class: "background",
         items: [
           { label: "Gradient background", type: "radio", name: "bgType", value: "gradient" },
           { label: "Single color background", type: "radio", name: "bgType", value: "single" },
@@ -61,19 +149,37 @@ const tabsData = [
         conditionalFields: {
           gradient: [
             { label: "Gradient angle degree", type: "range", name: "gradientAngle", min: 0, max: 360, value: 90 },
-            { label: "Gradient First Color", type: "color", name: "gradientColor1", value: "#000000" },
-            { label: "Gradient Second Color", type: "color", name: "gradientColor2", value: "#ffffff" },
+            { 
+              title: "",
+              items: [
+                { label: "", type: "color", class: "gradientColor1", name: "gradientColor1", value: "#000000" },
+                { label: "", type: "text", name: "gradientColor1Code", value: "#000000" }
+              ]
+            },
+            { 
+              title: "",
+              items: [
+                { label: "", type: "color", class: "gradientColor2", name: "gradientColor2", value: "#000000" },
+                { label: "", type: "text", name: "gradientColor2Code", value: "#000000" }
+              ]
+            },
           ],
           single: [
-            { label: "Background Color", type: "color", name: "bgColor", value: "#ffffff" },
+            {
+              items: [
+                { label: "", type: "color", class: "bgColors", name: "bgColor", value: "#000000" },
+                { label: "", type: "text", name: "bgColorCode", value: "#000000" }
+              ]
+             },
           ],
         },
       },
       {
-        title: "Border",
+        title: "Border size and color",
+        class: "setting-border",
         items: [
-          { label: "Border width in (px)", type: "number", name: "borderSize", value: 0 },
-          { label: "Border color", type: "color", name: "borderColor", value: "#000000" },
+          { label: "", type: "number", name: "borderSize", value: 0 },
+          { label: "", type: "color", name: "borderColor", value: "#000000" },
         ],
       },
       { title: "", items: [{ label: "Show drop shadow", type: "checkbox", name: "dropShadow", value: true }] },
@@ -115,30 +221,30 @@ const tabsData = [
         ],
       },
       {
-        title: "Product name style",
+        title: "Product Name",
+        class: "product-name",
         items: [
-          { label: "Font size", type: "number", name: "productNameSize", value: 14 },
-          { label: "Font color", type: "color", name: "productNameColor", value: "#fff" },
-          { label: "Font bold", type: "radio", name: "productNameWeight", value: "bold" },
-          { label: "Font normal", type: "radio", name: "productNameWeight", value: "normal" },
+          { label: "B", type: "checkbox", name: "productNameWeight", value: true },
+          { label: "", type: "number", name: "productNameSize", value: 14 },
+          { label: "", type: "color", name: "productNameColor", value: "#fff" },
         ],
       },
       {
-        title: "Product price style",
+        title: "Price",
+        class: "product-price",
         items: [
-          { label: "Font size", type: "number", name: "productPriceSize", value: 14 },
-          { label: "Font color", type: "color", name: "productPriceColor", value: "#fff" },
-          { label: "Font bold", type: "radio", name: "productPriceWeight", value: "bold" },
-          { label: "Font normal", type: "radio", name: "productPriceWeight", value: "normal" },
+          { label: "B", type: "checkbox", name: "productPriceWeight", value: true },
+          { label: "", type: "number", name: "productPriceSize", value: 14 },
+          { label: "", type: "color", name: "productPriceColor", value: "#fff" },
         ],
       },
       {
-        title: "Compared price style",
+        title: "Compared At Price",
+        class: "product-compare",
         items: [
-          { label: "Font size", type: "number", name: "productCompareSize", value: 14 },
-          { label: "Font color", type: "color", name: "productCompareColor", value: "#aaa" },
-          { label: "Font bold", type: "radio", name: "productCompareFont", value: "bold" },
-          { label: "Font normal", type: "radio", name: "productCompareFont", value: "normal" },
+          { label: "B", type: "checkbox", name: "productCompareFont", value: true },
+          { label: "", type: "number", name: "productCompareSize", value: 14 },
+          { label: "", type: "color", name: "productCompareColor", value: "#aaa" },
         ],
       },
     ],
@@ -149,33 +255,27 @@ const tabsData = [
     title: "Variant & Quantity Selection",
     fields: [
       {
-        title: "Show elements",
+        title: "",
+        class: "setting-elements-variant",
         items: [
           { label: "Show quantity", type: "checkbox", name: "showQuantity", value: true },
           { label: "Show variant", type: "checkbox", name: "showVariant", value: true },
         ],
       },
       {
-        title: "Variant style",
+        title: "",
+        class: "setting-variant",
         items: [
-          { label: "Font bold", type: "radio", name: "variantTextFont", value: "bold" },
-          { label: "Font normal", type: "radio", name: "variantTextFont", value: "normal" },
-          { label: "Font size", type: "number", name: "variantTextSize", value: 14 },
-          { label: "Font color", type: "color", name: "variantTextColor", value: "#fff" },
-          { label: "Varint background color", type: "color", name: "variantBgColor", value: "transparent" },
-        ],
-      },
-      {
-        title: "Quantity style",
-        items: [
-          { label: "Icon size", type: "number", name: "qtyTextSize", value: 14 },
+          { label: "B", type: "checkbox", name: "variantTextFont", value: true },
+          { label: "", type: "number", name: "variantTextSize", value: 14 },
+          { label: "", type: "color", name: "variantTextColor", value: "#fff" },
           { label: "Icon color", type: "color", name: "qtyIconColor", value: "#fff" },
-          { label: "Background color", type: "color", name: "qtyBgColor", value: "" },
+          { label: "Background color", type: "color", name: "variantBgColor", value: "transparent" },
           { label: "Border size in px", type: "number", name: "qtyBorderSize", value: 0 },
-          { label: "Border color", type: "color", name: "qtyBorderColor", value: "" },
+          { label: "", type: "color", name: "qtyBorderColor", value: "" },
           { label: "Border radius", type: "number", name: "qtyBorderRadius", value: 0 },
         ],
-      },
+      }
     ],
   },
 
@@ -185,22 +285,26 @@ const tabsData = [
     fields: [
       {
         title: "Add to cart button",
+        class: "setting-button",
         items: [
-          { label: "Button text", type: "text", name: "buttonText", value: "Add to Cart" },
-          { label: "Text size in px", type: "number", name: "buttonTextSize", value: 14 },
-          { label: "Text color", type: "color", name: "buttonTextColor", value: "#ffffff" },
+          { label: "Button text", type: "text", name: "buttonText", value: "Add to Cart", content: "Use {price} variable to show product price in the button." },
+          { label: "Text size and color", type: "number", name: "buttonTextSize", value: 14 },
+          { label: "", type: "color", name: "buttonTextColor", value: "#ffffff" },
           { label: "Background color", type: "color", name: "buttonBgColor", value: "#005BD3" },
-          { label: "Border width in px", type: "number", name: "buttonBorderWidth", value: 0 },
-          { label: "Border color", type: "color", name: "buttonBorderColor", value: "#005BD3" },
-          { label: "Border radius in px", type: "number", name: "buttonBorderRadius", value: 4 },
+          { label: "Border size and color", type: "number", name: "buttonBorderWidth", value: 0 },
+          { label: "", type: "color", name: "buttonBorderColor", value: "#005BD3" },
+          { label: "Corner radius", type: "number", name: "buttonBorderRadius", value: 4 },
         ],
       },
       {
         title: "Sold out button",
+        class: "setting-sold-out-button",
         items: [
           { label: "Sold out text", type: "text", name: "soldOutText", value: "Sold Out" },
           { label: "Background color", type: "color", name: "soldOutBgColor", value: "#cccccc" },
-          { label: "Border color", type: "color", name: "soldOutBorderColor", value: "#999999" },
+          { label: "Border Size", type: "number", name: "soldOutBorderSize", value: "0" },
+          { label: "", type: "color", name: "soldOutBorderColor", value: "#999999" },
+          { label: "Corner radius", type: "number", name: "buttonBorderRadius", value: 4 },
         ],
       },
     ],
@@ -211,24 +315,53 @@ const tabsData = [
     title: "Announcement Bar",
     fields: [
       {
+        title: "Devices",
+        class: "Responsive",
+        items: [
+          { label: "Desktop", type: "radio", name: "visibilyDevice", value: "showDesktop" },
+          { label: "Mobile", type: "radio", name: "visibilyDevice", value: "showMobile" },
+        ],
+      },
+      {
         title: "Enable",
         items: [
           { label: "Enabled on desktop", type: "checkbox", name: "announcementEnabled", value: true }
         ],
       },
       {
-        title: "Text",
+        title: "",
+        class: "setting-announcement-text",
         items: [
-          { label: "Text", type: "text", name: "announcementText", value: "" },
-          { label: "Font size", type: "number", name: "announcementFontSize", value: "14px" },
-          { label: "Font bold", type: "checkbox", name: "announcementFontWeight", value: true },
-          { label: "Font Italic", type: "checkbox", name: "announcementFontStyle", value: false },
-          { label: "Background color", type: "color", name: "announcementBgColor", value: "#13FFC4" },
-          { label: "Font color", type: "color", name: "announcementFontColor", value: "#635F5F" },
+          // { label: "A", type: "select", name: "announcementFontSize", options:
+          //   [
+          //     { label: "10px", value: "10px" }, 
+          //     { label: "12px", value: "12px" }, 
+          //     { label: "14px", value: "14px" },
+          //     { label: "16px", value: "16px" },
+          //     { label: "18px", value: "18px" },
+          //     { label: "20px", value: "20px" },
+          //     { label: "22px", value: "22px" },
+          //     { label: "24px", value: "24px" },
+          //   ] 
+          // },
+          { label: "B", type: "checkbox", name: "announcementFontWeight", value: true },
+          { label: "I", type: "checkbox", name: "announcementFontStyle", value: false },
+          { label: "U", type: "checkbox", name: "announcementFontDecoration", value: false },
+          { label: "", type: "color", name: "announcementFontColor", value: "#635F5F" },
+          { label: "Text", type: "text", name: "announcementText", value: "Announcement text" }
         ],
       },
       {
+        title:"",
+        class: "setting-announcement-bar-bg",
+        items: [
+          { label: "Background color", type: "color", name: "announcementBgColor", value: "#13FFC4" }
+        ]
+
+      },
+      {
         title: "Timer Settings",
+        class: "timer-settings",
         content: "Same timer settings apply both to desktop and mobile.",
         items: [
           {
@@ -256,7 +389,7 @@ const tabsData = [
         ],
       },
       {
-        title: "Countdown vibility",
+        title: "After timer ends",
         items: [
           { label: "Show", type: "radio", name: "counterVisibilty", value: "show" },
           { label: "Hide", type: "radio", name: "counterVisibilty", value: "hide" },

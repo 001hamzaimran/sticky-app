@@ -17,7 +17,7 @@ const stickyCartSchema = new mongoose.Schema(
         // WHEN TO DISPLAY
         displayMode: {
             type: String,
-            enum: ["always", "in_view", "out_of_view"],
+            enum: ["always", "scroll", "outOfView"],
             default: "always",
         },
 
@@ -31,13 +31,14 @@ const stickyCartSchema = new mongoose.Schema(
             text: { type: String, default: "" },
             backgroundColor: { type: String, default: "#ffffff" },
             textColor: { type: String, default: "#000000" },
-            fontWeight: { type: String, enum: ["normal", "bold"], default: "normal" },
-            fontStyle: { type: String, enum: ["normal", "italic"], default: "normal" },
+            fontWeight: { type: Boolean, default: true },
+            fontStyle: { type: Boolean, default: false },
             underline: { type: Boolean, default: false },
             fontSize: { type: String, default: "16px" }, // added for React mapping
             Countdown: { type: String, default: "hide" },
             coundownDate: { type: String, default: "" },
-            fixedminute: { type: String, default: "" }
+            fixedminute: { type: String, default: "" },
+            TimerEnd: { type: String, default: "hide" }
         },
 
         // PRODUCT DETAILS SECTION
@@ -63,7 +64,7 @@ const stickyCartSchema = new mongoose.Schema(
         // VARIANT SELECTOR
         variantSelector: {
             show: { type: Boolean, default: true },
-            style: { type: String, enum: ["dropdown", "buttons"], default: "dropdown" },
+            // style: { type: String, enum: ["dropdown", "buttons"], default: "dropdown" },
             backgroundColor: { type: String, default: "#ffffff" },
             textColor: { type: String, default: "#000000" },
             fontSize: { type: String, default: "14px" },
@@ -79,7 +80,6 @@ const stickyCartSchema = new mongoose.Schema(
             borderRadius: { type: Number, default: 0 },
             borderSize: { type: Number, default: 0 },
             iconColor: { type: String, default: "#000000" },
-            iconSize: { type: Number, default: 12 },
             fontSize: { type: Number, default: 14 },
         },
 
@@ -92,41 +92,61 @@ const stickyCartSchema = new mongoose.Schema(
             borderColor: { type: String, default: "#000000" },
             fontSize: { type: String, default: "16px" },
             borderRadius: { type: Number, default: "5px" },
-            showIcon: { type: Boolean, default: true },
             action: { type: String, enum: ["cart", "checkout", "stay"], default: "cart" },
             soldOutText: { type: String, default: "Sold out" }, // added for your React code
+            soldOutBackgroundColor: { type: String, default: "#cccccc" }, // added for your React code
+            soldOutBorderSize: { type: Number, default: 0 }, // added for your React code
+            soldOutBorderColor: { type: String, default: "#000000" }, // added for your React code
+            soldOutBorderRadius: { type: Number, default: 0 }, // added for your React code
         },
 
         // MAIN CONTAINER
         container: {
+            onDesktop: { type: Boolean, default: true },
+            onMobile: { type: Boolean, default: true },
             backgroundColor: { type: String, default: "#ffffff" },
-            padding: { type: String, default: "10px" },
+            CondensedValue: { type: String, default: "800" },
             position: {
                 type: String,
                 enum: ["bottom", "top"],
                 default: "bottom",
             },
-            borderRadius: { type: String, default: "8px" },
             borderSize: { type: Number, default: 0 },
             borderColor: { type: String, default: "#000000" },
             shadow: { type: Boolean, default: false },
             fontFamily: { type: String, default: "Arial, sans-serif" },
-            size:{
+            size: {
                 type: String,
-                enum: ["fullWidth", "Condensed"],
-                default: "Condensed",
+                enum: ["full", "condensed"],
+                default: "full",
             },
             horizontalPosition: {
                 type: String,
                 enum: ["left", "right"],
                 default: "right",
             },
+            BottomOffset: {
+                type: Number,
+                default: 0
+            },
+            TopOffset: {
+                type: Number,
+                default: 0
+            },
+            RightOffset: {
+                type: Number,
+                default: 0
+            },
+            LeftOffset: {
+                type: Number,
+                default: 0
+            },
             Template: {
                 type: String,
                 enum: ["dark", "white"],
                 default: "dark",
             },
-            
+
         },
 
 

@@ -175,16 +175,19 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
         text: selectedValues.announcementText || "Get it while it lasts",
         backgroundColor: selectedValues.announcementBgColor || "#14FFC4",
         textColor: selectedValues.announcementFontColor || "#ffffff",
-        fontWeight: ["normal", "bold"].includes(selectedValues.announcementFontWeight)
-          ? selectedValues.announcementFontWeight
-          : "bold",
-        fontStyle: ["normal", "italic"].includes(selectedValues.announcementFontStyle)
-          ? selectedValues.announcementFontStyle
-          : "normal",
-        underline: !!selectedValues.announcementUnderline,
+        // fontWeight: ["normal", "bold"].includes(selectedValues.announcementFontWeight)
+        //   ? selectedValues.announcementFontWeight
+        //   : "bold",
+        // fontStyle: ["normal", "italic"].includes(selectedValues.announcementFontStyle)
+        //   ? selectedValues.announcementFontStyle
+        //   : "normal",
+        fontWeight: selectedValues.announcementFontWeight || true,
+        fontStyle: selectedValues.announcementFontStyle || false,
+        underline: !!selectedValues.announcementFontDecoration,
         Countdown: selectedValues.counterVisibilty,
         coundownDate: selectedValues.timerType === "countdown-to-date" ? selectedValues.countdownDate + " " + selectedValues.countdownTime : null,
         fixedminute: selectedValues.timerType === "fixed-minutes" ? selectedValues.timerDays + " " + selectedValues.timerHour + " " + selectedValues.timerMinutes + " " + selectedValues.timerSeconds : null,
+        TimerEnd: selectedValues.counterVisibilty,
       },
 
       productDetails: {
@@ -208,22 +211,21 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
 
       variantSelector: {
         show: !!selectedValues.showVariant,
-        textColor: selectedValues.variantTextColor || "#ffffff",
-        isBold: selectedValues.variantTextFont === "bold",
-        fontSize: Number(selectedValues.variantTextSize) || 14,
         backgroundColor: selectedValues.variantBgColor || " #000000",
+        textColor: selectedValues.variantTextColor || "#ffffff",
+        fontSize: Number(selectedValues.variantTextSize) || 14,
+        isBold: selectedValues.variantTextFont === "bold",
       },
 
       quantitySelector: {
         show: !!selectedValues.showQuantity,
-        textColor: selectedValues.qtyTextColor || "#FFFFFF",
         fontSize: Number(selectedValues.qtyTextSize) || 14,
+        textColor: selectedValues.qtyTextColor || "#FFFFFF",
         borderColor: selectedValues.qtyBorderColor || "#CCCCCC",
         borderSize: Number(selectedValues.qtyBorderSize) || 0,
         backgroundColor: selectedValues.qtyBgColor || " #000000",
-        // iconColor: selectedValues.qtyIconColor || "#EEEEEE",
-        IconSize: Number(selectedValues.qtyIconSize) || 12,
-        iconBackgroundColor: selectedValues.qtyIconBgColor || " #000000",
+        iconColor: selectedValues.qtyIconColor || "#EEEEEE",
+        // iconBackgroundColor: selectedValues.qtyIconBgColor || " #000000",
         borderRadius: Number(selectedValues.qtyBorderRadius) || 0,
       },
 
@@ -234,26 +236,36 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
         action: ["cart", "checkout", "stay"].includes(selectedValues.buttonAction)
           ? selectedValues.buttonAction
           : "cart",
-        fontWeight: ["normal", "bold"].includes(selectedValues.buttonFontWeight)
-          ? selectedValues.buttonFontWeight
-          : "bold",
         fontSize: Number(selectedValues.buttonTextSize) || 16,
         borderSize: Number(selectedValues.buttonBorderWidth) || 0,
         borderRadius: Number(selectedValues.buttonBorderRadius) || 4,
         borderColor: selectedValues.buttonBorderColor || "#000000",
-        borderWidth: Number(selectedValues.buttonBorderWidth) || 0,
+        soldOutText: selectedValues.soldOutText || "Sold Out",
+        soldOutBackgroundColor: selectedValues.soldOutBgColor || "#000000",
+        soldOutBorderSize: Number(selectedValues.soldOutBorderSize) || 0,
+        soldOutBorderColor: selectedValues.soldOutBorderColor || "#000000",
+        soldOutBorderRadius: Number(selectedValues.buttonBorderRadius) || 0,
       },
       container: {
+        onDesktop: selectedValues.showDektopDevice || true,
+        onMobile: selectedValues.showMobileDevice || true,
         borderSize: Number(selectedValues.borderSize) || 0,
         borderColor: selectedValues.borderColor || "#000000",
-        borderRadius: Number(selectedValues.containerBorderRadius) || 8,
         shadow: !!selectedValues.dropShadow,
-        position: selectedValues.position || "bottom",
+        position: selectedValues.positionVertical || "bottom",
         backgroundColor:
           selectedValues.bgType === "gradient"
             ? `linear-gradient(${selectedValues.gradientAngle ?? 0}deg, ${selectedValues.gradientColor1}, ${selectedValues.gradientColor2})`
             : selectedValues.bgColor || "#000000",
         fontFamily: selectedValues.fontFamily || "Arial, sans-serif",
+        size: selectedValues.size || "full",
+        CondensedValue: selectedValues.customWidth || 800,
+        horizontalPosition: selectedValues.positionHorizontal === "right" ? "right" : "left" || "left",
+        BottomOffset: Number(selectedValues.bottomOffset) || 0,
+        TopOffset: Number(selectedValues.topOffset) || 0,
+        RightOffset: Number(selectedValues.rightOffset) || 0,
+        LeftOffset: Number(selectedValues.leftOffset) || 0,
+        Template: selectedValues.template || "dark",
       },
 
 
@@ -352,17 +364,20 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
 
       // Setting
       hideSoldOut: addToCartButton?.soldOutText ? true : false,
+      showBar: stickyCartSettings.displayMode ?? "scroll",
+      stickyCart: stickyCartSettings.displayScope === "all_products" ? "all-products" : stickyCartSettings.displayScope === "specific_products" ? "specific-products" : stickyCartSettings.displayScope ?? "all-products",
+
 
       // Banner
+      counterVisibilty: banner?.TimerEnd ?? "hide",
+      announcementFontSize: banner?.fontSize ?? "14",
+      announcementFontStyle: banner?.fontStyle ?? true,
+      announcementFontWeight: banner?.fontWeight ?? true,
+      announcementFontDecoration: banner?.underline ?? false,
       announcementEnabled: banner?.show ?? false,
       announcementText: banner?.text ?? "Get it while it lasts",
       announcementBgColor: banner?.backgroundColor ?? "#00FFC2",
       announcementFontColor: banner?.textColor ?? "#000000",
-      // announcementFontWeight: banner?.fontWeight ?? "normal",
-      // announcementFontStyle: banner?.fontStyle ?? "normal",
-      // announcementUnderline: banner?.underline ?? false,
-      announcementFontSize: banner?.fontSize ?? "14",
-      // counterVisibilty: banner?.Countdown ?? "hide",
       timerType:
         banner?.coundownDate && banner.coundownDate !== "" && banner.coundownDate !== null
           ? "countdown-to-date"
@@ -392,35 +407,38 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
 
 
 
-      // Product detailsf
+      // Product details
       showImage: productDetails?.showImage ?? true,
       showName: productDetails?.showTitle ?? true,
-      productNameColor: productDetails?.titleColor ?? "#FFFFFF",
-      productNameFont: productDetails?.titleBold ? "bold" : "normal",
-      productNameSize: productDetails?.titleSize ?? 14,
-      // productPriceWeight: productDetails?.priceBold ? "bold" : "normal",
-      productPriceColor: productDetails?.priceColor ?? "#FFFFFF",
       showPrice: productDetails?.showPrice ?? true,
-      productCompareFont: productDetails?.comparePriceBold ? "bold" : "normal",
       showComparedPrice: productDetails?.showComparePrice ?? false,
+      productNameColor: productDetails?.titleColor ?? "#FFFFFF",
+      productNameWeight: productDetails?.titleBold ?? true,
+      productNameSize: productDetails?.titleSize ?? 14,
+      productPriceColor: productDetails?.priceColor ?? "#FFFFFF",
+      productCompareFont: productDetails?.comparePriceBold ?? false,
       productCompareColor: productDetails?.comparePriceColor ?? "#aaa",
+      productPriceSize: productDetails?.priceSize ?? 14,
+      productCompareSize: productDetails?.comparePriceSize ?? 14,
+      productNameSize: productDetails?.titleSize ?? 14,
+      productPriceWeight: productDetails?.priceBold ?? true,
 
       // Variant
       showVariant: variantSelector?.show ?? true,
-      // variantTextFont: variantSelector?.isBold ? "bold" : "normal",
       variantTextSize: variantSelector?.fontSize ?? 14,
       variantTextColor: variantSelector?.textColor ?? "#FFFFFF",
       variantBgColor: variantSelector?.backgroundColor ?? "transparent",
+      variantTextWeight: variantSelector?.isBold ?? false,
+      variantBorderColor: quantitySelector?.borderColor ?? "#000000",
+      variantBorderSize: quantitySelector?.borderSize ?? 1,
+      variantBorderRadius: quantitySelector?.borderRadius ?? 0,
 
       // Quantity
       showQuantity: quantitySelector?.show ?? true,
       qtyTextSize: quantitySelector?.fontSize ?? 14,
       qtyTextColor: quantitySelector?.textColor ?? "#FFFFFF",
-      qtyTextBold: quantitySelector?.isBold ?? false,
-      // qtyIconColor: quantitySelector?.iconColor ?? "#EEEEEE",
-      qtyIconSize: quantitySelector?.IconSize ?? 12,
-      qtyBorderColor: quantitySelector?.borderColor ?? "#CCCCCC",
-      qtyBorderSize: quantitySelector?.borderWidth ?? 1,
+      qtyIconColor: quantitySelector?.iconColor ?? "#000000",
+      // qtyBorderColor: quantitySelector?.borderColor ?? "#CCCCCC",
       qtyBorderRadius: quantitySelector?.borderRadius ?? 0,
 
       // Button
@@ -434,7 +452,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       buttonBorderRadius: addToCartButton?.borderRadius ?? 4,
       buttonAction: addToCartButton?.action ?? "cart",
       soldOutText: addToCartButton?.soldOutText ?? "Sold Out",
-      soldOutBgColor: addToCartButton?.soldOutBgColor ?? "#FFFFFF",
+      soldOutBgColor: addToCartButton?.soldOutBackgroundColor ?? "#FFFFFF",
       soldOutBorderColor: addToCartButton?.soldOutBorderColor ?? "#000000",
 
       // Containers
@@ -444,6 +462,18 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       borderSize: container?.borderSize ?? 0,
       borderColor: container?.borderColor ?? "#000000",
       fontFamily: container?.fontFamily ?? "Arial, sans-serif",
+      bottomOffset: container?.BottomOffset ?? 0,
+      customWidth: container?.CondensedValue ?? 800,
+      leftOffset: container?.LeftOffset ?? 0,
+      rightOffset: container?.RightOffset ?? 0,
+      topOffset: container?.TopOffset ?? 0,
+      template: container?.Template ?? "dark",
+      positionVertical: container?.position ?? "bottom",
+      positionHorizontal: container?.positionHorizontal ?? "left",
+      showDektopDevice: container?.onDesktop ?? true,
+      showMobileDevice: container?.onMobile ?? true,
+      size: container?.size ?? "full",
+
     }));
   }, [stickyCartSettings]);
 
@@ -634,7 +664,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
                                         />
                                       )}
 
-                                      
+
 
                                       {condField.type === "color" && (
                                         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -687,15 +717,15 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
                                       )}
                                     </div>
                                   ))}
-                                  {/* Sticky Cart Add Button */}
-                                    {isActive && (item.value === "specific-products" || item.value === "exclude-products") && (
-                                      <div className="show-sticky-cart-tab-container">
-                                        <p>No products selected.</p>
-                                        <Button primary onClick={toggleModal}>
-                                          Add 
-                                        </Button>
-                                      </div>
-                                    )}
+                                {/* Sticky Cart Add Button */}
+                                {isActive && (item.value === "specific-products" || item.value === "exclude-products") && (
+                                  <div className="show-sticky-cart-tab-container">
+                                    <p>No products selected.</p>
+                                    <Button primary onClick={toggleModal}>
+                                      Add
+                                    </Button>
+                                  </div>
+                                )}
                               </>
                             )}
 

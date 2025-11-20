@@ -25,7 +25,7 @@ compliance_topics = ["shop/redact"]
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products"
+scopes = "write_products,read_themes "
 
 [auth]
 redirect_urls = [

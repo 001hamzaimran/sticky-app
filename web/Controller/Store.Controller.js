@@ -1,5 +1,5 @@
 import StoreModel from "../Models/Store.Model.js";
-import shopify from "../shopify.js"; 
+import shopify from "../shopify.js";
 
 export const getShop = async (req, res) => {
     try {
@@ -32,6 +32,27 @@ export const getShop = async (req, res) => {
         } else {
             return res.status(404).json({ message: "Store not found" });
         }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal server Error" });
+    }
+};
+
+export const disablingFirstVisit = async (req, res) => {
+    try {
+        const { storeName } = req.params;
+
+        const updatedStore = await StoreModel.findOneAndUpdate(
+            { storeName },
+            { firstVisit: false },
+            { new: true }
+        );
+
+        if (!updatedStore) {
+            return res.status(404).json({ message: "Store not found" });
+        }
+
+        return res.status(200).json(updatedStore);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Internal server Error" });

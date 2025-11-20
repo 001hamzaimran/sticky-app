@@ -18,8 +18,8 @@ export default function App() {
       <BrowserRouter>
         <QueryProvider>
           <NavMenu>
-            <Link href="/" rel="home" />
-            {/* <Link to="/Customize">Customize</Link> */}
+            <Link to="/" rel="home" />
+            {/* <Link to="/first">first</Link> */}
             {/* <a href="/pagename">{t("NavigationMenu.pageName")}</a> */}
           </NavMenu>
           <Routes pages={pages} />

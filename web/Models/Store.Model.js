@@ -17,6 +17,10 @@ const StoreSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    firstVisit: {
+        type: Boolean,
+        default: true
+    }
 
 }, { timestamps: true })
 

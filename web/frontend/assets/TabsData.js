@@ -56,7 +56,7 @@ const tabsData = [
         ],
         conditionalFields: {
             condensed: [
-              { label: "Custom Width", type: "range", name: "width", min: 0, max: 100, step: 10, value: 100 },
+              { label: "Custom Width", type: "range", name: "width", min: 0, max: 25, step: 10, },
               { label: "", type: "text", name: "customWidth", value: "800" },
             ]
           }
@@ -88,8 +88,8 @@ const tabsData = [
             label: "Top offset position",
             value: 0,
             min: 0,
-            max: 100,
-            step: 10,
+            max: 25,
+            step: 2,
             conditionalFieldFor: "vertical",
             activeWhen: "top"
           },
@@ -99,7 +99,7 @@ const tabsData = [
             label: "Bottom offset position",
             value: 0,
             min: 0,
-            max: 100,
+            max: 25,
             step: 10,
             conditionalFieldFor: "vertical",
             activeWhen: "bottom"
@@ -110,7 +110,7 @@ const tabsData = [
             label: "Left offset position",
             value: 0,
             min: 0,
-            max: 100,
+            max: 25,
             step: 10,
             conditionalFieldFor: "horizontal",
             activeWhen: "left"
@@ -121,7 +121,7 @@ const tabsData = [
             label: "Right offset position",
             value: 0,
             min: 0,
-            max: 100,
+            max: 25,
             step: 10,
             conditionalFieldFor: "horizontal",
             activeWhen: "right"
@@ -182,9 +182,10 @@ const tabsData = [
           { label: "", type: "color", name: "borderColor", value: "#000000" },
         ],
       },
-      { title: "", items: [{ label: "Show drop shadow", type: "checkbox", name: "dropShadow", value: true }] },
+      { title: "", class: "setting-shadow", items: [{ label: "Show drop shadow", type: "checkbox", name: "dropShadow", value: true }] },
       {
         title: "Font",
+        class: "font-family",
         items: [
           {
             label: "Font",
@@ -212,6 +213,14 @@ const tabsData = [
   {
     title: "Product",
     fields: [
+      {
+        title: "Devices",
+        class: "Responsive",
+        items: [
+          { label: "Desktop", type: "radio", name: "visibilyDevice", value: "showDesktop" },
+          { label: "Mobile", type: "radio", name: "visibilyDevice", value: "showMobile" },
+        ],
+      },
       {
         items: [
           { label: "Show Product Image", type: "checkbox", name: "showImage", default: false },
@@ -242,7 +251,7 @@ const tabsData = [
         title: "Compared At Price",
         class: "product-compare",
         items: [
-          { label: "B", type: "checkbox", name: "productCompareFont", value: true },
+          { label: "B", type: "checkbox", name: "productCompareWeight", value: true },
           { label: "", type: "number", name: "productCompareSize", value: 14 },
           { label: "", type: "color", name: "productCompareColor", value: "#aaa" },
         ],
@@ -255,6 +264,14 @@ const tabsData = [
     title: "Variant & Quantity Selection",
     fields: [
       {
+        title: "Devices",
+        class: "Responsive",
+        items: [
+          { label: "Desktop", type: "radio", name: "visibilyDevice", value: "showDesktop" },
+          { label: "Mobile", type: "radio", name: "visibilyDevice", value: "showMobile" },
+        ],
+      },
+      {
         title: "",
         class: "setting-elements-variant",
         items: [
@@ -266,14 +283,14 @@ const tabsData = [
         title: "",
         class: "setting-variant",
         items: [
-          { label: "B", type: "checkbox", name: "variantTextFont", value: true },
+          { label: "B", type: "checkbox", name: "variantTextWeight", value: true },
           { label: "", type: "number", name: "variantTextSize", value: 14 },
           { label: "", type: "color", name: "variantTextColor", value: "#fff" },
           { label: "Icon color", type: "color", name: "qtyIconColor", value: "#fff" },
           { label: "Background color", type: "color", name: "variantBgColor", value: "transparent" },
-          { label: "Border size in px", type: "number", name: "qtyBorderSize", value: 0 },
-          { label: "", type: "color", name: "qtyBorderColor", value: "" },
-          { label: "Border radius", type: "number", name: "qtyBorderRadius", value: 0 },
+          { label: "Border size in px", type: "number", name: "variantBorderSize", value: 0 },
+          { label: "", type: "color", name: "variantBorderColor", value: "#000000" },
+          { label: "Border radius", type: "number", name: "variantBorderRadius", value: 0 },
         ],
       }
     ],
@@ -283,6 +300,14 @@ const tabsData = [
   {
     title: "Button",
     fields: [
+      {
+        title: "Devices",
+        class: "Responsive",
+        items: [
+          { label: "Desktop", type: "radio", name: "visibilyDevice", value: "showDesktop" },
+          { label: "Mobile", type: "radio", name: "visibilyDevice", value: "showMobile" },
+        ],
+      },
       {
         title: "Add to cart button",
         class: "setting-button",
@@ -324,6 +349,7 @@ const tabsData = [
       },
       {
         title: "Enable",
+        class: "setting-announcement-enable",
         items: [
           { label: "Enabled on desktop", type: "checkbox", name: "announcementEnabled", value: true }
         ],
@@ -332,21 +358,21 @@ const tabsData = [
         title: "",
         class: "setting-announcement-text",
         items: [
-          // { label: "A", type: "select", name: "announcementFontSize", options:
-          //   [
-          //     { label: "10px", value: "10px" }, 
-          //     { label: "12px", value: "12px" }, 
-          //     { label: "14px", value: "14px" },
-          //     { label: "16px", value: "16px" },
-          //     { label: "18px", value: "18px" },
-          //     { label: "20px", value: "20px" },
-          //     { label: "22px", value: "22px" },
-          //     { label: "24px", value: "24px" },
-          //   ] 
-          // },
+          { label: "", type: "select", name: "announcementFontSize", options:
+            [
+              { label: "10px", value: "10px" }, 
+              { label: "12px", value: "12px" }, 
+              { label: "14px", value: "14px" },
+              { label: "16px", value: "16px" },
+              { label: "18px", value: "18px" },
+              { label: "20px", value: "20px" },
+              { label: "22px", value: "22px" },
+              { label: "24px", value: "24px" },
+            ] 
+          },
           { label: "B", type: "checkbox", name: "announcementFontWeight", value: true },
-          { label: "I", type: "checkbox", name: "announcementFontStyle", value: false },
-          { label: "U", type: "checkbox", name: "announcementFontDecoration", value: false },
+          { label: "I", type: "checkbox", name: "announcementFontStyle", value: true },
+          { label: "U", type: "checkbox", name: "announcementFontDecoration", value: true },
           { label: "", type: "color", name: "announcementFontColor", value: "#635F5F" },
           { label: "Text", type: "text", name: "announcementText", value: "Announcement text" }
         ],
@@ -390,9 +416,10 @@ const tabsData = [
       },
       {
         title: "After timer ends",
+        class: "timer-after-end",
         items: [
-          { label: "Show", type: "radio", name: "counterVisibilty", value: "show" },
           { label: "Hide", type: "radio", name: "counterVisibilty", value: "hide" },
+          { label: "Show", type: "radio", name: "counterVisibilty", value: "show" },
         ]
       }
     ],

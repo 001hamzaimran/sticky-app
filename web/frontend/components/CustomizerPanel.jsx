@@ -28,6 +28,9 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
   const [loading, setLoading] = useState(false);
 
 
+
+
+
   const handleColorChange = (name, value) => {
     let newValue = value;
 
@@ -55,35 +58,6 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       return updated;
     });
   };
-
-
-  const handleSizeChange = (name, value, item) => {
-  setSelectedValues(prev => {
-    const updated = { ...prev };
-
-    // RANGE → TEXT (slider moved)
-    if (item.type === "range") {
-      const px = Math.round((value / 100) * 1440); // convert %
-      updated[item.name] = value; // slider value
-      updated["customWidth"] = px > 1440 ? 1440 : px; // text field px
-    }
-
-    // TEXT → RANGE (custom width typed)
-    if (item.type === "text") {
-      let px = parseInt(value) || 0;
-      if (px > 1440) px = 1440; // limit
-      const percent = Math.round((px / 1440) * 100);
-
-      updated["customWidth"] = px;
-      updated["width"] = percent; // slider update
-    }
-
-    return updated;
-  });
-};
-
-
-
 
   const getStickyCartSettings = async () => {
     setLoading(true);
@@ -174,7 +148,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
     const payload = {
       shop: storeData.domain,
       enabled: true,
-
+      displayMode: selectedValues.showBar || "always",
       // displayScope should match schema enum
       displayScope:
         selectedValues.stickyCart === "always"
@@ -247,7 +221,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
         borderColor: selectedValues.qtyBorderColor || "#CCCCCC",
         borderSize: Number(selectedValues.qtyBorderSize) || 0,
         backgroundColor: selectedValues.qtyBgColor || " #000000",
-        iconColor: selectedValues.qtyIconColor || "#EEEEEE",
+        // iconColor: selectedValues.qtyIconColor || "#EEEEEE",
         IconSize: Number(selectedValues.qtyIconSize) || 12,
         iconBackgroundColor: selectedValues.qtyIconBgColor || " #000000",
         borderRadius: Number(selectedValues.qtyBorderRadius) || 0,
@@ -269,24 +243,6 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
         borderColor: selectedValues.buttonBorderColor || "#000000",
         borderWidth: Number(selectedValues.buttonBorderWidth) || 0,
       },
-
-      // container: {
-      //   borderRadius: Number(selectedValues.containerBorderRadius) || 8,
-      //   shadow: !!selectedValues.dropShadow,
-      //   position: selectedValues.position || "bottom",
-      //   backgroundColor:
-      //     selectedValues.bgType === "gradient"
-      //     ? (selectedValues.gradientAngle &&
-      //       selectedValues.gradientColor1 &&
-      //       selectedValues.gradientColor2)
-      //       ? `linear-gradient(${selectedValues.gradientAngle}deg, ${selectedValues.gradientColor1}, ${selectedValues.gradientColor2})`
-      //       : "#000000" // fallback if any undefined
-      //     : selectedValues.bgColor || "#000000",
-      //   // backgroundColor:
-      //   //   selectedValues.bgType === "gradient"
-      //   //     ? `linear-gradient(${selectedValues.gradientAngle}deg, ${selectedValues.gradientColor1}, ${selectedValues.gradientColor2})`
-      //   //     : selectedValues.bgColor || "#000000",
-      // },
       container: {
         borderSize: Number(selectedValues.borderSize) || 0,
         borderColor: selectedValues.borderColor || "#000000",
@@ -402,11 +358,11 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       announcementText: banner?.text ?? "Get it while it lasts",
       announcementBgColor: banner?.backgroundColor ?? "#00FFC2",
       announcementFontColor: banner?.textColor ?? "#000000",
-      announcementFontWeight: banner?.fontWeight ?? "normal",
-      announcementFontStyle: banner?.fontStyle ?? "normal",
-      announcementUnderline: banner?.underline ?? false,
+      // announcementFontWeight: banner?.fontWeight ?? "normal",
+      // announcementFontStyle: banner?.fontStyle ?? "normal",
+      // announcementUnderline: banner?.underline ?? false,
       announcementFontSize: banner?.fontSize ?? "14",
-      counterVisibilty: banner?.Countdown ?? "hide",
+      // counterVisibilty: banner?.Countdown ?? "hide",
       timerType:
         banner?.coundownDate && banner.coundownDate !== "" && banner.coundownDate !== null
           ? "countdown-to-date"
@@ -442,7 +398,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       productNameColor: productDetails?.titleColor ?? "#FFFFFF",
       productNameFont: productDetails?.titleBold ? "bold" : "normal",
       productNameSize: productDetails?.titleSize ?? 14,
-      productPriceWeight: productDetails?.priceBold ? "bold" : "normal",
+      // productPriceWeight: productDetails?.priceBold ? "bold" : "normal",
       productPriceColor: productDetails?.priceColor ?? "#FFFFFF",
       showPrice: productDetails?.showPrice ?? true,
       productCompareFont: productDetails?.comparePriceBold ? "bold" : "normal",
@@ -451,7 +407,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
 
       // Variant
       showVariant: variantSelector?.show ?? true,
-      variantTextFont: variantSelector?.isBold ? "bold" : "normal",
+      // variantTextFont: variantSelector?.isBold ? "bold" : "normal",
       variantTextSize: variantSelector?.fontSize ?? 14,
       variantTextColor: variantSelector?.textColor ?? "#FFFFFF",
       variantBgColor: variantSelector?.backgroundColor ?? "transparent",
@@ -461,12 +417,10 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       qtyTextSize: quantitySelector?.fontSize ?? 14,
       qtyTextColor: quantitySelector?.textColor ?? "#FFFFFF",
       qtyTextBold: quantitySelector?.isBold ?? false,
-      qtyIconColor: quantitySelector?.iconColor ?? "#EEEEEE",
+      // qtyIconColor: quantitySelector?.iconColor ?? "#EEEEEE",
       qtyIconSize: quantitySelector?.IconSize ?? 12,
-      qtyIconBgColor: quantitySelector?.iconBackgroundColor ?? "#000000",
       qtyBorderColor: quantitySelector?.borderColor ?? "#CCCCCC",
       qtyBorderSize: quantitySelector?.borderWidth ?? 1,
-      qtyBgColor: quantitySelector?.backgroundColor ?? "#000000",
       qtyBorderRadius: quantitySelector?.borderRadius ?? 0,
 
       // Button
@@ -499,34 +453,50 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
     setSelectedValues((prev) => ({
       ...prev,
       hideSoldOut: true,
+      topOffset: 0,
+      bottomOffset: 0,
+      leftOffset: 0,
+      rightOffset: 0,
+
+      // produt default values
       showImage: true,
       showName: true,
       showPrice: true,
       showComparedPrice: true,
       productCompareColor: "#aaa",
+      productCompareWeight: false,
+      // Quantity + Variant
+      variantTextWeight: true,
       showQuantity: true,
       showVariant: true,
-      variantBgColor: "transparent",
       variantTextColor: "#fff",
+
+
+      // Announcement
+      announcementHasTimer: false,
       announcementFontSize: "14",
       announcementEnabled: true,
       announcementFontColor: "#635F5F",
-      announcementFontStyle: "normal",
+      announcementFontWeight: true,
+      announcementFontStyle: false,
+      announcementFontDecoration: false,
 
       announcementText: "ðŸ”¥ Hello Wolrd!",
       visibilyDevice: "showDesktop",
-      showDektopDevice:true,
-      showMobileDevice:true,
+      showDektopDevice: true,
+      showMobileDevice: true,
       positionVertical: "bottom",
-      size:"full",
+      positionHorizontal: "right",
+      size: "full",
       position: "bottom",
       bgType: "single",
       bgColor: "#1a1a1a",
+      qtyIconColor: "#000000",
       buttonAction: "stay",
       showBar: "always",
-      productNameWeight: prev.productNameWeight || "bold",
-      productPriceWeight: prev.productPriceWeight || "normal",
-      productCompareFont: prev.productCompareFont || "normal",
+      productNameWeight: true,
+      productPriceWeight: true,
+      productCompareFont: false,
       counterVisibilty: "hide",
     }));
   }, []);
@@ -536,9 +506,9 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
   };
 
 
-
   const toggleModal = () => setActiveModal(!activeModal);
   const handleAddButtonClick = () => toggleModal();
+
 
   return (
     <>
@@ -577,6 +547,21 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
                       {field.title && <h4>{field.title}</h4>}
 
                       {field.items?.map((item, j) => {
+
+                        // POSITION OFFSET LOGIC (vertical/horizontal)
+                        if (item.conditionalFieldFor) {
+                          const isVertical = item.conditionalFieldFor === "vertical";
+                          const activeValue = isVertical
+                            ? selectedValues.positionVertical
+                            : selectedValues.positionHorizontal;
+
+                          // Only show when matched
+                          if (activeValue !== item.activeWhen) {
+                            return null; // hide
+                          }
+                        }
+
+
                         const isActive = selectedValues[item.name] === item.value;
                         const activeConditionalFields = isActive
                           ? item.conditionalFields ?? field.conditionalFields?.[item.value] ?? []
@@ -607,65 +592,67 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
                                     >
                                       {/* Single Field Types */}
                                       {condField.type === "range" && (
-                                        <RangeSlider 
-                                          labelHidden value={selectedValues[condField.name] || condField.value} 
-                                          onChange={(value) => handleChange(condField.name, value)} 
-                                          min={condField.min} 
-                                          max={condField.max} 
-                                          output 
-                                        />)} 
-                                        {condField.type === "date" && (
-                                          <TextField 
-                                            label={condField.label} 
-                                            type="date" 
-                                            value={selectedValues[condField.name] ?? condField.value} 
-                                            onChange={(value) => handleChange(condField.name, value)} 
+                                        <RangeSlider
+                                          labelHidden value={selectedValues[condField.name] || condField.value}
+                                          onChange={(value) => handleChange(condField.name, value)}
+                                          min={condField.min}
+                                          max={condField.max}
+                                          output
+                                        />)}
+                                      {condField.type === "date" && (
+                                        <TextField
+                                          label={condField.label}
+                                          type="date"
+                                          value={selectedValues[condField.name] ?? condField.value}
+                                          onChange={(value) => handleChange(condField.name, value)}
+                                        />
+                                      )}
+                                      {condField.type === "time" && (
+                                        <TextField
+                                          label={condField.label}
+                                          type="time" value={selectedValues[condField.name] ?? condField.value}
+                                          onChange={(value) => handleChange(condField.name, value)
+
+                                          }
+                                        />
+                                      )}
+                                      {condField.type === "text" && (
+                                        <TextField
+                                          label={condField.label}
+                                          type="text" value={selectedValues[condField.name] ?? condField.value}
+                                          onChange={(value) => handleChange(condField.name, value)
+
+                                          }
+                                        />
+                                      )}
+                                      {condField.type === "number" && (
+                                        <TextField
+                                          label={condField.label}
+                                          type="number"
+                                          value={String(selectedValues[condField.name] ?? condField.value ?? 0)}
+                                          onChange={(value) => handleChange(condField.name, parseInt(value) || 0)}
+                                        />
+                                      )}
+
+                                      
+
+                                      {condField.type === "color" && (
+                                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                          <TextField
+                                            label={condField.label}
+                                            type="color"
+                                            value={selectedValues[condField.name] || condField.value}
+                                            onChange={(value) => handleColorChange(condField.name, value)}
                                           />
-                                         )} 
-                                         {condField.type === "time" && (
-                                            <TextField 
-                                            label={condField.label} 
-                                            type="time" value={selectedValues[condField.name] ?? condField.value} 
-                                            onChange={(value) => handleChange(condField.name, value)
-
-                                            } 
-                                            />
-                                            )} 
-                                            {condField.type === "text" && (
-                                            <TextField 
-                                            label={condField.label} 
-                                            type="text" value={selectedValues[condField.name] ?? condField.value} 
-                                            onChange={(value) => handleChange(condField.name, value)
-
-                                            } 
-                                            />
-                                            )} 
-                                            {condField.type === "number" && (
-                                              <TextField 
-                                                label={condField.label} 
-                                                type="number" 
-                                                value={String(selectedValues[condField.name] ?? condField.value ?? 0)} 
-                                                onChange={(value) => handleChange(condField.name, parseInt(value) || 0)} 
-                                              />
-                                            )}
-
-                                          {condField.type === "color" && (
-                                            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                                              <TextField
-                                                label={condField.label}
-                                                type="color"
-                                                value={selectedValues[condField.name] || condField.value}
-                                                onChange={(value) => handleColorChange(condField.name, value)}
-                                              />
-                                              {/* HEX input */}
-                                              <TextField
-                                                label="HEX"
-                                                type="text"
-                                                value={selectedValues[condField.name] || condField.value}
-                                                onChange={(value) => handleColorChange(condField.name, value)}
-                                              />
-                                            </div>
-                                          )}
+                                          {/* HEX input */}
+                                          <TextField
+                                            label="HEX"
+                                            type="text"
+                                            value={selectedValues[condField.name] || condField.value}
+                                            onChange={(value) => handleColorChange(condField.name, value)}
+                                          />
+                                        </div>
+                                      )}
 
                                       {/* Gradient group items */}
                                       {condField.items && (
@@ -700,6 +687,15 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
                                       )}
                                     </div>
                                   ))}
+                                  {/* Sticky Cart Add Button */}
+                                    {isActive && (item.value === "specific-products" || item.value === "exclude-products") && (
+                                      <div className="show-sticky-cart-tab-container">
+                                        <p>No products selected.</p>
+                                        <Button primary onClick={toggleModal}>
+                                          Add 
+                                        </Button>
+                                      </div>
+                                    )}
                               </>
                             )}
 
@@ -742,6 +738,8 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
                             {item.type === "range" && (
                               <RangeSlider
                                 label={item.label}
+                                min={0}
+                                max={25}
                                 checked={selectedValues[item.name] || false}
                                 onChange={(newChecked) => handleChange(item.name, newChecked)}
                               />

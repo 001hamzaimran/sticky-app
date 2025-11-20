@@ -111,7 +111,24 @@ const stickyCartSchema = new mongoose.Schema(
             borderColor: { type: String, default: "#000000" },
             shadow: { type: Boolean, default: false },
             fontFamily: { type: String, default: "Arial, sans-serif" },
+            size:{
+                type: String,
+                enum: ["fullWidth", "Condensed"],
+                default: "Condensed",
+            },
+            horizontalPosition: {
+                type: String,
+                enum: ["left", "right"],
+                default: "right",
+            },
+            Template: {
+                type: String,
+                enum: ["dark", "white"],
+                default: "dark",
+            },
+            
         },
+
 
         createdAt: { type: Date, default: Date.now },
         updatedAt: { type: Date, default: Date.now },

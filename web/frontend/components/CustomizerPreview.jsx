@@ -9,13 +9,13 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
 
   return (
     <div
-      className={`customizer-preview ${selectedValues.visibilyDevice === "showMobile" ? "mobile-device" : ""}`}
+      className={`customizer-preview ${selectedValues.visibilyDevice === "showMobile" ? "mobile-device": ""}`}
       style={{
         width:
           selectedValues.visibilyDevice === "showDesktop"
             ? "100%"
             : selectedValues.visibilyDevice === "showMobile"
-              ? "320px"
+              ? "375px"
               : "100%", // fallback
         transition: "width 0.3s ease",
         margin: "0 auto",
@@ -62,10 +62,35 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
           borderStyle: "solid",
           color: selectedValues?.fontColor || "#fff",
           fontFamily: selectedValues?.fontFamily || "inherit",
-          top: selectedValues?.positionVertical === "top" ? "50px" : "unset",
-          bottom: selectedValues?.positionVertical === "bottom" ? "0" : "unset",
-          left: selectedValues?.positionHorizontal === "left" ? "0" : "unset",
-          right: selectedValues?.positionHorizontal === "right" ? "0" : "unset",
+          // top: selectedValues?.positionVertical === "top" ? "50px" : "unset",
+          // bottom: selectedValues?.positionVertical === "bottom" ? "0" : "unset",
+          // left: selectedValues?.positionHorizontal === "left" ? "0" : "unset",
+          // right: selectedValues?.positionHorizontal === "right" ? "0" : "unset",
+          top:
+            selectedValues.positionVertical === "top"
+              ? `${Math.min(selectedValues.topOffset ?? 0, 25)}%` // max 25%
+              : "unset",
+
+          // BOTTOM
+          bottom:
+            selectedValues.positionVertical === "bottom"
+              ? `${Math.min(selectedValues.bottomOffset ?? 0, 25)}%` // max 25%
+              : "unset",
+
+          // LEFT
+          left:
+            selectedValues.positionHorizontal === "left"
+              ? `${Math.min(selectedValues.leftOffset ?? 0, 25)}%` // max 25%
+              : "unset",
+
+          // RIGHT
+          right:
+            selectedValues.positionHorizontal === "right"
+              ? `${Math.min(selectedValues.rightOffset ?? 0, 25)}%` // max 25%
+              : "unset",
+
+
+
           width: selectedValues.size === "full" ? "100%" : selectedValues.size === "condensed" ? `${selectedValues.customWidth}px` : "auto",
           
         }}
@@ -113,7 +138,7 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                     <h2
                       className="product-title"
                       style={{
-                        fontWeight: selectedValues?.productNameWeight || "bold", // ← fix
+                        fontWeight: selectedValues?.productNameWeight !== false ? "bold" : "normal",
                         fontSize: selectedValues?.productNameSize
                           ? `${selectedValues.productNameSize}px`
                           : "16px",
@@ -128,7 +153,7 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                       <p
                         className="product-compare-price"
                         style={{
-                          fontWeight: selectedValues?.productCompareFont === "bold" ? "bold" : "normal",
+                          fontWeight: selectedValues?.productCompareWeight !== false ? "bold" : "normal",
                           fontSize: selectedValues?.productCompareSize
                             ? `${selectedValues.productCompareSize}px`
                             : "14px",
@@ -145,7 +170,7 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                       <p
                         className="pucrodt-price"
                         style={{
-                          fontWeight: selectedValues?.productPriceWeight === "bold" ? "bold" : "normal",
+                          fontWeight: selectedValues?.productPriceWeight !== false ? "bold" : "normal",
                           fontSize: selectedValues?.productPriceSize
                             ? `${selectedValues.productPriceSize}px`
                             : "14px",
@@ -162,24 +187,32 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
 
                 </div>
                 {/* Variant & Quantity */}
-                <div className="product-info">
+                <div className="product-info"
+                  style={
+                    {
+                      border: selectedValues.variantBorderSize ? `${selectedValues.variantBorderSize}px solid ${selectedValues.variantBorderColor}` : "none",
+                      backgroundColor: selectedValues?.variantBgColor || "#fff",
+                      borderRadius: selectedValues?.variantBorderRadius
+                    }
+                  }
+                  >
                   {selectedValues?.showVariant && (
                     <div
                       className="product-variant"
                       style={{
                         color: selectedValues?.variantTextColor || "#000",
                         borderRadius: "4px",
+                        
                       }}
                     >
                       <select
                         style={{
                           width: "100%",
                           padding: "5px 10px",
-                          backgroundColor: selectedValues?.variantBgColor || "",
                           color: selectedValues?.variantTextColor || "#fff",
                           fontSize: selectedValues?.variantTextSize
                             ? `${parseInt(selectedValues.variantTextSize)}px` : "14px",
-                          fontWeight: selectedValues?.variantTextFont || "normal",
+                          fontWeight: selectedValues?.variantTextWeight !== false ? "bold" : "normal",
                           border: "none",
                           borderRadius: "4px",
                           lineHeight: "24px"
@@ -203,14 +236,13 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                         width: "20px",
                         height: "30px",
                         padding: "5px",
-                        fontSize: selectedValues?.qtyTextSize,
+                        backgroundColor: "transparent",
+                        fontSize: selectedValues?.variantTextSize
+                            ? `${parseInt(selectedValues.variantTextSize)}px` : "14px",
                         lineHeight: selectedValues?.qtyTextSize ? `${parseInt(selectedValues.qtyTextSize) + 4}px` : "18px",
                         color: selectedValues?.qtyIconColor || "#fff",
-                        backgroundColor: selectedValues?.qtyBgColor || "transparent",
-                        borderWidth: selectedValues?.qtyBorderSize || 0,
-                        borderStyle: "solid",
-                        borderColor: selectedValues?.qtyBorderColor,
-                        borderRadius: selectedValues?.qtyBorderRadius
+                        border: "none",
+                        
 
                       }}>+</button>
                       <input
@@ -221,11 +253,14 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                         style={{ 
                           width: "40px", 
                           height: "30px", 
-                          lineHeight: "24px", 
+                          backgroundColor: "transparent",
+                          lineHeight: selectedValues?.qtyTextSize ? `${parseInt(selectedValues.qtyTextSize) + 4}px` : "18px", 
                           textAlign: "center",
                           color: selectedValues?.qtyIconColor || "#fff",
-                          backgroundColor: selectedValues?.qtyBgColor || "transparent",
-                          borderWidth: selectedValues?.qtyBorderSize || 0,
+                          border: "none",
+                          fontSize: selectedValues?.variantTextSize
+                            ? `${parseInt(selectedValues.variantTextSize)}px` : "14px",
+                          fontWeight: selectedValues?.variantTextWeight !== false ? "bold" : "normal",
                         }}
                       />
                       <button
@@ -233,14 +268,13 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                           width: "20px",
                           height: "30px",
                           padding: "5px",
-                          fontSize: selectedValues?.qtyTextSize,
+                          border: "none",
+                          backgroundColor: "transparent",
+                          fontSize: selectedValues?.variantTextSize
+                            ? `${parseInt(selectedValues.variantTextSize)}px` : "14px",
                           lineHeight: selectedValues?.qtyTextSize ? `${parseInt(selectedValues.qtyTextSize) + 4}px` : "18px",
                           color: selectedValues?.qtyIconColor || "#fff",
-                          backgroundColor: selectedValues?.qtyBgColor || "transparent",
-                          borderWidth: selectedValues?.qtyBorderSize || 0,
-                          borderStyle: "solid",
-                          borderColor: selectedValues?.qtyBorderColor,
-                          borderRadius: selectedValues?.qtyBorderRadius
+                          
 
                         }}
                       >-</button>

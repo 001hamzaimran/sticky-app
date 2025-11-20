@@ -121,7 +121,7 @@ label.input-number {
 
 .sticky-product-container {
     position: absolute;
-    z-index: 9;
+    z-index: 99;
     border-radius: 0 0 25px 25px;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
@@ -149,7 +149,6 @@ label.input-number {
 h2.product-title {
     font-size: 20px;
     font-weight: 600;
-    line-height: 32px;
     color: #fff;
 }
 
@@ -338,6 +337,7 @@ main.customizer-container {
     position: relative;
     background: #fff;
     border-radius: 20px;
+    overflow: hidden;
 }
 
 .customizer-panel-tab button {
@@ -408,7 +408,7 @@ main.customizer-container {
 }
 
 .customizer-preview .product-add-to-cart {
-    width: 15% !important;
+    width: 150px !important;
 }
 
 .product-add-to-cart button {
@@ -416,17 +416,19 @@ main.customizer-container {
 }
 
 .customizer-preview .product-image {
-    width: 8%;
+    width: 100px
 }
 
 .customizer-preview .product-content {
     width: 92%;
     align-items: center;
 }
-
+.Polaris-TextField{
+    margin-bottom: 0;
+}
 .customizer-preview.mobile-device .product-item {
     padding: 0;
-    gap: 10px;
+    gap: 0px;
 }
 
 .customizer-preview.mobile-device .product-item,
@@ -503,7 +505,6 @@ main.customizer-container {
 .product-image-content.without-image .product-content .product-info {
     margin-left: 0;
     justify-content: end;
-    width: 100%;
 }
 
 .product-image-content.with-image .product-title-price {
@@ -757,9 +758,10 @@ c .product-add-to-cart,
 .device-btns {
     display: flex;
     gap: 10px;
-    position: absolute;
-    top: -50px;
-    left: 0;
+    position: fixed;
+    top: 0%;
+    right: 0;
+    transform: translate(-10%, 0px);
 }
 
 .device-btns button {
@@ -1150,18 +1152,25 @@ c .product-add-to-cart,
     flex-wrap: wrap;
     gap: 10px;
 }
-.inp-setting-announcement-text .inp-color-inner >div>div:nth-child(2) {
-    display: none !important;
-}
 .inp-setting-announcement-text .custom-radio:nth-child(5){
     flex: 0 0 100%;
 }
-
-
+.inp-setting-announcement-text .inp-text-inner{
+    width: 100%;
+}
+.Polaris-TextField--hasValue{
+    margin-bottom: 0;
+}
+.inp-setting-announcement-text .Polaris-Select__Content{
+    padding: 0  5px;
+    min-height: 36px;
+}
+input[type="color"] + .Polaris-TextField__Backdrop{
+    border: none !important;
+}
 .inp-container-size{
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
 }
 .inp-container-size .custom-radio:nth-child(1){
     flex: 0 0 100%;
@@ -1186,4 +1195,91 @@ c .product-add-to-cart,
     flex: 0 0 30%;
     padding: 0;
     
+}
+
+.show-sticky-cart-tab-container{
+    display: flex;
+    align-items: center;
+    padding-left: 40px;
+}
+.show-sticky-cart-tab-container p{
+    width: 140px
+}
+.show-sticky-cart-tab-container button{
+    width: 30px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    box-shadow: none;
+    color: #0088ff;
+}
+.show-sticky-cart-tab-container button:hover{
+    color: #000;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.mobile-customizer-container .inp-show-for-sold-out-products,
+.mobile-customizer-container .inp-visibility,
+.mobile-customizer-container .inp-button-action-on-click,
+.mobile-customizer-container .inp-show-the-bar,
+.mobile-customizer-container .inp-container-size,
+.mobile-customizer-container .inp-tempalte,
+.mobile-customizer-container .inp-background,
+.mobile-customizer-container .inp-setting-border,
+.mobile-customizer-container .inp-setting-shadow,
+.mobile-customizer-container .inp-font-family,
+.mobile-customizer-container .inp-product-name,
+.mobile-customizer-container .inp-product-price,
+.mobile-customizer-container .inp-product-compare,
+.mobile-customizer-container .inp-setting-variant .custom-radio:nth-child(5),
+.mobile-customizer-container .inp-setting-variant .custom-radio:nth-child(6),
+.mobile-customizer-container .inp-setting-variant .custom-radio:nth-child(7),
+.mobile-customizer-container .inp-setting-variant .custom-radio:nth-child(8),
+.mobile-customizer-container .inp-setting-button h4,
+.mobile-customizer-container .inp-setting-button .inp-text-inner,
+.mobile-customizer-container .inp-setting-button .custom-radio:nth-child(4),
+.mobile-customizer-container .inp-setting-button .custom-radio:nth-child(5),
+.mobile-customizer-container .inp-setting-button .custom-radio:nth-child(6),
+.mobile-customizer-container .inp-setting-button .custom-radio:nth-child(7),
+.mobile-customizer-container .inp-setting-button .custom-radio:nth-child(8),
+.mobile-customizer-container .inp-setting-sold-out-button h4,
+.mobile-customizer-container .inp-setting-sold-out-button .custom-radio:nth-child(2),
+.mobile-customizer-container .inp-setting-sold-out-button .custom-radio:nth-child(3),
+.mobile-customizer-container .inp-setting-sold-out-button .custom-radio:nth-child(4),
+.mobile-customizer-container .inp-setting-sold-out-button .custom-radio:nth-child(5),
+.mobile-customizer-container .inp-setting-sold-out-button .custom-radio:nth-child(6),
+.mobile-customizer-container .inp-setting-announcement-text,
+.mobile-customizer-container .inp-setting-announcement-bar-bg,
+.mobile-customizer-container .inp-timer-settings,
+.mobile-customizer-container .inp-timer-after-end,
+.mobile-customizer-container .inp-setting-sold-out-button
+{
+    display: none;
+}
+
+
+.mobile-customizer-container .product-content .inp-Responsive,
+.mobile-customizer-container .button-content .inp-Responsive,
+.mobile-customizer-container .tab-2 .inp-Responsive {
+    display: flex !important;
+}
+
+
+.customizer-container .product-content .inp-Responsive,
+.customizer-container .button-content .inp-Responsive,
+.customizer-container .tab-2 .inp-Responsive {
+    display: none;
+}
+
+.mobile-customizer-container .inp-setting-button .custom-radio:nth-child(3) {
+    flex: 0 0 100%;
+}
+.mobile-customizer-container .field-item{
+    border-bottom: none;
+}
+
+.mobile-customizer-container .customizer-preview.mobile-device .product-add-to-cart button {
+    border-radius: 0 0 25px 25px !important;
 }

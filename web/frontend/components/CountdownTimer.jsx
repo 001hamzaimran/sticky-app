@@ -49,14 +49,23 @@ export default function CountdownTimer({ selectedValues }) {
     <div className="timer-preview">
       <p
         style={{
-          fontWeight: selectedValues?.announcementFontWeight ? "bold" : "normal",
-          fontStyle: selectedValues?.announcementFontStyle ? "italic" : "normal",
+          fontWeight: selectedValues?.announcementFontWeight !== false ? "bold" : "normal",
+          fontStyle: selectedValues?.announcementFontStyle !== false ? "italic" : "normal",
+          textDecoration: selectedValues?.announcementFontDecoration !== false ? "underline" : "none",
         }}
       >
-        <span>{selectedValues.announcementText} </span>
-        {selectedValues.counterVisibilty !== "hide" && (
-          <span>{formatTime(remainingTime)}</span>
-        )}
+        <span>
+        {selectedValues.announcementText.replace("{timer}", "")}{" "}
+        {selectedValues.announcementText.includes("{timer}") &&
+          remainingTime > 0 && (
+            <span>{formatTime(remainingTime)}</span>
+          )}
+          {selectedValues.announcementText.includes("{timer}") &&
+            remainingTime === 0 &&
+            selectedValues.counterVisibilty === "show" && (
+              <span>0d 0h 0m 0s</span>
+            )}
+        </span>
       </p>
     </div>
   );

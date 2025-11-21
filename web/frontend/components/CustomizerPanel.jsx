@@ -425,7 +425,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       productNameWeight: productDetails?.titleBold ?? true,
       productNameSize: productDetails?.titleSize ?? 14,
       productPriceColor: productDetails?.priceColor ?? "#FFFFFF",
-      productCompareWeight: !productDetails?.comparePriceBold ?? false,
+      productCompareWeight: !productDetails?.comparePriceBold,
       productCompareColor: productDetails?.comparePriceColor ?? "#aaa",
       productPriceSize: productDetails?.priceSize ?? 14,
       productCompareSize: productDetails?.comparePriceSize ?? 14,

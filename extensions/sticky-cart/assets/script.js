@@ -10,7 +10,9 @@ window.addEventListener('DOMContentLoaded', () => {
     const topDate = topText.querySelector('h3');
     const productTitle = document.getElementById('productTitle');
     const productPrice = document.getElementById('productPrice');
+    const productComparePrice = document.getElementById('productComparePrice');
     const productImg = document.getElementById('productImg');
+    const productInfo = document.getElementById('productInfo');
     const variantSelect = document.getElementById('variantsItem');
     const qtyContainer = document.querySelector('.qty-container');
     let variantId;
@@ -207,8 +209,9 @@ window.addEventListener('DOMContentLoaded', () => {
                 topText.style.backgroundColor = banner.backgroundColor;
                 topTextP.textContent = banner.text;
                 topTextP.style.color = banner.textColor;
-                topTextP.style.fontWeight = banner.fontWeight;
-                topTextP.style.fontStyle = banner.fontStyle;
+                topTextP.style.fontSize = banner.fontSize ? `${banner.fontSize}px` : '16px';
+                topTextP.style.fontWeight = banner.fontWeight ? 'bold' : 'normal';
+                topTextP.style.fontStyle = banner.fontStyle ? 'italic' : 'normal';
                 topTextP.style.textDecoration = banner.underline ? 'underline' : 'none';
             } else {
                 topText.style.display = 'none';
@@ -216,19 +219,29 @@ window.addEventListener('DOMContentLoaded', () => {
 
             // ✅ Product Details
             productTitle.style.display = productDetails.showTitle ? 'block' : 'none';
+            productPrice.style.display = productDetails.showPrice ? 'block' : 'none';
+            productComparePrice.style.display = productDetails.showComparePrice ? 'block' : 'none';
+
+            // Product title
+            productTitle.style.fontSize = `${productDetails.titleSize}px`;
             productTitle.style.fontWeight = productDetails.titleBold ? 'bold' : 'normal';
             productTitle.style.color = productDetails.titleColor;
-            productTitle.style.fontSize = `${productDetails.titleSize}px`;
             productTitle.style.fontFamily = container.fontFamily;
 
-            productPrice.style.display = productDetails.showPrice ? 'block' : 'none';
-            productPrice.style.color = productDetails.priceColor;
+            // Product price
             productPrice.style.fontSize = `${productDetails.priceSize}px`;
+            productPrice.style.color = productDetails.priceColor;
             productPrice.style.fontWeight = productDetails.priceBold ? 'bold' : 'normal';
+
+            // Product compare price
+            productComparePrice.style.fontSize = `${productDetails.comparePriceSize}px`;
+            productComparePrice.style.color = productDetails.comparePriceColor;
+            productComparePrice.style.fontWeight = productDetails.comparePriceBold ? 'bold' : 'normal';
 
             const productImageWithVariantContainer = document.querySelector('.product-image-content-variant');
             const productImageContainer = document.querySelector('.product-image');
 
+            // ✅ Product Image
             productImageWithVariantContainer.classList.add(productDetails.showImage && variantSelector.show ? 'with-image' : 'without-image');
             productImageContainer.style.display = productDetails.showImage ? 'block' : 'none';
 
@@ -236,8 +249,8 @@ window.addEventListener('DOMContentLoaded', () => {
             if (variantSelector.show) {
                 variantsContainer.style.display = 'block';
                 variantSelect.style.color = variantSelector.textColor;
-                variantSelect.style.fontSize = `${variantSelector.fontSize}px`;
-                variantSelect.style.backgroundColor = variantSelector.backgroundColor;
+                variantSelect.style.fontSize = `${variantSelector.fontSize}px`; s
+                productInfo.style.backgroundColor = variantSelector.backgroundColor;
                 variantSelect.style.fontWeight = variantSelector.isBold ? 'bold' : 'normal';
             } else {
                 variantsContainer.style.display = 'none';
@@ -248,7 +261,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 qtyContainer.style.display = 'flex';
 
                 // Input styles
-                qtyInp.style.backgroundColor = quantitySelector.backgroundColor;
                 qtyInp.style.color = quantitySelector.textColor;
                 qtyInp.style.borderColor = quantitySelector.borderColor;
                 qtyInp.style.borderWidth = `${quantitySelector.borderWidth}px`;

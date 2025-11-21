@@ -192,19 +192,19 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
 
       productDetails: {
         showTitle: !!selectedValues.showName,
-        titleBold: selectedValues.productNameWeight === "bold",
+        titleBold: selectedValues.productNameWeight || true,
         titleColor: selectedValues.productNameColor || "#ffffff",
         titleSize: Number(selectedValues.productNameSize) || 16,
 
         showPrice: !!selectedValues.showPrice,
         priceColor: selectedValues.productPriceColor || "#ffffff",
         priceSize: Number(selectedValues.productPriceSize) || 14,
-        priceBold: selectedValues.productPriceWeight === "bold",
+        priceBold: selectedValues.productPriceWeight || true,
 
         showComparePrice: !!selectedValues.showComparedPrice,
         comparePriceColor: selectedValues.productCompareColor || "#a1a1a1",
         comparePriceSize: Number(selectedValues.productCompareSize) || 14,
-        comparePriceBold: selectedValues.productCompareFont === "bold",
+        comparePriceBold: selectedValues.productCompareFont || true,
 
         showImage: !!selectedValues.showImage,
       },
@@ -416,11 +416,10 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       productNameWeight: productDetails?.titleBold ?? true,
       productNameSize: productDetails?.titleSize ?? 14,
       productPriceColor: productDetails?.priceColor ?? "#FFFFFF",
-      productCompareFont: productDetails?.comparePriceBold ?? false,
+      productCompareFont: productDetails?.comparePriceBold ?? true,
       productCompareColor: productDetails?.comparePriceColor ?? "#aaa",
       productPriceSize: productDetails?.priceSize ?? 14,
       productCompareSize: productDetails?.comparePriceSize ?? 14,
-      productNameSize: productDetails?.titleSize ?? 14,
       productPriceWeight: productDetails?.priceBold ?? true,
 
       // Variant

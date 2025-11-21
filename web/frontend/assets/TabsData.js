@@ -233,7 +233,7 @@ const tabsData = [
         title: "Product Name",
         class: "product-name",
         items: [
-          { label: "B", type: "checkbox", name: "productNameWeight", value: true },
+          { label: "B", type: "checkbox", name: "productNameWeight", value: false },
           { label: "", type: "number", name: "productNameSize", value: 14 },
           { label: "", type: "color", name: "productNameColor", value: "#fff" },
         ],
@@ -242,7 +242,7 @@ const tabsData = [
         title: "Price",
         class: "product-price",
         items: [
-          { label: "B", type: "checkbox", name: "productPriceWeight", value: true },
+          { label: "B", type: "checkbox", name: "productPriceWeight", value: false },
           { label: "", type: "number", name: "productPriceSize", value: 14 },
           { label: "", type: "color", name: "productPriceColor", value: "#fff" },
         ],

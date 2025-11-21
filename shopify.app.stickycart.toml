@@ -5,9 +5,6 @@ name = "StickyCart"
 application_url = "https://stickycartboost-33f7fb3bfb6f.herokuapp.com/"
 embedded = true
 
-[build]
-automatically_update_urls_on_dev = true
-
 [webhooks]
 api_version = "2026-01"
 
@@ -38,3 +35,6 @@ redirect_urls = [
 url = "https://stickycartboost-33f7fb3bfb6f.herokuapp.com/proxy"
 subpath = "Sticky"
 prefix = "apps"
+
+[build]
+automatically_update_urls_on_dev = true

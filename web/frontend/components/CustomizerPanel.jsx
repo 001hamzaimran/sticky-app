@@ -144,7 +144,8 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
 
     setSaving(true);
     // Construct schema-aligned payload
-    console.log(selectedValues.counterVisibilty)
+    console.log("productCompareWeight value:", selectedValues.productCompareWeight);
+    console.log("Type of productCompareWeight:", typeof selectedValues.productCompareWeight);
     const payload = {
       shop: storeData.domain,
       enabled: true,
@@ -204,7 +205,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
         showComparePrice: !!selectedValues.showComparedPrice,
         comparePriceColor: selectedValues.productCompareColor || "#a1a1a1",
         comparePriceSize: Number(selectedValues.productCompareSize) || 14,
-        comparePriceBold: selectedValues.productCompareFont || true,
+        comparePriceBold: !Boolean(selectedValues.productCompareWeight),
 
         showImage: !!selectedValues.showImage,
       },
@@ -221,12 +222,10 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
         show: !!selectedValues.showQuantity,
         fontSize: Number(selectedValues.qtyTextSize) || 14,
         textColor: selectedValues.qtyTextColor || "#FFFFFF",
-        borderColor: selectedValues.qtyBorderColor || "#CCCCCC",
-        borderSize: Number(selectedValues.qtyBorderSize) || 0,
-        backgroundColor: selectedValues.qtyBgColor || " #000000",
+        borderColor: selectedValues.variantBorderColor || "#CCCCCC",
+        borderSize: Number(selectedValues.variantBorderSize) || 0,
         iconColor: selectedValues.qtyIconColor || "#EEEEEE",
-        // iconBackgroundColor: selectedValues.qtyIconBgColor || " #000000",
-        borderRadius: Number(selectedValues.qtyBorderRadius) || 0,
+        borderRadius: Number(selectedValues.variantBorderRadius) || 0,
       },
 
       addToCartButton: {
@@ -416,7 +415,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       productNameWeight: productDetails?.titleBold ?? true,
       productNameSize: productDetails?.titleSize ?? 14,
       productPriceColor: productDetails?.priceColor ?? "#FFFFFF",
-      productCompareFont: productDetails?.comparePriceBold ?? true,
+      productCompareWeight: !productDetails?.comparePriceBold ?? false,
       productCompareColor: productDetails?.comparePriceColor ?? "#aaa",
       productPriceSize: productDetails?.priceSize ?? 14,
       productCompareSize: productDetails?.comparePriceSize ?? 14,
@@ -437,7 +436,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       qtyTextSize: quantitySelector?.fontSize ?? 14,
       qtyTextColor: quantitySelector?.textColor ?? "#FFFFFF",
       qtyIconColor: quantitySelector?.iconColor ?? "#000000",
-      // qtyBorderColor: quantitySelector?.borderColor ?? "#CCCCCC",
+      qtyBorderColor: quantitySelector?.borderColor ?? "#CCCCCC",
       qtyBorderRadius: quantitySelector?.borderRadius ?? 0,
 
       // Button

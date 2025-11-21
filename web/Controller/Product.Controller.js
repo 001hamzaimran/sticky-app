@@ -21,6 +21,7 @@ const getProductById = async (req, res) => {
                   node{
                     id
                     title
+                    compareAtPrice
                     price
                     media(first:10) {
                       edges {

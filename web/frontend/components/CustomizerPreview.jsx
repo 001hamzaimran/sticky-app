@@ -201,7 +201,6 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                       className="product-variant"
                       style={{
                         color: selectedValues?.variantTextColor || "#000",
-                        borderRadius: "4px",
                         
                       }}
                     >
@@ -214,7 +213,6 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                             ? `${parseInt(selectedValues.variantTextSize)}px` : "14px",
                           fontWeight: selectedValues?.variantTextWeight !== false ? "bold" : "normal",
                           border: "none",
-                          borderRadius: "4px",
                           lineHeight: "24px"
                         }}
                       >

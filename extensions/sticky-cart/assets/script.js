@@ -344,7 +344,7 @@ window.addEventListener('DOMContentLoaded', () => {
             if (variantSelector.show) {
                 variantsContainer.style.display = 'block';
                 variantSelect.style.color = variantSelector.textColor;
-                variantSelect.style.fontSize = `${variantSelector.fontSize}px`;
+                variantSelect.style.fontSize = `${variantSelector.fontSize}px`;  
                 variantSelect.style.fontWeight = variantSelector.isBold ? 'bold' : 'normal';
 
                 const qtyBg = (variantSelector.backgroundColor || "").trim();

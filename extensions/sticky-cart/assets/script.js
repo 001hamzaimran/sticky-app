@@ -323,9 +323,9 @@ window.addEventListener('DOMContentLoaded', () => {
             productTitle.style.fontSize = `${productDetails.titleSize}px`;
             productTitle.style.fontWeight = productDetails.titleBold ? 'bold' : 'normal';
             productTitle.style.color = productDetails.titleColor;
-            productTitle.style.fontFamily = container.fontFamily;
+            productTitle.style.fontFamily = container.fontFamily;  
 
-            productPrice.style.fontSize = `${productDetails.priceSize}px`;
+            productPrice.style.fontSize = `${productDetails.priceSize}px`;    
             productPrice.style.color = productDetails.priceColor;
             productPrice.style.fontWeight = productDetails.priceBold ? 'bold' : 'normal';
 
@@ -343,15 +343,15 @@ window.addEventListener('DOMContentLoaded', () => {
             // ✅ Variant Selector
             if (variantSelector.show) {
                 variantsContainer.style.display = 'block';
-                variantSelect.style.color = variantSelector.textColor;
+                variantSelect.style.color = variantSelector.textColor; 
                 variantSelect.style.fontSize = `${variantSelector.fontSize}px`;  
                 variantSelect.style.fontWeight = variantSelector.isBold ? 'bold' : 'normal';
 
                 const qtyBg = (variantSelector.backgroundColor || "").trim();
-                qtyInp.style.backgroundColor = qtyBg;
+                qtyInp.style.backgroundColor = qtyBg; 
                 qtyContainer.style.backgroundColor = qtyBg;
                 productInfo.style.backgroundColor = qtyBg;
-
+ 
                 productInfo.style.border = `${quantitySelector.borderSize || 0}px solid ${quantitySelector.borderColor || '#000'}`;
                 productInfo.style.borderRadius = `${quantitySelector.borderRadius || 0}px`;
             } else {

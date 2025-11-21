@@ -17,6 +17,49 @@ window.addEventListener('DOMContentLoaded', () => {
     const qtyContainer = document.querySelector('.qty-container');
     let variantId;
     let countdownInterval;
+    let currentVariantAvailable = true;
+    let productData;
+    let stickyCartSettings = null; // Store settings globally
+
+    // ✅ Check device type
+    function isMobileDevice() {
+        return window.innerWidth <= 768;
+    }
+
+    // ✅ Check if sticky cart should be displayed based on device settings
+    function shouldDisplayStickyCart(containerSettings) {
+        const { onMobile, onDesktop } = containerSettings;
+
+        if (onMobile && onDesktop) {
+            return true;
+        } else if (isMobileDevice() && onMobile) {
+            return true;
+        } else if (!isMobileDevice() && onDesktop) {
+            return true;
+        }
+        return false;
+    }
+
+    // ✅ Check if product should be displayed based on display scope
+    function shouldDisplayProduct(settings) {
+        const { displayScope, selectedProducts, excludedProducts } = settings;
+
+        if (!displayScope || displayScope === "all_products") {
+            return true;
+        }
+
+        const { id: currentProductId } = window.stickyCart;
+
+        if (displayScope === "selected_products") {
+            return selectedProducts && selectedProducts.includes(currentProductId);
+        }
+
+        if (displayScope === "excluded_products") {
+            return !excludedProducts || !excludedProducts.includes(currentProductId);
+        }
+
+        return true;
+    }
 
     // ✅ Quantity controls
     plusbtn.addEventListener('click', () => qtyInp.value++);
@@ -31,6 +74,11 @@ window.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (!currentVariantAvailable) {
+            alert("This product is currently out of stock.");
+            return;
+        }
+
         const splitvariantId = variantId.split("/").pop();
         fetch("/cart/add.js", {
             method: "POST",
@@ -42,46 +90,107 @@ window.addEventListener('DOMContentLoaded', () => {
                 return res.json();
             })
             .then(() => {
-                const action = window.stickyCartAction || "cart"; // fallback if missing
+                const action = window.stickyCartAction || "cart";
                 if (action === "cart") {
                     window.location.href = "/cart";
                 } else if (action === "checkout") {
                     window.location.href = "/checkout";
                 } else {
-                    // stay on page, maybe show a small confirmation
-                    window.location.reload();
                     addToCartBtn.textContent = "Added!";
-                    setTimeout(() => addToCartBtn.textContent = "Add to Cart", 1500);
+                    setTimeout(() => {
+                        if (currentVariantAvailable) {
+                            addToCartBtn.textContent = window.stickyCartButtonText || "Add to Cart";
+                        } else {
+                            addToCartBtn.textContent = window.stickyCartSoldOutText || "Sold Out";
+                        }
+                    }, 1500);
                 }
             })
-
             .catch(err => {
                 console.error("Add to Cart Error:", err);
                 alert("Something went wrong while adding the product to the cart.");
             });
     });
 
-    // ✅ Fetch product and sticky cart settings
-    const { shop, id } = window.stickyCart;
+    // ✅ Update button styling based on availability
+    function updateAddToCartButton(addToCartButton) {
+        console.log('Updating button. Available:', currentVariantAvailable); // Debug log
 
-    if (!id) return;
+        if (currentVariantAvailable) {
+            // Available product styling
+            addToCartBtn.style.backgroundColor = addToCartButton.backgroundColor;
+            addToCartBtn.style.color = addToCartButton.textColor || "#ffffff";
+            addToCartBtn.style.border = `${addToCartButton.borderSize || 0}px solid ${addToCartButton.borderColor || '#000000'}`;
+            addToCartBtn.style.borderRadius = `${addToCartButton.borderRadius || 0}px`;
+            addToCartBtn.style.fontSize = `${addToCartButton.fontSize || 14}px`;
+            addToCartBtn.style.fontWeight = addToCartButton.fontWeight || 'normal';
+            addToCartBtn.style.padding = '8px 12px';
+            addToCartBtn.style.width = '100%';
+            addToCartBtn.style.cursor = 'pointer';
+            addToCartBtn.style.transition = '0.2s all ease-in-out';
+            addToCartBtn.textContent = addToCartButton.text || "Add to cart";
+            addToCartBtn.disabled = false;
 
-    const getProduct = async () => {
+            window.stickyCartButtonText = addToCartButton.text || "Add to Cart";
+        } else {
+            // Sold out product styling
+            addToCartBtn.style.backgroundColor = addToCartButton.soldOutBackgroundColor || "#cccccc";
+            addToCartBtn.style.color = addToCartButton.soldOutTextColor || "#666666";
+            addToCartBtn.style.border = `${addToCartButton.soldOutBorderSize || 0}px solid ${addToCartButton.soldOutBorderColor || '#999999'}`;
+            addToCartBtn.style.borderRadius = `${addToCartButton.soldOutBorderRadius || 0}px`;
+            addToCartBtn.style.fontSize = `${addToCartButton.fontSize || 14}px`;
+            addToCartBtn.style.fontWeight = addToCartButton.fontWeight || 'normal';
+            addToCartBtn.style.padding = '8px 12px';
+            addToCartBtn.style.width = '100%';
+            addToCartBtn.style.cursor = 'not-allowed';
+            addToCartBtn.style.transition = '0.2s all ease-in-out';
+            addToCartBtn.textContent = addToCartButton.soldOutText || "Sold Out";
+            addToCartBtn.disabled = true;
+
+            window.stickyCartSoldOutText = addToCartButton.soldOutText || "Sold Out";
+        }
+    }
+
+    // ✅ Initialize everything in proper sequence
+    async function initializeStickyCart() {
+        const { shop, id } = window.stickyCart;
+
+        if (!id) return;
+
+        try {
+            // First, fetch product data
+            await getProduct(shop, id);
+
+            // Then, fetch and apply cart settings
+            await getCart(shop);
+
+        } catch (error) {
+            console.error("Initialization error:", error);
+        }
+    }
+
+    // ✅ Fetch product data
+    async function getProduct(shop, id) {
         try {
             const resp = await fetch(`https://${shop}/apps/Sticky/product/${id}/${shop}`);
             const result = await resp.json();
-            const { title, variants, media } = result.data.product;
+            productData = result.data.product;
+            const { title, variants, media } = productData;
 
             productTitle.textContent = title;
-            parent.style.display = 'block';
 
             const firstVariant = variants.edges[0].node;
             productPrice.textContent = `$${firstVariant.price}`;
-            productComparePrice.textContent = `$${firstVariant.compareAtPrice}`;
+            productComparePrice.textContent = firstVariant.compareAtPrice ? `$${firstVariant.compareAtPrice}` : '';
+
             const defaultImage =
                 firstVariant.media?.edges?.[0]?.node?.preview?.image?.url ||
                 media?.edges?.[0]?.node?.preview?.image?.url || '';
             productImg.src = defaultImage;
+
+            // ✅ CRITICAL FIX: Set availability BEFORE any button updates
+            currentVariantAvailable = firstVariant.availableForSale;
+            console.log('Product loaded. Available:', currentVariantAvailable); // Debug log
 
             // Populate variant select
             variantSelect.innerHTML = '';
@@ -99,26 +208,43 @@ window.addEventListener('DOMContentLoaded', () => {
                 const selectedVariant = variants.edges.find(v => v.node.id === selectedId)?.node;
                 if (selectedVariant) {
                     productPrice.textContent = `$${selectedVariant.price}`;
-                    productComparePrice.textContent = `$${selectedVariant.compareAtPrice}`;
+                    productComparePrice.textContent = selectedVariant.compareAtPrice ? `$${selectedVariant.compareAtPrice}` : '';
                     variantId = selectedVariant.id;
+
+                    // Update availability for the selected variant
+                    currentVariantAvailable = selectedVariant.availableForSale;
+                    console.log('Variant changed. Available:', currentVariantAvailable); // Debug log
+
                     const newImage =
                         selectedVariant.media?.edges?.[0]?.node?.preview?.image?.url ||
                         media?.edges?.[0]?.node?.preview?.image?.url || '';
                     productImg.src = newImage;
+
+                    // Update button styling when variant changes
+                    if (stickyCartSettings) {
+                        updateAddToCartButton(stickyCartSettings.addToCartButton);
+                    }
                 }
             });
         } catch (error) {
             console.error("Product fetch error:", error);
         }
-    };
+    }
 
-    const getCart = async () => {
+    // ✅ Fetch cart settings
+    async function getCart(shop) {
         try {
             const resp = await fetch(`https://${shop}/apps/Sticky/get-sticky-cart/${shop}`);
             const result = await resp.json();
             const settings = result.data;
 
             if (!settings || !settings.enabled) {
+                parent.style.display = 'none';
+                return;
+            }
+
+            // ✅ Product display scope check
+            if (!shouldDisplayProduct(settings)) {
                 parent.style.display = 'none';
                 return;
             }
@@ -132,9 +258,21 @@ window.addEventListener('DOMContentLoaded', () => {
                 container
             } = settings;
 
+            // Store settings globally for later use
+            stickyCartSettings = settings;
+
+            // ✅ Device display check
+            if (!shouldDisplayStickyCart(container)) {
+                parent.style.display = 'none';
+                return;
+            }
+
+            // ✅ If we pass both product scope and device checks, then show the parent and apply styles
+            parent.style.display = 'block';
+
             // ✅ Container styles
             if (container.backgroundColor && container.backgroundColor.startsWith("linear-gradient(")) {
-                parent.style.background = container.backgroundColor; // use background for gradients
+                parent.style.background = container.backgroundColor;
             } else {
                 parent.style.backgroundColor = container.backgroundColor || "#000";
             }
@@ -152,23 +290,18 @@ window.addEventListener('DOMContentLoaded', () => {
                 topText.style.display = 'flex';
                 topText.style.backgroundColor = banner.backgroundColor;
 
-                // Check if banner text contains {timer}
                 const hasTimer = banner.text.includes('{timer}');
 
                 if (hasTimer) {
-                    // Show timer and replace {timer} with actual timer element
                     topDate.style.display = 'block';
                     topText.style.justifyContent = 'center';
                     topText.style.alignItems = 'center';
 
-                    // Replace {timer} with empty string initially, we'll update the timer separately
                     const displayText = banner.text.replace('{timer}', '');
                     topTextP.textContent = displayText;
 
-                    // Start countdown only if timer is present in text
                     startCountdown(banner, topDate, topText);
                 } else {
-                    // No timer, just show the text
                     topDate.style.display = 'none';
                     topTextP.textContent = banner.text;
                 }
@@ -187,18 +320,15 @@ window.addEventListener('DOMContentLoaded', () => {
             productPrice.style.display = productDetails.showPrice ? 'block' : 'none';
             productComparePrice.style.display = productDetails.showComparePrice ? 'block' : 'none';
 
-            // Product title
             productTitle.style.fontSize = `${productDetails.titleSize}px`;
             productTitle.style.fontWeight = productDetails.titleBold ? 'bold' : 'normal';
             productTitle.style.color = productDetails.titleColor;
             productTitle.style.fontFamily = container.fontFamily;
 
-            // Product price
             productPrice.style.fontSize = `${productDetails.priceSize}px`;
             productPrice.style.color = productDetails.priceColor;
             productPrice.style.fontWeight = productDetails.priceBold ? 'bold' : 'normal';
 
-            // Product compare price
             productComparePrice.style.fontSize = `${productDetails.comparePriceSize}px`;
             productComparePrice.style.color = productDetails.comparePriceColor;
             productComparePrice.style.fontWeight = productDetails.comparePriceBold ? 'bold' : 'normal';
@@ -217,7 +347,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 variantSelect.style.fontSize = `${variantSelector.fontSize}px`;
                 variantSelect.style.fontWeight = variantSelector.isBold ? 'bold' : 'normal';
 
-                // Background color
                 const qtyBg = (variantSelector.backgroundColor || "").trim();
                 qtyInp.style.backgroundColor = qtyBg;
                 qtyContainer.style.backgroundColor = qtyBg;
@@ -225,16 +354,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
                 productInfo.style.border = `${quantitySelector.borderSize || 0}px solid ${quantitySelector.borderColor || '#000'}`;
                 productInfo.style.borderRadius = `${quantitySelector.borderRadius || 0}px`;
-
             } else {
                 variantsContainer.style.display = 'none';
-            };
+            }
 
             // ✅ Quantity Selector
             if (quantitySelector.show) {
                 qtyContainer.style.display = 'flex';
 
-                // Background color
                 const qtyBg = (variantSelector.backgroundColor || "").trim();
                 qtyInp.style.backgroundColor = qtyBg;
                 qtyContainer.style.backgroundColor = qtyBg;
@@ -243,7 +370,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 productInfo.style.border = `${quantitySelector.borderSize || 0}px solid ${quantitySelector.borderColor || '#000'}`;
                 productInfo.style.borderRadius = `${quantitySelector.borderRadius || 0}px`;
 
-                // Input styles
                 qtyInp.style.color = quantitySelector.textColor;
                 qtyInp.style.fontSize = `${quantitySelector.fontSize}px`;
                 qtyInp.style.fontWeight = quantitySelector.isBold ? "bold" : "normal";
@@ -255,7 +381,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 plusbtn.style.border = "none";
                 minusbtn.style.border = "none";
 
-                // Plus/Minus button styles
                 const iconColor = quantitySelector.iconColor || "#000";
 
                 [plusbtn, minusbtn].forEach(btn => {
@@ -271,18 +396,9 @@ window.addEventListener('DOMContentLoaded', () => {
                 qtyContainer.style.display = 'none';
             }
 
-            // ✅ Add to Cart Button 
-            addToCartBtn.style.backgroundColor = addToCartButton.backgroundColor;
-            addToCartBtn.style.color = addToCartButton.textColor || "#ffffff";
-            addToCartBtn.style.border = `${addToCartButton.borderSize || 0}px solid ${addToCartButton.borderColor || '#000000'}`;
-            addToCartBtn.style.borderRadius = `${addToCartButton.borderRadius || 0}px`;
-            addToCartBtn.style.fontSize = `${addToCartButton.fontSize || 14}px`;
-            addToCartBtn.style.fontWeight = addToCartButton.fontWeight || 'normal';
-            addToCartBtn.style.padding = '8px 12px';
-            addToCartBtn.style.width = '100%';
-            addToCartBtn.style.cursor = 'pointer';
-            addToCartBtn.style.transition = '0.2s all ease-in-out';
-            addToCartBtn.textContent = addToCartButton.text || "Add to cart";
+            // ✅ CRITICAL FIX: Update button styling AFTER product data is loaded
+            // This ensures currentVariantAvailable is set correctly
+            updateAddToCartButton(addToCartButton);
 
             // ✅ Save action globally for addToCart behavior
             window.stickyCartAction = addToCartButton.action || "cart";
@@ -290,11 +406,10 @@ window.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Sticky Cart Settings Error:", error);
         }
-    };
+    }
 
     // ✅ Countdown function
     function startCountdown(banner, topDate, topText) {
-        // Clear any existing interval
         if (countdownInterval) {
             clearInterval(countdownInterval);
         }
@@ -302,13 +417,9 @@ window.addEventListener('DOMContentLoaded', () => {
         let targetTime;
 
         if (banner.coundownDate) {
-            // Countdown to a specific date
             targetTime = new Date(banner.coundownDate).getTime();
         } else if (banner.fixedminute) {
-            // Parse "1 2 5 1" → [days, hours, minutes, seconds]
             const [days, hours, minutes, seconds] = banner.fixedminute.split(' ').map(Number);
-
-            // Calculate end timestamp based on updatedAt
             const updatedAt = new Date(banner.updatedAt || Date.now()).getTime();
             targetTime = updatedAt +
                 (days * 24 * 60 * 60 * 1000) +
@@ -316,7 +427,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 (minutes * 60 * 1000) +
                 (seconds * 1000);
         } else {
-            // No valid countdown configuration
             topDate.textContent = "";
             return;
         }
@@ -328,10 +438,8 @@ window.addEventListener('DOMContentLoaded', () => {
             if (distance <= 0) {
                 clearInterval(countdownInterval);
 
-                // Timer ended - handle TimerEnd setting
                 if (banner.TimerEnd === "hide") {
                     topDate.style.display = 'none';
-                    // Also hide the entire banner if it only contained the timer
                     const bannerText = banner.text.replace('{timer}', '').trim();
                     if (!bannerText) {
                         topText.style.display = 'none';
@@ -342,13 +450,11 @@ window.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Calculate time units
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
             const minutes = Math.floor((distance / (1000 * 60)) % 60);
             const seconds = Math.floor((distance / 1000) % 60);
 
-            // Format display based on whether we have days
             if (days > 0) {
                 topDate.textContent = `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             } else {
@@ -359,7 +465,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // ✅ Container Size and Position function
     function applyContainerSizeAndPosition(container, parent) {
-        // Reset positioning
         parent.style.position = 'fixed';
         parent.style.left = '0';
         parent.style.right = '0';
@@ -369,14 +474,12 @@ window.addEventListener('DOMContentLoaded', () => {
         parent.style.maxWidth = 'none';
         parent.style.margin = '0';
 
-        // Apply size
         if (container.size === "condensed") {
             const condensedValue = container.CondensedValue || "800";
             parent.style.width = `${condensedValue}px`;
-            parent.style.maxWidth = '90%'; // Ensure it doesn't overflow on small screens
+            parent.style.maxWidth = '90%';
             parent.style.margin = '0 auto';
 
-            // Apply horizontal positioning for condensed mode
             if (container.horizontalPosition === "left") {
                 parent.style.left = container.LeftOffset ? `${container.LeftOffset}%` : '0';
                 parent.style.right = 'auto';
@@ -386,19 +489,16 @@ window.addEventListener('DOMContentLoaded', () => {
                 parent.style.left = 'auto';
                 parent.style.margin = '0';
             } else {
-                // center (default)
                 parent.style.left = '50%';
                 parent.style.transform = 'translateX(-50%)';
                 parent.style.margin = '0';
             }
         } else {
-            // full size
             parent.style.width = '100%';
             parent.style.left = '0';
             parent.style.right = '0';
         }
 
-        // Apply vertical positioning and offsets
         if (container.position === "bottom") {
             parent.style.bottom = container.BottomOffset ? `${container.BottomOffset}%` : '0';
             parent.style.top = 'auto';
@@ -408,6 +508,6 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    getProduct();
-    getCart();
+    // ✅ Initialize everything in proper sequence
+    initializeStickyCart();
 });

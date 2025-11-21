@@ -246,8 +246,8 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
         soldOutBorderRadius: Number(selectedValues.buttonBorderRadius) || 0,
       },
       container: {
-        onDesktop: selectedValues.showDektopDevice || true,
-        onMobile: selectedValues.showMobileDevice || true,
+        onDesktop: selectedValues.showDektopDevice || false,
+        onMobile: selectedValues.showMobileDevice || false,
         borderSize: Number(selectedValues.borderSize) || 0,
         borderColor: selectedValues.borderColor || "#000000",
         shadow: !!selectedValues.dropShadow,

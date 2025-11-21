@@ -9,6 +9,7 @@ import PrivacyWebhookHandlers from "./privacy.js";
 import productRoute from "./Routes/Product.route.js";
 import { storeRouter } from "./Routes/Store.Route.js";
 import { StickyCartRoute } from "./Routes/StickyCart.Route.js";
+import { getExtensionStatus } from "./Controller/Theme.Controller.js";
 
 
 const PORT = parseInt(
@@ -59,6 +60,7 @@ app.use("/proxy/*", authenticateUser);
 app.use('/api', productRoute);
 app.use('/api', storeRouter);
 app.use('/api', StickyCartRoute);
+app.get('/api/getEmbedStatus', getExtensionStatus)
 
 app.use('/proxy', productRoute);
 app.use('/proxy', StickyCartRoute);

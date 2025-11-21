@@ -364,7 +364,17 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       // Setting
       hideSoldOut: addToCartButton?.soldOutText ? true : false,
       showBar: stickyCartSettings.displayMode ?? "scroll",
-      stickyCart: stickyCartSettings.displayScope === "all_products" ? "all-products" : stickyCartSettings.displayScope === "specific_products" ? "specific-products" : stickyCartSettings.displayScope ?? "all-products",
+      stickyCart:
+        stickyCartSettings.displayScope === "all_products"
+          ? "all-products"
+          : stickyCartSettings.displayScope === "specific_products"
+            ? "specific-products"
+            : stickyCartSettings.displayScope === "selected_product"
+              ? "specific-products"
+              : stickyCartSettings.displayScope === "excluded_product"
+                ? "exclude-products"
+                : "all-products", // default fallback
+
 
 
       // Banner

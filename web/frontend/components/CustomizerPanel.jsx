@@ -184,6 +184,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
         //   : "normal",
         fontWeight: selectedValues.announcementFontWeight || true,
         fontStyle: selectedValues.announcementFontStyle || false,
+        fontSize: selectedValues.announcementFontSize || 24,
         underline: !!selectedValues.announcementFontDecoration,
         Countdown: selectedValues.counterVisibilty,
         coundownDate: selectedValues.timerType === "countdown-to-date" ? selectedValues.countdownDate + " " + selectedValues.countdownTime : null,
@@ -379,7 +380,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
 
       // Banner
       counterVisibilty: banner?.TimerEnd ?? "hide",
-      announcementFontSize: banner?.fontSize ?? "14",
+      announcementFontSize: banner?.announcementFontSize ?? "14",
       announcementFontStyle: banner?.fontStyle ?? true,
       announcementFontWeight: banner?.fontWeight ?? true,
       announcementFontDecoration: banner?.underline ?? false,

@@ -307,10 +307,16 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
 
                 topTextP.style.color = banner.textColor;
-                topTextP.style.fontSize = banner.fontSize ? `${banner.fontSize}px` : '16px';
+                topTextP.style.fontSize = banner.fontSize ? `${banner.fontSize}` : '16px';
                 topTextP.style.fontWeight = banner.fontWeight ? 'bold' : 'normal';
                 topTextP.style.fontStyle = banner.fontStyle ? 'italic' : 'normal';
                 topTextP.style.textDecoration = banner.underline ? 'underline' : 'none';
+                // Make timer font size same as banner text size
+                topDate.style.fontSize = banner.fontSize ? `${banner.fontSize}` : '16px';
+                topDate.style.color = banner.textColor;
+                topDate.style.fontWeight = banner.fontWeight ? 'bold' : 'normal';
+                topDate.style.fontStyle = banner.fontStyle ? 'italic' : 'normal';
+
             } else {
                 topText.style.display = 'none';
             }
@@ -323,9 +329,9 @@ window.addEventListener('DOMContentLoaded', () => {
             productTitle.style.fontSize = `${productDetails.titleSize}px`;
             productTitle.style.fontWeight = productDetails.titleBold ? 'bold' : 'normal';
             productTitle.style.color = productDetails.titleColor;
-            productTitle.style.fontFamily = container.fontFamily;  
+            productTitle.style.fontFamily = container.fontFamily;
 
-            productPrice.style.fontSize = `${productDetails.priceSize}px`;    
+            productPrice.style.fontSize = `${productDetails.priceSize}px`;
             productPrice.style.color = productDetails.priceColor;
             productPrice.style.fontWeight = productDetails.priceBold ? 'bold' : 'normal';
 
@@ -343,15 +349,15 @@ window.addEventListener('DOMContentLoaded', () => {
             // ✅ Variant Selector
             if (variantSelector.show) {
                 variantsContainer.style.display = 'block';
-                variantSelect.style.color = variantSelector.textColor; 
-                variantSelect.style.fontSize = `${variantSelector.fontSize}px`;  
+                variantSelect.style.color = variantSelector.textColor;
+                variantSelect.style.fontSize = `${variantSelector.fontSize}px`;
                 variantSelect.style.fontWeight = variantSelector.isBold ? 'bold' : 'normal';
 
                 const qtyBg = (variantSelector.backgroundColor || "").trim();
-                qtyInp.style.backgroundColor = qtyBg; 
+                qtyInp.style.backgroundColor = qtyBg;
                 qtyContainer.style.backgroundColor = qtyBg;
                 productInfo.style.backgroundColor = qtyBg;
- 
+
                 productInfo.style.border = `${quantitySelector.borderSize || 0}px solid ${quantitySelector.borderColor || '#000'}`;
                 productInfo.style.borderRadius = `${quantitySelector.borderRadius || 0}px`;
             } else {

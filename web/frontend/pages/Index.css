@@ -995,6 +995,7 @@ c .product-add-to-cart,
 .field-item.inp-setting-variant .inp-checkbox-inner,
 .inp-setting-announcement-text .inp-checkbox-inners {
     flex: 0 0 10%;
+    background: #CCCCCC;
 }
 
 .field-item.inp-product-name .inp-number-inner,

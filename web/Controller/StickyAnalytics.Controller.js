@@ -170,6 +170,8 @@ export const getAnalytics = async (req, res) => {
                 product(id: $ownerId) {
                     id
                     title
+                    onlineStorePreviewUrl
+                    handle
                     variants(first:150){
                         edges{
                             node{

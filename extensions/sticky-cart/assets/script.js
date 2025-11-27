@@ -1,3 +1,154 @@
+const createandUpdateStickyAnalytics = async (shop, body) => {
+    try {
+        const response = await fetch(`https://${shop}/apps/Sticky/create-analytics`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        });
+        const data = await response.json();
+        console.log("Analytics data:", data);
+
+        return data;
+    } catch (error) {
+        console.error("Error fetching analytics data:", error);
+    }
+}
+
+const updatstickyAddToCarts = async (shop, body) => {
+    try {
+        const response = await fetch(`https://${shop}/apps/Sticky/update-addToCartsSticky`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        });
+        const data = await response.json();
+        console.log("Analytics data:", data);
+
+        return data;
+    } catch (error) {
+        console.error("Error fetching analytics data:", error);
+    }
+}
+const updatedefaultstickyAddToCarts = async (shop, body) => {
+    try {
+        const response = await fetch(`https://${shop}/apps/Sticky/update-defaultaddToCartsSticky`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        });
+        const data = await response.json();
+        console.log("Analytics data:", data);
+
+        return data;
+    } catch (error) {
+        console.error("Error fetching analytics data:", error);
+    }
+}
+
+window.addEventListener("load", () => {
+    window.lastDefaultATC = 0;
+
+    // Detect native PRODUCT FORM submission
+    // const productForms = document.querySelectorAll('form[action="/cart/add"], form[action="/cart/add.js"]');
+
+    // productForms.forEach(form => {
+    //     form.addEventListener("submit", async (e) => {
+    //         // Allow the form to submit normally (we DON’T prevent)
+    //         const formData = new FormData(form);
+    //         const variantId = formData.get("id");
+
+    //         if (variantId) {
+    //             console.log("🛒 Default Add to Cart detected (Form)", variantId);
+
+    //             await updatedefaultstickyAddToCarts(window.stickyCart.shop, {
+    //                 shop: window.stickyCart.shop,
+    //                 productId: window.stickyCart.id,
+    //                 normalAddToCarts: 1
+    //             });
+    //         }
+    //     });
+});
+
+// Detect AJAX-based Add to Cart (theme.js, global.js, custom scripts)
+const originalFetch = window.fetch;
+window.fetch = async function () {
+    const url = arguments[0];
+
+    if (window.isStickyCartATC) {
+        window.isStickyCartATC = false;
+        return originalFetch.apply(this, arguments);
+    }
+
+    if (typeof url === "string" && url.includes("/cart/add.js")) {
+        return originalFetch.apply(this, arguments);
+    }
+
+    if (typeof url === "string" && url.includes("/cart/add")) {
+
+        const now = Date.now();
+        if (now - window.lastDefaultATC < 300) return originalFetch.apply(this, arguments);
+        window.lastDefaultATC = now;
+
+        console.log("🛒 Default Add to Cart detected (AJAX)");
+
+        await updatedefaultstickyAddToCarts(window.stickyCart.shop, {
+            shop: window.stickyCart.shop,
+            productId: window.stickyCart.id,
+            normalAddToCarts: 1
+        });
+    }
+
+    return originalFetch.apply(this, arguments);
+};
+
+    // window.fetch = async function () {
+    //     const url = arguments[0];
+
+    //     // 1️⃣ Skip if sticky cart made the request
+    //     if (window.isStickyCartATC) {
+    //         window.isStickyCartATC = false;
+    //         return originalFetch.apply(this, arguments);
+    //     }
+
+    //     // 2️⃣ Skip sticky-cart-specific add endpoint `/cart/add.js`
+    //     if (typeof url === "string" && url.includes("/cart/add.js")) {
+    //         // do NOT count as default add-to-cart
+    //         return originalFetch.apply(this, arguments);
+    //     }
+
+    //     // 3️⃣ Detect only REAL default add-to-cart
+    //     if (typeof url === "string" && url.includes("/cart/add")) {
+
+    //         const now = Date.now();
+
+    //         // 🛑 Prevent double firing within 500ms
+    //         if (now - window.lastDefaultATC < 5) {
+    //             return originalFetch.apply(this, arguments);
+    //         }
+
+    //         window.lastDefaultATC = now;
+
+    //         console.log("🛒 Default Add to Cart detected (AJAX)");
+
+    //         await updatedefaultstickyAddToCarts(window.stickyCart.shop, {
+    //             shop: window.stickyCart.shop,
+    //             productId: window.stickyCart.id,
+    //             normalAddToCarts: 1
+    //         });
+    //     }
+
+
+    //     return originalFetch.apply(this, arguments);
+    // };
+
+// });
+
 window.addEventListener('DOMContentLoaded', () => {
     const plusbtn = document.getElementById('plus');
     const minusbtn = document.getElementById('minus');
@@ -65,11 +216,11 @@ window.addEventListener('DOMContentLoaded', () => {
     // ✅ Quantity controls
     plusbtn.addEventListener('click', () => qtyInp.value++);
     minusbtn.addEventListener('click', () => {
-        if (qtyInp.value > 0) qtyInp.value--;
+        if (qtyInp.value > 1) qtyInp.value--;
     });
 
     // ✅ Add to Cart
-    addToCartBtn.addEventListener('click', () => {
+    addToCartBtn.addEventListener('click', async () => {
         if (!variantId) {
             alert("Please select a variant before adding to cart.");
             return;
@@ -80,7 +231,15 @@ window.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        window.isStickyCartATC = true;
         const splitvariantId = variantId.split("/").pop();
+
+        await updatstickyAddToCarts(window.stickyCart.shop, {
+            shop: window.stickyCart.shop,
+            productId: window.stickyCart.id,
+            stickyAddToCarts: 1
+        });
+
         fetch("/cart/add.js", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -271,6 +430,7 @@ window.addEventListener('DOMContentLoaded', () => {
             // ✅ If we pass both product scope and device checks, then show the parent and apply styles
             parent.style.display = 'block';
             stickyCartViewCount++;
+            await createandUpdateStickyAnalytics(shop, { shop, productId: window.stickyCart.id, stickyViews: 1 });
 
             // Prepare debug data
             const previewLog = {

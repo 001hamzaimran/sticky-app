@@ -52,6 +52,8 @@ const otherApps = [
 export default function Analytics() {
     const [products, setProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState('');
+    const [storeData, setStoreData] = useState({});
+    const [Analytics, setAnalytics] = useState([]);
     const [analyticsData, setAnalyticsData] = useState(mockAnalyticsData);
 
     // -----------------------------------------
@@ -73,7 +75,90 @@ export default function Analytics() {
         };
 
         fetchProducts();
+        getStore();
     }, []);
+
+    const getStore = async () => {
+        try {
+            const response = await fetch("/api/get-store");
+            const data = await response.json();
+            setStoreData(data);
+            console.log("Store data:", data);
+        } catch (error) {
+            console.error("Error fetching store data:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (!storeData?.domain) return;
+
+        const fetchAnalytics = async () => {
+            try {
+                const response = await fetch(`/api/get-analytics/${storeData.domain}`);
+                const json = await response.json();
+
+                if (!json?.data) return;
+
+                const arr = json.data;
+
+                // ---------------------------
+                // Build products dropdown list
+                // ---------------------------
+                setProducts(
+                    arr.map(item => ({
+                        id: item.productId,
+                        title: item.productData?.title || "Unnamed Product"
+                    }))
+                );
+
+                // ---------------------------
+                // Sticky Usage Graph
+                // ---------------------------
+                const stickyUsage = arr.map(item => ({
+                    product: item.productData?.title || item.productId,
+                    views: item.stickyViews ?? 0,
+                    addToCartClicks: item.stickyAddToCarts ?? 0
+                }));
+
+                // ---------------------------
+                // Conversion Graph
+                // ---------------------------
+                const conversionUplift = arr.map(item => {
+                    const stickyViews = item.stickyViews || 0;
+                    const stickyATC = item.stickyAddToCarts || 0;
+                    const normalATC = item.normalAddToCarts || 0;
+
+                    const withSticky =
+                        stickyViews > 0 ? (stickyATC / stickyViews) * 100 : 0;
+
+                    const withoutSticky =
+                        (normalATC > 0)
+                            ? (normalATC / (stickyViews + normalATC + stickyATC)) * 100
+                            : 0;
+
+                    return {
+                        product: item.productData?.title || item.productId,
+                        withSticky: Number(withSticky.toFixed(2)),
+                        withoutSticky: Number(withoutSticky.toFixed(2))
+                    };
+                });
+
+                // Set graph data
+                setAnalyticsData({
+                    stickyUsage,
+                    conversionUplift
+                });
+
+                setAnalytics(arr);
+            } catch (error) {
+                console.error("Error fetching analytics:", error);
+            }
+        };
+
+
+        fetchAnalytics();
+    }, [storeData]);
+
 
     // -----------------------------------------
     // Preview Button Handler
@@ -83,10 +168,7 @@ export default function Analytics() {
 
         const selectedProductData = products.find(p => p.id === selectedProduct);
         if (selectedProductData) {
-            const shopDomain =
-                window.Shopify?.shop ||
-                window.Shopify?.shopDomain ||
-                "your-store.myshopify.com";
+            const shopDomain = storeData?.domain;
 
             const productHandle = selectedProductData.title.toLowerCase().replace(/\s+/g, "-");
 

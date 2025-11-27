@@ -20,6 +20,7 @@ export default function App() {
           <NavMenu>
             <Link to="/" rel="home" />
             {/* <Link to="/first">first</Link> */}
+            <Link to="Analytics">Analytics</Link>
             {/* <a href="/pagename">{t("NavigationMenu.pageName")}</a> */}
           </NavMenu>
           <Routes pages={pages} />

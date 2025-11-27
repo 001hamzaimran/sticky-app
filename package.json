@@ -11,7 +11,10 @@
     "generate": "shopify app generate",
     "deploy": "shopify app deploy"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1"
+  },
   "author": "Sticky App",
   "private": true,
   "workspaces": [

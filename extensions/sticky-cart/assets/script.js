@@ -20,6 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
     let currentVariantAvailable = true;
     let productData;
     let stickyCartSettings = null; // Store settings globally
+    let stickyCartViewCount = 0;
 
     // ✅ Check device type
     function isMobileDevice() {
@@ -269,7 +270,27 @@ window.addEventListener('DOMContentLoaded', () => {
 
             // ✅ If we pass both product scope and device checks, then show the parent and apply styles
             parent.style.display = 'block';
+            stickyCartViewCount++;
 
+            // Prepare debug data
+            const previewLog = {
+                productId: window.stickyCart.id,
+                shop: window.stickyCart.shop,
+                viewCount: stickyCartViewCount,
+                pageUrl: window.location.href,
+                device: isMobileDevice() ? "Mobile" : "Desktop",
+                time: new Date().toISOString()
+            };
+
+            // Stylish console output
+            console.group("🟢 Sticky Cart Preview");
+            console.log("Product ID:", previewLog.productId);
+            console.log("Shop:", previewLog.shop);
+            console.log("View Count:", previewLog.viewCount);
+            console.log("Page URL:", previewLog.pageUrl);
+            console.log("Device:", previewLog.device);
+            console.log("Time:", previewLog.time);
+            console.groupEnd();
             // ✅ Container styles
             if (container.backgroundColor && container.backgroundColor.startsWith("linear-gradient(")) {
                 parent.style.background = container.backgroundColor;

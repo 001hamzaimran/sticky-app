@@ -51,12 +51,13 @@
 }
 
 input[type="color"] {
-    width: 50px;
+    width: 40px;
     height: 40px;
     border: none;
     padding: 0;
     background: transparent;
     display: block;
+    border-radius: 20px;
 }
 
 input[type="range"],

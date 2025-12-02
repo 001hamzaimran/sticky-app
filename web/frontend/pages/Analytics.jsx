@@ -44,9 +44,8 @@ const mockAnalyticsData = {
 };
 
 const otherApps = [
-    { name: 'Upsell Manager', url: 'https://apps.shopify.com/upsell-manager' },
-    { name: 'Cart Booster', url: 'https://apps.shopify.com/cart-booster' },
-    { name: 'Email Automations', url: 'https://apps.shopify.com/email-automations' }
+    { name: 'CartBoost AI', url: 'https://apps.shopify.com/cart-boost-ai?st_source=autocomplete&surface_detail=autocomplete_apps', image: 'https://cdn.shopify.com/app-store/listing_images/799deea5f642fac375dab8470d93bc5c/icon/CLjLqJ3WzY4DEAE=.jpeg' },
+    { name: 'ABboost: A/B Testing', url: 'https://apps.shopify.com/boostab-a-b-testing?st_source=autocomplete&surface_detail=autocomplete_apps', image: 'https://cdn.shopify.com/app-store/listing_images/522f1c73dcc3a2505dddf4e16185da86/icon/CJbN0czL9o8DEAE=.jpeg' },
 ];
 
 export default function Analytics() {
@@ -318,26 +317,56 @@ export default function Analytics() {
                         Check Out Our Other Apps
                     </Typography>
 
-                    <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mt: 1 }}>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            gap: 3,
+                            flexWrap: "wrap",
+                            mt: 2,
+                        }}
+                    >
                         {otherApps.map((app) => (
-                            <Paper
+                            <Card
                                 key={app.name}
                                 sx={{
-                                    flex: "1 1 30%",
-                                    minWidth: 200,
-                                    p: 2,
-                                    textAlign: "center",
+                                    width: 250,
                                     cursor: "pointer",
-                                    "&:hover": { backgroundColor: "#eee" }
+                                    borderRadius: 2,
+                                    boxShadow: 3,
+                                    transition: "0.2s",
+                                    "&:hover": {
+                                        transform: "scale(1.03)",
+                                        boxShadow: 6,
+                                    },
                                 }}
                                 onClick={() => window.open(app.url, "_blank")}
                             >
-                                <Typography fontWeight="medium">{app.name}</Typography>
-                            </Paper>
+                                <img
+                                    src={app.image}
+                                    alt={app.name}
+                                    style={{
+                                        width: "100%",
+                                        height: 150,
+                                        objectFit: "cover",
+                                        borderTopLeftRadius: "8px",
+                                        borderTopRightRadius: "8px",
+                                    }}
+                                />
+
+                                <Box sx={{ p: 2 }}>
+                                    <Typography
+                                        variant="subtitle1"
+                                        sx={{ fontWeight: 600, textAlign: "center" }}
+                                    >
+                                        {app.name}
+                                    </Typography>
+                                </Box>
+                            </Card>
                         ))}
                     </Box>
                 </CardContent>
             </Card>
+
         </div>
     );
 }

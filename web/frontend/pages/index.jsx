@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import img from "../assets/sticky-add-to-cart-bg.webp";
 import First from "./first";
+import Second from './Second';
+import SuggestedApps from "./SuggestedApps";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -43,15 +45,15 @@ export default function HomePage() {
     window.open(url, "_blank");
   };
 
-  const handleModalPrimaryAction = () => {
-    setModalActive(false);
-    navigate("/Customize");
-  };
+  // const handleModalPrimaryAction = () => {
+  //   setModalActive(false);
+  //   navigate("/Customize");
+  // };
 
-  const handleModalClose = () => {
-    setModalActive(false);
-    setPlayVideo(false);
-  };
+  // const handleModalClose = () => {
+  //   setModalActive(false);
+  //   setPlayVideo(false);
+  // };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,11 +71,12 @@ export default function HomePage() {
       </div>
     );
   }
- 
+
 
   return (
     <>
       {storeData?.firstVisit && <First />}
+      {storeData?.firstVisit === false && themeEnabled === false && <Second />}
       <div className="main-page">
         <div className="sticky-content">
           <img src={img} alt="Sticky Cart" />
@@ -94,6 +97,7 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+      <SuggestedApps />
     </>
   );
 }

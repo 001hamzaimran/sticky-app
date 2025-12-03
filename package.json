@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1"
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.6"
   },
   "author": "Sticky App",
   "private": true,

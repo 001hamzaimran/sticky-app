@@ -2,6 +2,7 @@ import { Box, Button, Card, Page, ProgressBar, Text } from '@shopify/polaris'
 import React, { useEffect, useState } from 'react'
 import './First.css'
 
+
 export function DoneIcon() {
     return (
         <svg
@@ -202,6 +203,7 @@ function First() {
 
     return (
         <Page>
+
             <Card>
                 <Card.Section>
                     <Text variant="headingMd" as="h2">

@@ -1,11 +1,39 @@
 import img from "../assets/placeholder-featured-image.svg";
 import CountdownTimer from "./CountdownTimer";
 
-export default function CustomizerPreview({ selectedValues, remainingTime, formatTime, handleChange }) {
+export default function CustomizerPreview({ selectedValues, productData, remainingTime, formatTime, handleChange }) {
+  console.log("Customize Preview", productData)
+  const getDisplayData = () => {
+    if (productData) {
+      // ✅ Agar productData hai, to real product data use karo
+      return {
+        title: productData.title || "Home Trophy",
+        price: productData.variants?.edges?.[0]?.node?.price || 
+               productData.priceRange?.minVariantPrice || "78",
+        comparePrice: productData.variants?.edges?.[0]?.node?.compareAtPrice || "90",
+        image: productData.images?.edges?.[0]?.node?.originalSrc || img,
+        hasVariants: productData.variants?.edges?.length > 0
+      };
+    } else {
+      // ✅ Agar productData nahi hai, to default values use karo
+      return {
+        title: "Home Trophy",
+        price: "78",
+        comparePrice: null, 
+        image: img,
+        hasVariants: false
+      };
+    }
+  };
+
+
+  const displayData = getDisplayData();
   const deviceChange = (device) => {
     // update selectedValues state
     handleChange("visibilyDevice", device);
   };
+
+  
 
   return (
     <div
@@ -129,7 +157,7 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
             <div className={`product-image-content ${selectedValues?.showImage !== false ? 'with-image' : 'without-image'}`}>
               {selectedValues?.showImage !== false && (
                 <div className="product-image">
-                  <img src={img} width="100" height="100" alt="Product" />
+                  <img src={displayData.image} width="100" height="100" alt={displayData.title} />
                 </div>
               )}
               <div className="product-content">
@@ -145,7 +173,7 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                         color: selectedValues?.productNameColor || "#fff",
                       }}
                     >
-                      Home Trophy
+                      {displayData.title}
                     </h2>
                   )}
                   <div className="product-prices">
@@ -153,6 +181,7 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                       <p
                         className="product-compare-price"
                         style={{
+                          display: selectedValues?.showComparedPrice !== false ? "block" : "none", 
                           fontWeight: selectedValues?.productCompareWeight !== false ? "bold" : "normal",
                           fontSize: selectedValues?.productCompareSize
                             ? `${selectedValues.productCompareSize}px`
@@ -161,7 +190,7 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                           textDecoration: "line-through",
                         }}
                       >
-                        $90 -
+                        ${displayData.comparePrice} -
                       </p>
 
                     )}
@@ -177,7 +206,7 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                           color: selectedValues?.productPriceColor || "#fff",
                         }}
                       >
-                        $78
+                        ${displayData.price}
                       </p>
                     )}
 
@@ -204,11 +233,11 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                         
                       }}
                     >
-                      <select
+                      {/* <select
                         style={{
                           width: "100%",
                           padding: "5px 10px",
-                          color: selectedValues?.variantTextColor || "#fff",
+                          color: selectedValues?.variantTextColor,
                           fontSize: selectedValues?.variantTextSize
                             ? `${parseInt(selectedValues.variantTextSize)}px` : "14px",
                           fontWeight: selectedValues?.variantTextWeight !== false ? "bold" : "normal",
@@ -217,6 +246,48 @@ export default function CustomizerPreview({ selectedValues, remainingTime, forma
                         }}
                       >
                         <option>Select Variant</option>
+                        {productData?.variants?.edges?.length > 0 ? (
+                          productData.variants.edges.map((edge, index) => (
+
+                            <option key={index} value={edge.node.id}>
+                              {edge.node.displayName}
+                            </option>
+                          ))
+                        ) : (
+                          <option>Default</option>
+                        )}
+                      </select> */}
+                      <select
+                        style={{
+                          width: "100%",
+                          padding: "5px 10px",
+                          color: selectedValues?.variantTextColor,
+                          fontSize: selectedValues?.variantTextSize
+                            ? `${parseInt(selectedValues.variantTextSize)}px` : "14px",
+                          fontWeight: selectedValues?.variantTextWeight !== false ? "bold" : "normal",
+                          border: "none",
+                          lineHeight: "24px"
+                        }}
+                      >
+                        <option value="">Select Variant</option>
+                        {productData?.variants?.edges?.length > 0 ? (
+                          productData.variants.edges.map((edge, index) => {
+                            const fullName = edge.node.displayName || edge.node.title || "";
+                            
+                            // Method 1: Extract everything after last dash
+                            const parts = fullName.split(" - ");
+                            const sizeName = parts.length > 1 ? parts[parts.length - 1] : fullName;
+
+                            
+                            return (
+                              <option key={index} value={edge.node.id}>
+                                {sizeName.trim()}
+                              </option>
+                            );
+                          })
+                        ) : (
+                          <option value="">Default</option>
+                        )}
                       </select>
                     </div>
                   )}

@@ -86,22 +86,32 @@ const getProducts = async (req, res) => {
     const client = new shopify.api.clients.Graphql({ session: res.locals.shopify.session });
     const data = await client.query({
       data: `query GetProducts {
-                products(first: 150) {
-                  edges {
-                    node {
-                      id
-                      title
-                      tags
-                      images(first: 1) {
-                        edges {
-                          node {
-                            originalSrc
-                          }
+              products(first: 150) {
+                edges {
+                  node {
+                    id
+                    title
+                    tags
+                    variants(first:10){
+                      edges{
+                        node{
+                          compareAtPrice
+                          price
+                          displayName
                         }
                       }
                     }
+                    images(first: 1) {
+                      edges {
+                        node {
+                          originalSrc
+                        }
+                      }
+                    }
+                    
                   }
                 }
+              }
             }`
     })
 

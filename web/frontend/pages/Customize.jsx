@@ -84,16 +84,43 @@ const Tabs = () => {
       });
     }, [selectedValues.template]);
 
+    const [selectedProductId, setSelectedProductId] = useState(null);
+    const [selectedProductData, setSelectedProductData] = useState(null);
+    
+    // ✅ Naya function banayein product remove ke liye
+    const handleProductRemoveFromPanel = () => {
+      setSelectedProductId(null);
+      setSelectedProductData(null);
+      
+      // Agar aap selectedValues me bhi store kar rahe hain to wahan bhi clear karo
+      setSelectedValues(prev => ({
+        ...prev,
+        selectedProductId: null
+      }));
+      
+      console.log("Product removed in Customize component");
+    };
+
+    const handleProductSelectFromPanel = (productId, productData) => {
+      // CHANGED CODE - product data CustomizerPreview ko pass karo
+      setSelectedProductId(productId);
+      setSelectedProductData(productData);
+    };
+
 
 
     return (
         <main className={`customizer-container ${selectedValues.visibilyDevice === "showMobile" ? "mobile-customizer-container": ""}`}>
-            <CustomizerPanel 
+            <CustomizerPanel
+                onProductSelect={handleProductSelectFromPanel}
+                onProductRemove={handleProductRemoveFromPanel}
                 selectedValues={selectedValues} 
                 setSelectedValues={setSelectedValues} 
                 handleChange={handleChange}
             />
             <CustomizerPreview
+                productId={selectedProductId}
+                productData={selectedProductData}
                 selectedValues={selectedValues}
                 handleChange={handleChange}
             />

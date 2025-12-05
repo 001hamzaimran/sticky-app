@@ -13,12 +13,22 @@
     font-size: 18px;
     font-weight: 500;
 }
-
+.inp-setting-announcement-text .inp-text-inner{
+    width: 100%;
+}
 .tab-icon {
     font-size: 20px;
     line-height: 24px;
 }
-
+.mobile-device .product-info{
+    margin-left: 0;
+} 
+.mobile-device .product-content{
+    gap: 10px;
+}
+.mobile-device .product-content h2.product-title{
+    line-height: 20px;
+}
 .customizer-panel-tab-content-item {
     padding: 10px 20px;
     border-top: 1px solid #f1f1f1;
@@ -184,7 +194,8 @@ p.product-price {
 }
 
 .product-variant select option {
-    background-color: #000;
+    /* background-color: #000; */
+    color: #000;
 }
 
 *:focus-visible {
@@ -394,7 +405,9 @@ main.customizer-container {
 .Polaris-TextField__Backdrop {
     border: none;
 }
-
+.Polaris-TextField--hasValue{
+    margin-bottom: 0 !important;
+}
 .inp-Background .Polaris-TextField--hasValue {
     width: 60px;
 }

@@ -4,7 +4,8 @@ import img from "../assets/sticky-add-to-cart-bg.webp";
 // import First from "./First.jsx";
 import Second from "./Second.jsx"
 import SuggestedApps from "./SuggestedApps";
-import First from "./first.jsx";
+// import First from "./first.jsx";
+import above from "./above.jsx";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -77,7 +78,7 @@ export default function HomePage() {
   return (
     <>
       {/* {storeData?.firstVisit && <First />} */}
-      {storeData?.firstVisit && <First />}
+      {storeData?.firstVisit && <above />}
       {storeData?.firstVisit === false && themeEnabled === false && <Second />}
       <div className="main-page">
         <div className="sticky-content">

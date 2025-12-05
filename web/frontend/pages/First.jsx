@@ -259,7 +259,7 @@ function First() {
                                                 </Button>
                                             ))}
                                         </div>
-                                    </>
+                                    </> 
                                 )}
                             </div>
                             <div className="chevron">
@@ -272,12 +272,12 @@ function First() {
                                     <path d="M8 12L3 7l1-1 4 4 4-4 1 1-5 5z" fill="currentColor" />
                                 </svg>
                             </div>
-                        </div>
-                    </div>
+                        </div> 
+                    </div>   
                 ))}
-            </Card>
-        </Page>
+            </Card> 
+        </Page> 
     )
-}
-
+} 
+  
 export default First

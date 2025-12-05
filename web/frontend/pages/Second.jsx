@@ -1,11 +1,11 @@
 // second.jsx
 import React, { useEffect, useState } from 'react'
-import "./second.css"
+import "./Second.css"
 import { Page, Banner, List } from '@shopify/polaris'
 
 function Second() {
     const [storeData, setStoreData] = useState(null);
-    const getStore = async () => { 
+    const getStore = async () => {
         try {
             const response = await fetch("/api/get-store");
             const data = await response.json();

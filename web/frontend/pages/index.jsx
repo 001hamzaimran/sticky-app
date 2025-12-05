@@ -75,7 +75,7 @@ export default function HomePage() {
 
   return (
     <>
-      {/* {storeData?.firstVisit && <First />} */}
+      {storeData?.firstVisit && <First />}
       {storeData?.firstVisit === false && themeEnabled === false && <Second />}
       <div className="main-page">
         <div className="sticky-content">

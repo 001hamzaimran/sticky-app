@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import img from "../assets/sticky-add-to-cart-bg.webp";
-import First from "./First.jsx";
+// import First from "./First.jsx";
 import Second from "./Second.jsx"
 import SuggestedApps from "./SuggestedApps";
 
@@ -75,7 +75,7 @@ export default function HomePage() {
 
   return (
     <>
-      {storeData?.firstVisit && <First />}
+      {/* {storeData?.firstVisit && <First />} */}
       {storeData?.firstVisit === false && themeEnabled === false && <Second />}
       <div className="main-page">
         <div className="sticky-content">

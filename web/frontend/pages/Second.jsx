@@ -1,7 +1,7 @@
 // second.jsx
 import React, { useEffect, useState } from 'react'
 import './First.css'
-
+    
 import { Page, Banner, List } from '@shopify/polaris'
 
 function Second() {

@@ -38,15 +38,15 @@ const PendingIcon = () => {
                 cy="14"
                 r="13"
                 stroke="#C4C4C4"
-                strokeWidth="2"
+                strokeWidth="2" 
                 strokeDasharray="4 4"
             />
-        </svg>
+        </svg> 
     );
 }
 
 
-
+ 
 function First() {
     const [expandedSection, setExpandedSection] = useState(0);
     const [loading, setLoading] = useState(true);

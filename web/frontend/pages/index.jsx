@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import img from "../assets/sticky-add-to-cart-bg.webp";
-import First from "./first";
+import First from "./First";
 import Second from './Second';
 import SuggestedApps from "./SuggestedApps";
 
@@ -38,7 +38,7 @@ export default function HomePage() {
 
   const handleGetStarted = () => {
     const shop = storeData.domain;
-    const API_KEY = "56505304f3c96a93db57dbec3fda07dd";
+    const API_KEY = "c23e9fe0713ccd6c1eff49729441698d";
     const EXTENSION_HANDLE = "sticky_cart";
 
     const url = `https://${shop}/admin/themes/current/editor?context=apps&activateAppId=${API_KEY}/${EXTENSION_HANDLE}`;
@@ -75,7 +75,7 @@ export default function HomePage() {
 
   return (
     <>
-      {storeData?.firstVisit && <First />}
+      {/* {storeData?.firstVisit && <First />} */}
       {storeData?.firstVisit === false && themeEnabled === false && <Second />}
       <div className="main-page">
         <div className="sticky-content">

@@ -222,6 +222,13 @@ const tabsData = [
         ],
       },
       {
+        title: "Search Product",
+        class: "search-product",
+        items: [
+          { label: "", type: "productSearch", name: "searchProduct" }
+        ]
+      },
+      {
         items: [
           { label: "Show Product Image", type: "checkbox", name: "showImage", default: false },
           { label: "Show Product Name", type: "checkbox", name: "showName", value: true },
@@ -285,7 +292,7 @@ const tabsData = [
         items: [
           { label: "B", type: "checkbox", name: "variantTextWeight", value: true },
           { label: "", type: "number", name: "variantTextSize", value: 14 },
-          { label: "", type: "color", name: "variantTextColor", value: "#fff" },
+          { label: "", type: "color", name: "variantTextColor", value: "" },
           { label: "Icon color", type: "color", name: "qtyIconColor", value: "#fff" },
           { label: "Background color", type: "color", name: "variantBgColor", value: "transparent" },
           { label: "Border size in px", type: "number", name: "variantBorderSize", value: 0 },
@@ -374,7 +381,7 @@ const tabsData = [
           { label: "I", type: "checkbox", name: "announcementFontStyle", value: true },
           { label: "U", type: "checkbox", name: "announcementFontDecoration", value: true },
           { label: "", type: "color", name: "announcementFontColor", value: "#635F5F" },
-          { label: "Text", type: "text", name: "announcementText", value: "Announcement text" }
+          { label: "Text (Add {timer} if need counter)", type: "text", name: "announcementText", value: "Announcement text" }
         ],
       },
       {

@@ -2,8 +2,8 @@ import { Box, Button, Card, Page, ProgressBar, Text } from '@shopify/polaris'
 import React, { useEffect, useState } from 'react'
 import './First.css'
 
-
-export function DoneIcon() {
+// Move these icon components inside the First component or keep them separate
+const DoneIcon = () => {
     return (
         <svg
             width="20"
@@ -24,7 +24,7 @@ export function DoneIcon() {
     );
 }
 
-export function PendingIcon() {
+const PendingIcon = () => {
     return (
         <svg
             width="20"
@@ -44,6 +44,8 @@ export function PendingIcon() {
         </svg>
     );
 }
+
+
 
 function First() {
     const [expandedSection, setExpandedSection] = useState(0);
@@ -92,7 +94,7 @@ function First() {
 
     const handleGetStarted = () => {
         const shop = "marcelshop-9888.myshopify.com";
-        const API_KEY = "56505304f3c96a93db57dbec3fda07dd";
+        const API_KEY = "c23e9fe0713ccd6c1eff49729441698d";
         const EXTENSION_HANDLE = "sticky_cart";
         const url = `https://${shop}/admin/themes/current/editor?context=apps&activateAppId=${API_KEY}/${EXTENSION_HANDLE}`;
         window.open(url, "_blank");
@@ -193,9 +195,9 @@ function First() {
         return (
             <Page>
                 <Card>
-                    <Card.Section>
+                    <Card>
                         <Text variant="bodyMd" as="p">Loading setup guide...</Text>
-                    </Card.Section>
+                    </Card>
                 </Card>
             </Page>
         );

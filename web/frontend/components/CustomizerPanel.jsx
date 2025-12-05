@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,12 +10,13 @@ import {
   RangeSlider,
   Select,
 } from "@shopify/polaris";
+import ProductSearchSelect from "./ProductSearchSelect";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import tabsData from "../assets/TabsData.js";
 import "../assets/style.css";
 
-export default function CustomizerPanel({ selectedValues, setSelectedValues, handleChange }) {
+export default function CustomizerPanel({ selectedValues, setSelectedValues, handleChange, onProductSelect, onProductRemove }) {
   const [activeTab, setActiveTab] = useState(null);
   const [activeModal, setActiveModal] = useState(false);
   const [storeData, setStoreData] = useState(null);
@@ -26,10 +26,45 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
   const [saving, setSaving] = useState(false);
   const [stickyCartSettings, setStickyCartSettings] = useState({});
   const [loading, setLoading] = useState(false);
+  const [selectedSingleProductId, setSelectedSingleProductId] = useState(null);
 
+  // console.log("product data", productsData)
 
+  // Functions add karein
+  const handleProductSelect = (productId, productData) => {
+    // setSelectedSingleProductId(productId);
+    // onProductSelect?.(productId, productData);
+    // setSelectedProductData(productData); 
+    // Agar aap isko main selectedValues mein store karna chahte hain:
+    // setSelectedValues(prev => ({
+    //   ...prev,
+    //   selectedProductId: productId
+    // }));
+  
+      setSelectedSingleProductId(productId);
+      
+      // ✅ Parent (Customize) ko data pass karo
+      if (onProductSelect) {
+        onProductSelect(productId, productData);
+      } else {
+        console.warn("onProductSelect prop not passed to CustomizerPanel");
+      }
+  };
 
+  const handleProductRemove = () => {
+    setSelectedSingleProductId(null);
+    setSelectedValues(prev => ({
+      ...prev,
+      selectedProductId: null
+    }));
 
+    // ✅ Parent ko bhi inform karo
+    if (onProductRemove) {
+      onProductRemove();
+    } else {
+      console.warn("onProductRemove prop not passed to CustomizerPanel");
+    }
+  };
 
   const handleColorChange = (name, value) => {
     let newValue = value;
@@ -75,7 +110,6 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
         return;
       }
 
-      console.log("Fetched sticky cart settings:", settings);
 
       setStickyCartSettings(settings);
     } catch (error) {
@@ -93,7 +127,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
     try {
       const response = await fetch("/api/get-products");
       const data = await response.json();
-      // console.log("Products data:", data);
+      console.log("Products data:", data);
       setProductsData(data.data.map(item => item.node));
 
     } catch (error) {
@@ -103,9 +137,6 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
 
 
   const toggleProductSelection = (productId) => {
-    console.log("Toggling product selection for ID:", productId);
-    // const snippedID = productId.split("/").pop();
-    // console.log("Snipped ID:", snippedID);
     setSelectedProductIds((prevSelected) =>
       prevSelected.includes(productId)
         ? prevSelected.filter((id) => id !== productId)
@@ -113,8 +144,6 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
     );
   };
   const toggleExcludedProductSelection = (productId) => {
-    // const productId = productId.split("/").pop();
-
     setexcludedProductsIds((prevSelected) =>
       prevSelected.includes(productId)
         ? prevSelected.filter((id) => id !== productId)
@@ -144,8 +173,6 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
 
     setSaving(true);
     // Construct schema-aligned payload
-    console.log("productCompareWeight value:", selectedValues.productCompareWeight);
-    console.log("Type of productCompareWeight:", typeof selectedValues.productCompareWeight);
     const payload = {
       shop: storeData.domain,
       enabled: true,
@@ -273,8 +300,6 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
     };
 
     try {
-      console.log("Saving sticky cart with payload:", payload);
-      console.log("Selected Values:", selectedProductIds, excludedProductsIds);
       const response = await fetch("/api/add-sticky-cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -282,10 +307,8 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       });
 
       const data = await response.json();
-      console.log("Sticky cart saved:", data);
       alert(data.message || "Settings saved successfully!");
     } catch (error) {
-      console.error("Error saving sticky cart:", error);
       alert("Error saving settings!");
     } finally {
       setSaving(false);
@@ -508,7 +531,6 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       variantTextWeight: true,
       showQuantity: true,
       showVariant: true,
-      variantTextColor: "#fff",
 
 
       // Announcement
@@ -586,6 +608,19 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
                       {field.title && <h4>{field.title}</h4>}
 
                       {field.items?.map((item, j) => {
+
+                        if (item.type === "productSearch") {
+                          return (
+                            <div key={j} className="product-search-wrapper">
+                              <ProductSearchSelect
+                                productsData={productsData}
+                                selectedProductId={selectedSingleProductId}
+                                onProductSelect={handleProductSelect}
+                                onProductRemove={handleProductRemove}
+                              />
+                            </div>
+                          );
+                        }
 
                         // POSITION OFFSET LOGIC (vertical/horizontal)
                         if (item.conditionalFieldFor) {
@@ -906,6 +941,9 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
                       </Text>
                       <Text variant="bodySm" as="p" color="subdued">
                         {product.tags?.join(", ") || "No tags"}
+                      </Text>
+                      <Text variant="bodySm" as="p" color="subdued">
+                        {product.price?.join(", ") || "No tags"}
                       </Text>
                     </div>
                   </div>

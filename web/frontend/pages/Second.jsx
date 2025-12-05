@@ -5,7 +5,7 @@ import { Page, Banner, List } from '@shopify/polaris'
 
 function Second() {
     const [storeData, setStoreData] = useState(null);
-    const getStore = async () => {
+    const getStore = async () => { 
         try {
             const response = await fetch("/api/get-store");
             const data = await response.json();
@@ -17,7 +17,7 @@ function Second() {
     };
     const handleGetStarted = () => {
         const shop = storeData.domain;
-        const API_KEY = "56505304f3c96a93db57dbec3fda07dd";
+        const API_KEY = "c23e9fe0713ccd6c1eff49729441698d";
         const EXTENSION_HANDLE = "sticky_cart";
 
         const url = `https://${shop}/admin/themes/current/editor?context=apps&activateAppId=${API_KEY}/${EXTENSION_HANDLE}`;

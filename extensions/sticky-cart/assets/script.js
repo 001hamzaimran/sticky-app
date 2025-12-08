@@ -107,45 +107,45 @@ window.fetch = async function () {
     return originalFetch.apply(this, arguments);
 };
 
-    // window.fetch = async function () {
-    //     const url = arguments[0];
+// window.fetch = async function () {
+//     const url = arguments[0];
 
-    //     // 1️⃣ Skip if sticky cart made the request
-    //     if (window.isStickyCartATC) {
-    //         window.isStickyCartATC = false;
-    //         return originalFetch.apply(this, arguments);
-    //     }
+//     // 1️⃣ Skip if sticky cart made the request
+//     if (window.isStickyCartATC) {
+//         window.isStickyCartATC = false;
+//         return originalFetch.apply(this, arguments);
+//     }
 
-    //     // 2️⃣ Skip sticky-cart-specific add endpoint `/cart/add.js`
-    //     if (typeof url === "string" && url.includes("/cart/add.js")) {
-    //         // do NOT count as default add-to-cart
-    //         return originalFetch.apply(this, arguments);
-    //     }
+//     // 2️⃣ Skip sticky-cart-specific add endpoint `/cart/add.js`
+//     if (typeof url === "string" && url.includes("/cart/add.js")) {
+//         // do NOT count as default add-to-cart
+//         return originalFetch.apply(this, arguments);
+//     }
 
-    //     // 3️⃣ Detect only REAL default add-to-cart
-    //     if (typeof url === "string" && url.includes("/cart/add")) {
+//     // 3️⃣ Detect only REAL default add-to-cart
+//     if (typeof url === "string" && url.includes("/cart/add")) {
 
-    //         const now = Date.now();
+//         const now = Date.now();
 
-    //         // 🛑 Prevent double firing within 500ms
-    //         if (now - window.lastDefaultATC < 5) {
-    //             return originalFetch.apply(this, arguments);
-    //         }
+//         // 🛑 Prevent double firing within 500ms
+//         if (now - window.lastDefaultATC < 5) {
+//             return originalFetch.apply(this, arguments);
+//         }
 
-    //         window.lastDefaultATC = now;
+//         window.lastDefaultATC = now;
 
-    //         console.log("🛒 Default Add to Cart detected (AJAX)");
+//         console.log("🛒 Default Add to Cart detected (AJAX)");
 
-    //         await updatedefaultstickyAddToCarts(window.stickyCart.shop, {
-    //             shop: window.stickyCart.shop,
-    //             productId: window.stickyCart.id,
-    //             normalAddToCarts: 1
-    //         });
-    //     }
+//         await updatedefaultstickyAddToCarts(window.stickyCart.shop, {
+//             shop: window.stickyCart.shop,
+//             productId: window.stickyCart.id,
+//             normalAddToCarts: 1
+//         });
+//     }
 
 
-    //     return originalFetch.apply(this, arguments);
-    // };
+//     return originalFetch.apply(this, arguments);
+// };
 
 // });
 
@@ -430,7 +430,7 @@ window.addEventListener('DOMContentLoaded', () => {
             }
 
             // ✅ If we pass both product scope and device checks, then show the parent and apply styles
-            
+
             stickyCartViewCount++;
             await createandUpdateStickyAnalytics(shop, { shop, productId: window.stickyCart.id, stickyViews: 1 });
 

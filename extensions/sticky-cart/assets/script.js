@@ -584,11 +584,12 @@ window.addEventListener('DOMContentLoaded', () => {
             } else {
                 qtyContainer.style.display = 'none';
             }
-            parent.style.display = 'block';
 
             // ✅ CRITICAL FIX: Update button styling AFTER product data is loaded
             // This ensures currentVariantAvailable is set correctly
             updateAddToCartButton(addToCartButton);
+            parent.style.display = 'block';
+            parent.style.opacity = '1';
 
             // ✅ Save action globally for addToCart behavior
             window.stickyCartAction = addToCartButton.action || "cart";

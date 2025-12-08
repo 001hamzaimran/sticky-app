@@ -391,6 +391,8 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+
+
     // ✅ Fetch cart settings
     async function getCart(shop) {
         try {
@@ -428,7 +430,7 @@ window.addEventListener('DOMContentLoaded', () => {
             }
 
             // ✅ If we pass both product scope and device checks, then show the parent and apply styles
-            parent.style.display = 'block';
+            
             stickyCartViewCount++;
             await createandUpdateStickyAnalytics(shop, { shop, productId: window.stickyCart.id, stickyViews: 1 });
 
@@ -582,6 +584,7 @@ window.addEventListener('DOMContentLoaded', () => {
             } else {
                 qtyContainer.style.display = 'none';
             }
+            parent.style.display = 'block';
 
             // ✅ CRITICAL FIX: Update button styling AFTER product data is loaded
             // This ensures currentVariantAvailable is set correctly

@@ -440,7 +440,7 @@ main.customizer-container {
 
 .customizer-preview.mobile-device .product-item {
     padding: 0;
-    gap: 10px;
+    gap: 0px;
 }
 
 .customizer-preview.mobile-device .product-item,

@@ -559,11 +559,11 @@ window.addEventListener('DOMContentLoaded', () => {
                 productInfo.style.border = `${quantitySelector.borderSize || 0}px solid ${quantitySelector.borderColor || '#000'}`;
                 productInfo.style.borderRadius = `${quantitySelector.borderRadius || 0}px`;
 
-                qtyInp.style.color = quantitySelector.textColor;
+                qtyInp.style.color = quantitySelector.iconColor;
                 qtyInp.style.fontSize = `${quantitySelector.fontSize}px`;
                 qtyInp.style.fontWeight = quantitySelector.isBold ? "bold" : "normal";
                 qtyInp.style.textAlign = "center";
-                qtyInp.style.width = "40px";
+                qtyInp.style.width = "30px";
                 qtyInp.style.margin = "0 5px";
                 plusbtn.style.backgroundColor = "transparent";
                 minusbtn.style.backgroundColor = "transparent";

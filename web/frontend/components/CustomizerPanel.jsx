@@ -241,7 +241,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       variantSelector: {
         show: !!selectedValues.showVariant,
         backgroundColor: selectedValues.variantBgColor || " #000000",
-        textColor: selectedValues.variantTextColor || "#ffffff",
+        textColor: selectedValues.variantTextColor || "#000000ff",
         fontSize: Number(selectedValues.variantTextSize) || 14,
         isBold: selectedValues.variantTextFont === "bold",
       },
@@ -249,7 +249,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       quantitySelector: {
         show: !!selectedValues.showQuantity,
         fontSize: Number(selectedValues.qtyTextSize) || 14,
-        textColor: selectedValues.qtyTextColor || "#FFFFFF",
+        textColor: selectedValues.qtyTextColor || "#000000ff",
         borderColor: selectedValues.variantBorderColor || "#CCCCCC",
         borderSize: Number(selectedValues.variantBorderSize) || 0,
         iconColor: selectedValues.qtyIconColor || "#EEEEEE",

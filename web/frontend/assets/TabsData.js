@@ -293,7 +293,7 @@ const tabsData = [
           { label: "B", type: "checkbox", name: "variantTextWeight", value: true },
           { label: "", type: "number", name: "variantTextSize", value: 14 },
           { label: "", type: "color", name: "variantTextColor", value: "" },
-          { label: "Icon color", type: "color", name: "qtyIconColor", value: "#fff" },
+          { label: "Icon color", type: "color", name: "qtyIconColor", value: "#000000ff" },
           { label: "Background color", type: "color", name: "variantBgColor", value: "transparent" },
           { label: "Border size in px", type: "number", name: "variantBorderSize", value: 0 },
           { label: "", type: "color", name: "variantBorderColor", value: "#000000" },

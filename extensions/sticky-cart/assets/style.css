@@ -180,8 +180,6 @@ button {
     }
     .product-image-content-variant.without-image .product-content {
         width: 100%;
-        gap: 10px;
-        padding: 10px;
     }
     .product-image-content-variant.without-image .product-title-price{
         display: block;

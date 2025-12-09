@@ -50,7 +50,6 @@ body {
 }
 .product-prices{
     display: flex;
-    /* gap: 10px; */
 }
 .product-add-to-cart button{
 
@@ -228,6 +227,8 @@ button {
      } */
     .product-prices{
         padding-left: 10px;
+        align-items: center;
+        gap: 10px;
     }
     .product-title-price{
         margin-bottom: 0;
@@ -239,6 +240,9 @@ button {
     .product-image {
         width: 30%;
         height: 125px;
+    }
+    .product-image-content-variant.without-image .product-title-price{
+        display: block;
     }
 }
 

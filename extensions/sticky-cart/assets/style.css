@@ -175,7 +175,6 @@ button {
     }
     .product-info {
         margin: 0 10px;
-        /* width: 90%; */
         justify-content: space-between;
     }
     .product-image-content-variant.without-image {
@@ -190,14 +189,12 @@ button {
         padding: 10px;
     }
     .product-image-content-variant.without-image .product-title-price{
-        display: flex;
-        justify-content: space-between;
-        align-items: start;
+        display: block;
         width: 100%;
     }
     h2.product-title{
         line-height: 20px;
-        padding-left: 10px;
+        padding-left: 0px;
         margin-bottom: 5px;
     }
 
@@ -221,9 +218,9 @@ button {
     }
     
     .product-prices{
-        padding-left: 10px;
+        padding-left: 0px;
         align-items: center;
-        gap: 10px;
+        gap: 0px;
     }
     .product-title-price{
         margin-bottom: 0;
@@ -238,6 +235,9 @@ button {
     }
     .product-image-content-variant.without-image .product-title-price{
         display: block;
+    }
+    .product-info {
+        margin: 0 10px 0 0;
     }
 }
 

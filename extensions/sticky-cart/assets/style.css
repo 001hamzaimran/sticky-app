@@ -226,7 +226,7 @@ button {
     }
     .product-image {
         width: 30%;
-        height: 125px;
+        height: auto;
     }
     .product-image-content-variant.without-image .product-title-price{
         display: block;

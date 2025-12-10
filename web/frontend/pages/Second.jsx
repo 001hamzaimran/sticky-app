@@ -1,10 +1,10 @@
 // second.jsx
 import React, { useEffect, useState } from 'react'
 import './First.css'
-    
+
 import { Page, Banner, List } from '@shopify/polaris'
 
-function Second() {
+function Second({ setThemeEnabled, themeEnabled }) {
     const [storeData, setStoreData] = useState(null);
     const getStore = async () => {
         try {
@@ -28,12 +28,16 @@ function Second() {
     useEffect(() => {
         getStore();
     }, []);
+
+    const handleDone = () => {
+        setThemeEnabled(true);
+    };
     return (
         <Page>
             <Banner
                 title="Sticky Cart app is not activated yet"
                 action={{ content: 'Activate', onAction: handleGetStarted }}
-                secondaryAction={{ content: 'I have Done it' }}
+                secondaryAction={{ content: 'I have Done it', onAction: handleDone }}
                 tone="warning"
             >
                 <List>

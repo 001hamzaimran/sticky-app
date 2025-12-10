@@ -220,7 +220,7 @@ button {
     }
     .product-image-content{
         gap: 0;
-        align-items: start;
+        align-items: center;
     }
     .product-image {
         width: 30%;

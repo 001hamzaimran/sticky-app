@@ -4,12 +4,11 @@ import img from "../assets/sticky-add-to-cart-bg.webp";
 // import First from "./First.jsx";
 import Second from "./Second.jsx"
 import SuggestedApps from "./SuggestedApps";
-// import First from "./first.jsx";
-import above from "./above.jsx";
+import FirstVisit from "./FirstVisit.jsx";
 
 export default function HomePage() {
   const navigate = useNavigate();
-
+  console.log("ABOVE", <FirstVisit />)
   const [playVideo, setPlayVideo] = useState(false);
   const [modalActive, setModalActive] = useState(false);
   const [storeData, setStoreData] = useState(null);
@@ -41,7 +40,7 @@ export default function HomePage() {
   const handleGetStarted = () => {
     const shop = storeData.domain;
     const API_KEY = "c23e9fe0713ccd6c1eff49729441698d";
-    const EXTENSION_HANDLE = "sticky_cart";
+    const EXTENSION_HANDLE = "sticky-cart";
 
     const url = `https://${shop}/admin/themes/current/editor?context=apps&activateAppId=${API_KEY}/${EXTENSION_HANDLE}`;
     window.open(url, "_blank");
@@ -78,7 +77,7 @@ export default function HomePage() {
   return (
     <>
       {/* {storeData?.firstVisit && <First />} */}
-      {storeData?.firstVisit && <above />}
+      {storeData?.firstVisit && <FirstVisit />}
       {storeData?.firstVisit === false && themeEnabled === false && <Second setThemeEnabled={setThemeEnabled} themeEnabled={themeEnabled} />}
       <div className="main-page">
         <div className="sticky-content">

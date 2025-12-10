@@ -158,7 +158,7 @@ button {
         width: 20%;
     }
     .product-content{
-        width: 70% !important;
+        width: 65% !important;
         flex-direction: column;
         align-items: start;
         padding: 10px 0;

@@ -5,20 +5,23 @@ name = "StickyCart"
 application_url = "https://stickycart-2b4c8b3ba0df.herokuapp.com/"
 embedded = true
 
+[build]
+automatically_update_urls_on_dev = true
+
 [webhooks]
 api_version = "2026-01"
 
-[[webhooks.subscriptions]]
-uri = "/webhooks/customers/data_request"
-compliance_topics = ["customers/data_request"]
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/customers/data_request"
+  compliance_topics = [ "customers/data_request" ]
 
-[[webhooks.subscriptions]]
-uri = "/webhooks/customers/redact"
-compliance_topics = ["customers/redact"]
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/customers/redact"
+  compliance_topics = [ "customers/redact" ]
 
-[[webhooks.subscriptions]]
-uri = "/webhooks/shop/redact"
-compliance_topics = ["shop/redact"]
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/shop/redact"
+  compliance_topics = [ "shop/redact" ]
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
@@ -28,13 +31,10 @@ scopes = "read_themes,write_products"
 redirect_urls = [
   "https://stickycart-2b4c8b3ba0df.herokuapp.com/auth/callback",
   "https://stickycart-2b4c8b3ba0df.herokuapp.com/auth/shopify/callback",
-  "https://stickycart-2b4c8b3ba0df.herokuapp.com/api/auth/callback",
+  "https://stickycart-2b4c8b3ba0df.herokuapp.com/api/auth/callback"
 ]
 
 [app_proxy]
 url = "https://stickycart-2b4c8b3ba0df.herokuapp.com/proxy"
 subpath = "Sticky"
 prefix = "apps"
-
-[build]
-automatically_update_urls_on_dev = true

@@ -2,52 +2,46 @@ import { Box, Button, Card, Page, ProgressBar, Text } from '@shopify/polaris'
 import React, { useEffect, useState } from 'react'
 import './First.css'
 
-// Move these icon components inside the First component or keep them separate
-const DoneIcon = () => {
-    return (
-        <svg
-            width="20"
-            height="20"
-            viewBox="0 0 28 28"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-            <circle cx="14" cy="14" r="14" fill="black" />
-            <path
-                d="M8 14.5L12 18L20 10"
-                stroke="white"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-}
+// Create SVG components as simple JSX elements, not React components
+const DoneIcon = () => (
+    <svg
+        width="20"
+        height="20"
+        viewBox="0 0 28 28"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <circle cx="14" cy="14" r="14" fill="black" />
+        <path
+            d="M8 14.5L12 18L20 10"
+            stroke="white"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+)
 
-const PendingIcon = () => {
-    return (
-        <svg
-            width="20"
-            height="20"
-            viewBox="0 0 28 28"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-            <circle
-                cx="14"
-                cy="14"
-                r="13"
-                stroke="#C4C4C4"
-                strokeWidth="2" 
-                strokeDasharray="4 4"
-            />
-        </svg> 
-    );
-}
+const PendingIcon = () => (
+    <svg
+        width="20"
+        height="20"
+        viewBox="0 0 28 28"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <circle
+            cx="14"
+            cy="14"
+            r="13"
+            stroke="#C4C4C4"
+            strokeWidth="2"
+            strokeDasharray="4 4"
+        />
+    </svg>
+)
 
-
- 
-function First() {
+export default function FirstVisit() {
     const [expandedSection, setExpandedSection] = useState(0);
     const [loading, setLoading] = useState(true);
     const [storeData, setStoreData] = useState(null);
@@ -93,9 +87,9 @@ function First() {
     }
 
     const handleGetStarted = () => {
-        const shop = "marcelshop-9888.myshopify.com";
+        const shop = storeData.domain;
         const API_KEY = "c23e9fe0713ccd6c1eff49729441698d";
-        const EXTENSION_HANDLE = "sticky_cart";
+        const EXTENSION_HANDLE = "sticky-cart";
         const url = `https://${shop}/admin/themes/current/editor?context=apps&activateAppId=${API_KEY}/${EXTENSION_HANDLE}`;
         window.open(url, "_blank");
     };
@@ -195,9 +189,7 @@ function First() {
         return (
             <Page>
                 <Card>
-                    <Card>
-                        <Text variant="bodyMd" as="p">Loading setup guide...</Text>
-                    </Card>
+                    <Text variant="bodyMd" as="p">Loading setup guide...</Text>
                 </Card>
             </Page>
         );
@@ -205,22 +197,19 @@ function First() {
 
     return (
         <Page>
-
             <Card>
-                <Card.Section>
-                    <Text variant="headingMd" as="h2">
-                        Setup Guide
-                    </Text>
-                    <Text>Follow these steps to start using Essential Sticky Add to Cart</Text>
-                    <Box paddingBlockStart="2">
-                        <div className="progress-container">
-                            <Text as="h4" variant="headingSm">{completedCount}/{totalSteps} Completed</Text>
-                            <div className="progress-bar-container">
-                                <ProgressBar progress={progressPercentage} size="small" color="success" />
-                            </div>
+                <Text variant="headingMd" as="h2">
+                    Setup Guide
+                </Text>
+                <Text>Follow these steps to start using Essential Sticky Add to Cart</Text>
+                <Box paddingBlockStart="2">
+                    <div className="progress-container">
+                        <Text as="h4" variant="headingSm">{completedCount}/{totalSteps} Completed</Text>
+                        <div className="progress-bar-container">
+                            <ProgressBar progress={progressPercentage} size="small" color="success" />
                         </div>
-                    </Box>
-                </Card.Section>
+                    </div>
+                </Box>
 
                 {/* Collapsible Sections */}
                 {steps.map((step, index) => (
@@ -259,7 +248,7 @@ function First() {
                                                 </Button>
                                             ))}
                                         </div>
-                                    </> 
+                                    </>
                                 )}
                             </div>
                             <div className="chevron">
@@ -272,12 +261,10 @@ function First() {
                                     <path d="M8 12L3 7l1-1 4 4 4-4 1 1-5 5z" fill="currentColor" />
                                 </svg>
                             </div>
-                        </div> 
-                    </div>   
+                        </div>
+                    </div>
                 ))}
-            </Card> 
-        </Page> 
+            </Card>
+        </Page>
     )
-} 
-  
-export default First
+}

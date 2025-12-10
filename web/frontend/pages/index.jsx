@@ -79,7 +79,7 @@ export default function HomePage() {
     <>
       {/* {storeData?.firstVisit && <First />} */}
       {storeData?.firstVisit && <above />}
-      {storeData?.firstVisit === false && themeEnabled === false && <Second />}
+      {storeData?.firstVisit === false && themeEnabled === false && <Second setThemeEnabled={setThemeEnabled} themeEnabled={themeEnabled} />}
       <div className="main-page">
         <div className="sticky-content">
           <img src={img} alt="Sticky Cart" />

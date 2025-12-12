@@ -33,13 +33,17 @@ export default function HomePage() {
       console.log("Theme data:", data);
 
       // Check if block was found AND is not disabled
-      const isEnabled = data.foundDetails && data.foundDetails.disabled === false;
+      // const isEnabled = data.foundDetails && data.foundDetails.disabled === false;
       setThemeEnabled(isEnabled);
     } catch (error) {
       console.error("Error fetching theme data:", error);
       setThemeEnabled(false);
     }
   };
+
+  useEffect(() => {
+    console.log("Theme enabled:", themeEnabled);
+  }, [themeEnabled]);
 
 
   const handleGetStarted = () => {

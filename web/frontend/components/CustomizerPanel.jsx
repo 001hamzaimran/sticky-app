@@ -428,7 +428,7 @@ export default function CustomizerPanel({ selectedValues, setSelectedValues, han
       ...(() => {
         const fixedParts = banner?.fixedminute
           ? banner.fixedminute.split(" ")
-          : ["0", "0", "0", "1"];
+          : ["0", "6", "0", "0"];
 
         return {
           timerDays: fixedParts[0],

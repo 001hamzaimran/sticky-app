@@ -31,11 +31,16 @@ export default function HomePage() {
       const response = await fetch("/api/getEmbedStatus");
       const data = await response.json();
       console.log("Theme data:", data);
-      setThemeEnabled(!data.foundDetails.disabled);
+
+      // Check if block was found AND is not disabled
+      const isEnabled = data.foundDetails && data.foundDetails.disabled === false;
+      setThemeEnabled(isEnabled);
     } catch (error) {
       console.error("Error fetching theme data:", error);
+      setThemeEnabled(false);
     }
   };
+
 
   const handleGetStarted = () => {
     const shop = storeData.domain;

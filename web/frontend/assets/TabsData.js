@@ -55,11 +55,11 @@ const tabsData = [
           { label: "Condensed", type: "radio", name: "size", value: "condensed" },
         ],
         conditionalFields: {
-            condensed: [
-              { label: "Custom Width", type: "range", name: "width", min: 0, max: 25, step: 10, },
-              { label: "", type: "text", name: "customWidth", value: "800" },
-            ]
-          }
+          condensed: [
+            { label: "Custom Width", type: "range", name: "width", min: 0, max: 25, step: 10, },
+            { label: "", type: "text", name: "customWidth", value: "800" },
+          ]
+        }
       },
       {
         title: "Vertical position",
@@ -67,7 +67,7 @@ const tabsData = [
         items: [
           { label: "Top", type: "radio", name: "positionVertical", value: "top" },
           { label: "Bottom", type: "radio", name: "positionVertical", value: "bottom" },
-          
+
         ]
       },
       {
@@ -133,10 +133,12 @@ const tabsData = [
         title: "Template",
         class: "tempalte",
         items: [
-          { label: "Template", type: "select", name: "template", options: [
-            { label: "Dark", value: "dark" },
-            { label: "White", value: "white" },
-          ] },
+          {
+            label: "Template", type: "select", name: "template", options: [
+              { label: "Dark", value: "dark" },
+              { label: "White", value: "white" },
+            ]
+          },
         ]
       },
       {
@@ -149,14 +151,14 @@ const tabsData = [
         conditionalFields: {
           gradient: [
             { label: "Gradient angle degree", type: "range", name: "gradientAngle", min: 0, max: 360, value: 90 },
-            { 
+            {
               title: "",
               items: [
                 { label: "", type: "color", class: "gradientColor1", name: "gradientColor1", value: "#000000" },
                 { label: "", type: "text", name: "gradientColor1Code", value: "#000000" }
               ]
             },
-            { 
+            {
               title: "",
               items: [
                 { label: "", type: "color", class: "gradientColor2", name: "gradientColor2", value: "#000000" },
@@ -170,7 +172,7 @@ const tabsData = [
                 { label: "", type: "color", class: "bgColors", name: "bgColor", value: "#000000" },
                 { label: "", type: "text", name: "bgColorCode", value: "#000000" }
               ]
-             },
+            },
           ],
         },
       },
@@ -358,24 +360,25 @@ const tabsData = [
         title: "Enable",
         class: "setting-announcement-enable",
         items: [
-          { label: "Enabled on desktop", type: "checkbox", name: "announcementEnabled", value: true }
+          { label: "Enabled", type: "checkbox", name: "announcementEnabled", value: true }
         ],
       },
       {
         title: "",
         class: "setting-announcement-text",
         items: [
-          { label: "", type: "select", name: "announcementFontSize", options:
-            [
-              { label: "10px", value: "10px" }, 
-              { label: "12px", value: "12px" }, 
-              { label: "14px", value: "14px" },
-              { label: "16px", value: "16px" },
-              { label: "18px", value: "18px" },
-              { label: "20px", value: "20px" },
-              { label: "22px", value: "22px" },
-              { label: "24px", value: "24px" },
-            ] 
+          {
+            label: "", type: "select", name: "announcementFontSize", options:
+              [
+                { label: "10px", value: "10px" },
+                { label: "12px", value: "12px" },
+                { label: "14px", value: "14px" },
+                { label: "16px", value: "16px" },
+                { label: "18px", value: "18px" },
+                { label: "20px", value: "20px" },
+                { label: "22px", value: "22px" },
+                { label: "24px", value: "24px" },
+              ]
           },
           { label: "B", type: "checkbox", name: "announcementFontWeight", value: true },
           { label: "I", type: "checkbox", name: "announcementFontStyle", value: true },
@@ -385,7 +388,7 @@ const tabsData = [
         ],
       },
       {
-        title:"",
+        title: "",
         class: "setting-announcement-bar-bg",
         items: [
           { label: "Background color", type: "color", name: "announcementBgColor", value: "#13FFC4" }
@@ -414,9 +417,9 @@ const tabsData = [
             value: "fixed-minutes",
             conditionalFields: [
               { label: "Days", type: "number", name: "timerDays", value: 0 },
-              { label: "Hour", type: "number", name: "timerHour", value: 0 },
+              { label: "Hour", type: "number", name: "timerHour", value: 6 },
               { label: "Minutes", type: "number", name: "timerMinutes", value: 0 },
-              { label: "Seconds", type: "number", name: "timerSeconds", value: 1 },
+              { label: "Seconds", type: "number", name: "timerSeconds", value: 0 },
             ],
           },
         ],

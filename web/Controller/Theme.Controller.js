@@ -53,6 +53,7 @@ const getExtensionStatus = async (req, res) => {
         let foundDetails = null;
 
         // Check sections for app blocks
+        // Check sections for app blocks
         if (settings.current?.sections) {
             for (const [sectionName, sectionData] of Object.entries(settings.current.sections)) {
                 console.log(`Checking section: ${sectionName}`);
@@ -63,28 +64,46 @@ const getExtensionStatus = async (req, res) => {
                         console.log(`  Checking block: ${blockId}`, blockData);
 
                         // Look for app block references
-                        if (blockData.type && blockData.type.includes('app_block') ||
+                        const isAppBlock = (
+                            blockData.type && blockData.type.includes('app_block') ||
                             blockId.includes('sticky') ||
-                            (blockData.type && blockData.type.includes('sticky'))) {
-                            isEnabled = true;
-                            foundLocation = `sections.${sectionName}.blocks.${blockId}`;
-                            foundDetails = blockData;
-                            console.log(`✅ Found app block in section:`, { sectionName, blockId, blockData });
-                            break;
+                            (blockData.type && blockData.type.includes('sticky'))
+                        );
+
+                        if (isAppBlock) {
+                            // Check the disabled state
+                            if (blockData.disabled === true) {
+                                console.log(`Found but DISABLED block in section:`, { sectionName, blockId });
+                                // Continue searching for an ENABLED instance
+                                continue;
+                            } else {
+                                isEnabled = true;
+                                foundLocation = `sections.${sectionName}.blocks.${blockId}`;
+                                foundDetails = blockData;
+                                console.log(`✅ Found ENABLED app block in section:`, { sectionName, blockId });
+                                break;
+                            }
                         }
                     }
                 }
 
+                if (isEnabled) break;
+
                 // Also check if the section itself is our app block
                 if (sectionName.includes('sticky') ||
                     (sectionData.type && sectionData.type.includes('app_block'))) {
-                    isEnabled = true;
-                    foundLocation = `sections.${sectionName}`;
-                    foundDetails = sectionData;
-                    console.log(`✅ Found app section:`, { sectionName, sectionData });
+                    // Check disabled state for sections too
+                    if (sectionData.disabled === true) {
+                        console.log(`Found but DISABLED app section:`, { sectionName });
+                        continue;
+                    } else {
+                        isEnabled = true;
+                        foundLocation = `sections.${sectionName}`;
+                        foundDetails = sectionData;
+                        console.log(`✅ Found ENABLED app section:`, { sectionName });
+                        break;
+                    }
                 }
-
-                if (isEnabled) break;
             }
         }
 
@@ -93,14 +112,24 @@ const getExtensionStatus = async (req, res) => {
             for (const [blockId, blockData] of Object.entries(settings.current.blocks)) {
                 console.log(`Checking global block: ${blockId}`, blockData);
 
-                if (blockId.includes('sticky') ||
+                const isAppBlock = (
+                    blockId.includes('sticky') ||
                     (blockData.type && blockData.type.includes('app_block')) ||
-                    (blockData.type && blockData.type.includes('sticky'))) {
-                    isEnabled = true;
-                    foundLocation = `blocks.${blockId}`;
-                    foundDetails = blockData;
-                    console.log(`✅ Found app block in global blocks:`, { blockId, blockData });
-                    break;
+                    (blockData.type && blockData.type.includes('sticky'))
+                );
+
+                if (isAppBlock) {
+                    // Check disabled state
+                    if (blockData.disabled === true) {
+                        console.log(`Found but DISABLED global block:`, { blockId });
+                        continue;
+                    } else {
+                        isEnabled = true;
+                        foundLocation = `blocks.${blockId}`;
+                        foundDetails = blockData;
+                        console.log(`✅ Found ENABLED app block in global blocks:`, { blockId });
+                        break;
+                    }
                 }
             }
         }
@@ -120,13 +149,23 @@ const getExtensionStatus = async (req, res) => {
 
                     if (section.blocks) {
                         for (const [blockId, blockData] of Object.entries(section.blocks)) {
-                            if (blockId.includes('sticky') ||
-                                (blockData.type && blockData.type.includes('app_block'))) {
-                                isEnabled = true;
-                                foundLocation = `sections.${sectionName}.blocks.${blockId}`;
-                                foundDetails = blockData;
-                                console.log(`✅ Found in product section:`, { sectionName, blockId });
-                                break;
+                            const isAppBlock = (
+                                blockId.includes('sticky') ||
+                                (blockData.type && blockData.type.includes('app_block'))
+                            );
+
+                            if (isAppBlock) {
+                                // Check disabled state
+                                if (blockData.disabled === true) {
+                                    console.log(`Found but DISABLED block in product section:`, { sectionName, blockId });
+                                    continue;
+                                } else {
+                                    isEnabled = true;
+                                    foundLocation = `sections.${sectionName}.blocks.${blockId}`;
+                                    foundDetails = blockData;
+                                    console.log(`✅ Found ENABLED app block in product section:`, { sectionName, blockId });
+                                    break;
+                                }
                             }
                         }
                     }
